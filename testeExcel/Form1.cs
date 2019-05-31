@@ -53,7 +53,7 @@ namespace testeExcel
         public List<String> itemsDataGrid = new List<String>();
         public SqlConnection conn = null;
         public bool checado;
-        int lastRow;
+        String databaseName;
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -62,7 +62,7 @@ namespace testeExcel
 
         private void buttonAbrir_Click(object sender, EventArgs e)
         {
-            SqlConnection conn = new SqlConnection(@"Data Source=BRCAENRODRIGUES\SQLEXPRESS01; Initial Catalog=LAMPADA; Integrated Security=True");
+           // SqlConnection conn = new SqlConnection(@"Data Source=BRCAENRODRIGUES\SQLEXPRESS; Initial Catalog=EKA_2018_JU; Integrated Security=True");
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             openFileDialog1.InitialDirectory = "C:\\";
             openFileDialog1.Filter = "Csv files (*.csv*)|*.csv*|Excel files (*.xls*)|*.xls*";
@@ -109,7 +109,7 @@ namespace testeExcel
 
         private void Form1_Load(object sender, EventArgs e)
         {
-              conn = new SqlConnection(@"Data Source=BRCAENRODRIGUES\SQLEXPRESS01; Initial Catalog=LAMPADA; Integrated Security=True");
+             // conn = new SqlConnection(@"Data Source=BRCAENRODRIGUES\SQLEXPRESS; Initial Catalog=EKA_2018_JU; Integrated Security=True");
         }
 
  
@@ -130,14 +130,14 @@ namespace testeExcel
         
         public void Compras()
         {
+ 
             //  string filePath = caminho;
-            string filePath = "C:\\Base\\compras.xlsx"; ;
+            string filePath = caminho; 
             // Abrindo, modificando meu arquivo e salvando
             ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             DateTime hoje = DateTime.Now;
             int linha =1;
-            lastRow = workSheet.Dimension.End.Row;
             int produtozerado = 0;
             bool produtoVazio=false;
             string tabela = "D_Compras";
@@ -150,7 +150,11 @@ namespace testeExcel
             workSheet = package.Workbook.Worksheets.First();
             StringBuilder conteudo = new StringBuilder();
             SqlCommand cmd = conn.CreateCommand();
-            conn.Open();
+
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
             for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
             {
                 produtoVazio = false;
@@ -220,13 +224,11 @@ namespace testeExcel
                             {
                            //     conteudo.Replace("[D_Compras]", "[D_Compras_Inconsistencias]");
                                 conteudo.Append(" " + 0 + ", ");
-                          //      MessageBox.Show("4");
                             }
                             else if(workSheet.Cells[i, j].Value == "")
                             {
                             //    conteudo.Replace("[D_Compras]", "[D_Compras_Inconsistencias]");
                                 conteudo.Append(" " + 0 + ", ");
-                         //       MessageBox.Show("3");
                             }
                         }
                         else if (( j == 15 || j == 16)
@@ -300,8 +302,11 @@ namespace testeExcel
                     conteudo.Append(")");
                     conteudo.Append(Environment.NewLine);
                 }
-                Clipboard.SetText(conteudo.ToString());
-               
+                // Clipboard.SetText(conteudo.ToString());
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
                 linha = linha + 1;
                 cmd.CommandText = conteudo.ToString();
                 SqlTransaction trE = null;
@@ -343,33 +348,35 @@ namespace testeExcel
         {
             int arqId = 0;
 
-            SqlConnection conn = new SqlConnection(@"Data Source=BRCAENRODRIGUES\SQLEXPRESS01; Initial Catalog=LAMPADA; Integrated Security=True");
- 
-                string oString = "select max(Arq_ID) from S_ArquivoCarregado where Arq_Tabela = @tabela";
+            //            SqlConnection conn = new SqlConnection(@"Data Source=BRCAENRODRIGUES\SQLEXPRESS; Initial Catalog=EKA_2018_JU; Integrated Security=True");
+            string oString = "select max(Arq_ID) from S_ArquivoCarregado where Arq_Tabela = @tabela";
                 SqlCommand oCmd = new SqlCommand(oString, conn);
                 oCmd.Parameters.AddWithValue("@tabela", tabela);
-                  conn.Open();
-                using (SqlDataReader oReader = oCmd.ExecuteReader())
+
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
+
+            using (SqlDataReader oReader = oCmd.ExecuteReader())
                 {
                     while (oReader.Read())
                     {
                         arqId = Int16.Parse(oReader[0].ToString());
                     }
-                conn.Close();
+                    conn.Close();
+                    }
+                    return arqId +1;
                 }
-            return arqId +1;
-        }
 
         public void Vendas()
         {
-            //  string filePath = caminho;
-            string filePath = "C:\\Base\\vendas.xlsx"; ;
+            string filePath = caminho ;
             // Abrindo, modificando meu arquivo e salvando
             ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             DateTime hoje = DateTime.Now;
             int linha = 1;
-            lastRow = workSheet.Dimension.End.Row;
             int produtozerado = 0;
             bool produtoVazio = false;
             string tabela = "D_Vendas_Itens";
@@ -382,7 +389,10 @@ namespace testeExcel
             workSheet = package.Workbook.Worksheets.First();
             StringBuilder conteudo = new StringBuilder();
             SqlCommand cmd = conn.CreateCommand();
-            conn.Open();
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
             for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
             {
                 for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
@@ -533,8 +543,11 @@ namespace testeExcel
                     conteudo.Append(")");
                     conteudo.Append(Environment.NewLine);
                 }
-              //  Clipboard.SetText(conteudo.ToString());
-
+                //  Clipboard.SetText(conteudo.ToString());
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
                 linha = linha + 1;
                 cmd.CommandText = conteudo.ToString();
                 SqlTransaction trE = null;
@@ -574,23 +587,22 @@ namespace testeExcel
 
         public void Clientes()
         {
-            string filePath = "C:\\Base\\clientes.xlsx";
+            string filePath = caminho;
 
             ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             DateTime hoje = DateTime.Now;
-
-            int lastRow = workSheet.Dimension.End.Row;
-
-            //workSheet.Cells[1, 1].Value = hoje.ToString(); // sobrescrevendo primeira linha e coluna
-            //workSheet.Cells[lastRow + 1, 1].Value = hoje.ToString(); // inserindo data de hoje apos ultima linha, 1a coluna
             package.Save();
             package.Dispose();
             int linha = 1;
             package = new ExcelPackage(new FileInfo(filePath));
             workSheet = package.Workbook.Worksheets.First();
             SqlCommand cmd = conn.CreateCommand();
-            conn.Open();
+
+            if(conn.State.ToString() == "Closed")
+            {
+             conn.Open();
+            }
             StringBuilder conteudo = new StringBuilder();
  
             for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
@@ -659,7 +671,14 @@ namespace testeExcel
                     conteudo.Append(")");
                     conteudo.Append(Environment.NewLine);
                 }
-                Clipboard.SetText(conteudo.ToString());
+                // Clipboard.SetText(conteudo.ToString());
+
+                MessageBox.Show(conn.State.ToString());
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+                MessageBox.Show(conn.State.ToString());
                 linha = linha + 1;
                 cmd.CommandText = conteudo.ToString();
                 SqlTransaction trE = null;
@@ -672,23 +691,25 @@ namespace testeExcel
             }
             package.Dispose();
         }
-
-
+         
         public void Fornecedores()
         {
-            string filePath = "C:\\Base\\fornecedores.xlsx";
+            string filePath = caminho;
             ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             DateTime hoje = DateTime.Now;
 
-            int lastRow = workSheet.Dimension.End.Row;
             package.Save();
             package.Dispose();
             int linha = 1;
             package = new ExcelPackage(new FileInfo(filePath));
             workSheet = package.Workbook.Worksheets.First();
             SqlCommand cmd = conn.CreateCommand();
-            conn.Open();
+
+            if(conn.State.ToString() == "Closed")
+            {
+             conn.Open();
+            }
             StringBuilder conteudo = new StringBuilder();
 
             for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
@@ -767,6 +788,11 @@ namespace testeExcel
                     conteudo.Append(Environment.NewLine);
                 }
                 //Clipboard.SetText(conteudo.ToString());
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+
                 linha = linha + 1;
                 cmd.CommandText = conteudo.ToString();
                 SqlTransaction trE = null;
@@ -782,19 +808,13 @@ namespace testeExcel
 
         public void Produtos()
         {
-            string filePath = "C:\\Base\\produtos.xlsx";
-
-            // Abrindo, modificando meu arquivo e salvando
+            string filePath = caminho;
             ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             DateTime hoje = DateTime.Now;
             string result = "";
-            int lastRow = workSheet.Dimension.End.Row;
-
             package.Save();
             package.Dispose();
-
-            // Abrindo meu arquivo para varrer o conteudo da primeira planilha e exibir na minha página
             package = new ExcelPackage(new FileInfo(filePath));
             workSheet = package.Workbook.Worksheets.First();
             StringBuilder conteudo = new StringBuilder();
@@ -804,9 +824,11 @@ namespace testeExcel
             package = new ExcelPackage(new FileInfo(filePath));
             workSheet = package.Workbook.Worksheets.First();
             SqlCommand cmd = conn.CreateCommand();
-            conn.Open();
 
-
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
             for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
             {
                 for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
@@ -862,19 +884,14 @@ namespace testeExcel
 
         public void Inventario()
         {
-            string filePath = "C:\\Base\\inventario.xlsx";
-
-            // Abrindo, modificando meu arquivo e salvando
+            string filePath = caminho;
             ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             DateTime hoje = DateTime.Now;
             string result = "";
-            int lastRow = workSheet.Dimension.End.Row;
-
             package.Save();
             package.Dispose();
 
-            // Abrindo meu arquivo para varrer o conteudo da primeira planilha e exibir na minha página
             package = new ExcelPackage(new FileInfo(filePath));
             workSheet = package.Workbook.Worksheets.First();
             StringBuilder conteudo = new StringBuilder();
@@ -884,7 +901,10 @@ namespace testeExcel
             package = new ExcelPackage(new FileInfo(filePath));
             workSheet = package.Workbook.Worksheets.First();
             SqlCommand cmd = conn.CreateCommand();
-            conn.Open();
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
 
             for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
             {
@@ -962,16 +982,124 @@ namespace testeExcel
             MessageBox.Show("Carregamento de " + linha +" registros de inventario realizados com sucesso");
         }
 
+
+        public void Insumo_Produto()
+        {
+            string filePath = caminho;
+            ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
+            ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            DateTime hoje = DateTime.Now;
+            package.Save();
+            package.Dispose();
+            int linha = 1;
+            package = new ExcelPackage(new FileInfo(filePath));
+            workSheet = package.Workbook.Worksheets.First();
+
+            SqlCommand cmd = conn.CreateCommand();
+
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
+            StringBuilder conteudo = new StringBuilder();
+
+            for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+            {
+                for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                {
+                    if (j == workSheet.Dimension.End.Column)
+                    {
+                        conteudo.Append(workSheet.Cells[i, j].Value == null ? "0, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
+                        conteudo.Append(" " + pegarID("D_Insumo_Produto") + " ");
+                    }
+                    else
+                    {
+                        Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
+                        {
+                            DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
+                        };
+
+                        if (j == 1)
+                        {
+                            conteudo.Append(" INSERT INTO D_INSUMO_PRODUTO " +
+                                 "([Ins_PA_Pro_Id] " +
+                                  ",[Ins_Qtd_Produzida] " +
+                                  ",[Ins_PA_Und_Id] " +
+                                  ",[Ins_MP_Pro_Id] " +
+                                  ",[Ins_Qtd_Requisitada] " +
+                                  ",[Ins_MP_Und_Id] " +
+                                  ",[Ins_Ordem_Prod] " +
+                                  ",[Ins_DT_Ini] " +
+                                  ",[Ins_DT_Fim] " +
+                                  ",[Ins_CNPJ] " +
+                                  ",[Lin_Origem_ID] " +
+                                  ",[Arq_Origem_ID]) " +
+                            " VALUES ( ");
+                            conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                        }
+                        else if ((j == 8 || j == 9) && workSheet.Cells[i, j].Value != null && workSheet.Cells[i, j].Value.GetType().Name.ToString() != "DateTime")
+                        {
+                            DateTime dt = DateTime.FromOADate(Convert.ToInt64(workSheet.Cells[i, j].Value));
+                            conteudo.Append("'" + dt + "', ");
+                        }
+                        else if ((j == 3 || j == 6) && workSheet.Cells[i, j].Value != null)
+                        {
+                            Unidades unidade = (Unidades)System.Enum.Parse(typeof(Unidades), workSheet.Cells[i, j].Value.ToString());
+                            conteudo.Append("'" + ((int)unidade).ToString() + "', ");
+                        }
+                        else
+                        {
+                            if ((workSheet.Cells[i, j].Value == null ? " NULL " : workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
+                            {
+                                workSheet.Cells[i, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
+                                conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                            }
+                            else
+                            {
+                                conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                            }
+                        }
+                    }
+                }
+
+                if (i == workSheet.Dimension.End.Row)
+                {
+                    conteudo.Append(" ) ");
+                }
+                else
+                {
+                    conteudo.Append(")");
+                    conteudo.Append(Environment.NewLine);
+                }
+                //Clipboard.SetText(conteudo.ToString());
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+                linha = linha + 1;
+                cmd.CommandText = conteudo.ToString();
+                SqlTransaction trE = null;
+                trE = conn.BeginTransaction();
+                cmd.Transaction = trE;
+                cmd.ExecuteNonQuery();
+                trE.Commit();
+                conteudo.Clear();
+            }
+            package.Dispose();
+        }
+
         public void Custo()
         {
-            string filePath = "C:\\Base\\CUSTOS.xlsx";
+            string filePath = caminho;
+            if(caminho == null)
+            {
+                MessageBox.Show("Escolha o arquivo");
+            }
 
             ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             DateTime hoje = DateTime.Now;
             string result = "";
-            int lastRow = workSheet.Dimension.End.Row;
-
             package.Save();
             package.Dispose();
 
@@ -984,13 +1112,17 @@ namespace testeExcel
             package = new ExcelPackage(new FileInfo(filePath));
             workSheet = package.Workbook.Worksheets.First();
             SqlCommand cmd = conn.CreateCommand();
-            conn.Open();
+
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
 
             for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
             {
                 for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                 {
-                    if ((j == 1) && workSheet.Cells[i, j].Value != null)
+                    if ((j == 1) )
                     {
 
                         conteudo.Append(" INSERT INTO D_Custo_Medio " +
@@ -998,15 +1130,18 @@ namespace testeExcel
                             "Cst_Mes, " +
                             "Cst_Ano, " +
                             "Cst_Vl_Custo, " +
-                            "Cst_CNPJ ) " + Environment.NewLine + " VALUES ( ");
+                            "Cst_CNPJ " +
+                            ",[Lin_Origem_ID] " +
+                            ",[Arq_Origem_ID]) " +
+                            " VALUES ( ");
                     }
-                        if (j == workSheet.Dimension.End.Column)
+                    if (j == workSheet.Dimension.End.Column)
                     {
-                        conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' ");
+                        conteudo.Append(workSheet.Cells[i, j].Value == null ? "0, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
+                        conteudo.Append(" " + pegarID("D_Custo_Medio") + " ");
                     }
                     else
                     {
-
                         if ((workSheet.Cells[i, j].Value == null ? " NULL " : workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
                         {
                             workSheet.Cells[i, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
@@ -1016,7 +1151,6 @@ namespace testeExcel
                         {
                             conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
                         }
-
                     }
                 }
                 if (i == workSheet.Dimension.End.Row)
@@ -1028,7 +1162,13 @@ namespace testeExcel
                     conteudo.Append(")");
                     conteudo.Append(Environment.NewLine);
                 }
-                Clipboard.SetText(conteudo.ToString());
+                //Clipboard.SetText(conteudo.ToString());
+
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+
                 linha = linha + 1;
                 cmd.CommandText = conteudo.ToString();
                 SqlTransaction trE = null;
@@ -1039,14 +1179,39 @@ namespace testeExcel
                 conteudo.Clear();
             }
             package.Dispose();
-            MessageBox.Show("Informações de Custo Médio incluídas com sucesso");
+
+            SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+            cmdArquivoCarregado.CommandText =
+              "declare @tabela varchar(max) = 'D_Custo_Medio';" +
+                " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
+                " insert into S_ArquivoCarregado" +
+                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                " values(1, 'Custos_Complementares', @tabela, 'Carga efetuada com sucesso.'," +
+                " GETDATE(), '2', SUSER_NAME())" +
+                " else" +
+                " insert into S_ArquivoCarregado" +
+                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                " values(isnull((select max(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela),0)+1, '\\Pasta\\Vendas.txt', @tabela, 'Carga efetuada com sucesso.'," +
+                " GETDATE(), " + linha.ToString() + ", SUSER_NAME())";
+
+            SqlTransaction trA = null;
+            trA = conn.BeginTransaction();
+            cmdArquivoCarregado.Transaction = trA;
+            cmdArquivoCarregado.ExecuteNonQuery();
+            trA.Commit();
+
+            conn.Close();
+
+            MessageBox.Show("Carregamento de " + linha.ToString() + " registros de  Custo Médio");
         }
 
 
         private void button1_Click_2(object sender, EventArgs e)
         {
-            UnitEnum unitw = new UnitEnum();
-             
+            if(conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
             if (cmbTabela.SelectedItem == "D_Custo_Medio")
             {
                 Custo();
@@ -1077,7 +1242,7 @@ namespace testeExcel
             }
             if (cmbTabela.SelectedItem == "D_Insumo_Produto")
             {
-             
+                Insumo_Produto();
             }
             if (cmbTabela.SelectedItem == "D_Relacao_Carga")
             {
@@ -1086,16 +1251,9 @@ namespace testeExcel
             if(cmbTabela.SelectedItem == null)
             {
                 MessageBox.Show("Selecione uma tabela para carregamento");
-
             }
 
 
-        }
-
-        public class UnitEnum
-        {
-            public const string KW = "KW";
-            public const string Volt = "%V";
         }
 
         enum Moedas
@@ -1496,6 +1654,54 @@ namespace testeExcel
 
         private void cmbTabela_SelectedIndexChanged(object sender, EventArgs e)
         {
+
+        }
+
+        private void comboBoxServidor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            conexao = comboBoxServidor.Text;
+              conn = new SqlConnection ("Data Source=" + conexao + "; Integrated Security=True;");
+            // conn = new SqlConnection(@"Data Source=BRCAENRODRIGUES\SQLSERVER; Initial Catalog=TEST_TEMP_2017; Integrated Security=True");
+
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
+            System.Data.DataTable databases = conn.GetSchema("Databases");
+
+            comboBoxBase.Items.Clear();
+
+            foreach (DataRow database in databases.Rows)
+            {
+                databaseName = database.Field<String>("database_name");
+                comboBoxBase.Items.Add(databaseName);
+               
+            }
+            conn.Close();
+        }
+
+
+        private void comboBoxServidor_Enter(object sender, EventArgs e)
+        {
+            comboBoxServidor.Items.Clear();
+            string myServer = Environment.MachineName;
+
+            System.Data.DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
+            for (int i = 0; i < servers.Rows.Count; i++)
+            {
+                if (myServer == servers.Rows[i]["ServerName"].ToString())
+                {
+                    if ((servers.Rows[i]["InstanceName"] as string) != null)
+                        comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
+                    else
+                        comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"]);
+                }
+            }
+        }
+
+        private void comboBoxBase_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + databaseName);
 
         }
     }

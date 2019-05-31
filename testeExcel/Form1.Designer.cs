@@ -36,11 +36,15 @@
             this.lblPlanilha = new System.Windows.Forms.Label();
             this.cmbTabela = new System.Windows.Forms.ComboBox();
             this.lblTabela = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.comboBoxBase = new System.Windows.Forms.ComboBox();
+            this.comboBoxServidor = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // buttonAbrir
             // 
-            this.buttonAbrir.Location = new System.Drawing.Point(26, 18);
+            this.buttonAbrir.Location = new System.Drawing.Point(13, 82);
             this.buttonAbrir.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonAbrir.Name = "buttonAbrir";
             this.buttonAbrir.Size = new System.Drawing.Size(210, 88);
@@ -52,7 +56,7 @@
             // lblEndereço
             // 
             this.lblEndereço.AutoSize = true;
-            this.lblEndereço.Location = new System.Drawing.Point(25, 264);
+            this.lblEndereço.Location = new System.Drawing.Point(17, 288);
             this.lblEndereço.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblEndereço.Name = "lblEndereço";
             this.lblEndereço.Size = new System.Drawing.Size(0, 20);
@@ -61,7 +65,7 @@
             // cmbPlanilha
             // 
             this.cmbPlanilha.FormattingEnabled = true;
-            this.cmbPlanilha.Location = new System.Drawing.Point(26, 215);
+            this.cmbPlanilha.Location = new System.Drawing.Point(13, 255);
             this.cmbPlanilha.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cmbPlanilha.Name = "cmbPlanilha";
             this.cmbPlanilha.Size = new System.Drawing.Size(442, 28);
@@ -79,7 +83,7 @@
             // 
             // btnCarregar
             // 
-            this.btnCarregar.Location = new System.Drawing.Point(255, 18);
+            this.btnCarregar.Location = new System.Drawing.Point(242, 82);
             this.btnCarregar.Name = "btnCarregar";
             this.btnCarregar.Size = new System.Drawing.Size(210, 88);
             this.btnCarregar.TabIndex = 27;
@@ -90,7 +94,7 @@
             // lblPlanilha
             // 
             this.lblPlanilha.AutoSize = true;
-            this.lblPlanilha.Location = new System.Drawing.Point(25, 190);
+            this.lblPlanilha.Location = new System.Drawing.Point(12, 229);
             this.lblPlanilha.Name = "lblPlanilha";
             this.lblPlanilha.Size = new System.Drawing.Size(106, 20);
             this.lblPlanilha.TabIndex = 28;
@@ -109,7 +113,7 @@
             "D_Produtos",
             "D_Relacao_Carga",
             "D_Vendas_Itens"});
-            this.cmbTabela.Location = new System.Drawing.Point(26, 148);
+            this.cmbTabela.Location = new System.Drawing.Point(13, 198);
             this.cmbTabela.Name = "cmbTabela";
             this.cmbTabela.Size = new System.Drawing.Size(442, 28);
             this.cmbTabela.TabIndex = 29;
@@ -118,17 +122,58 @@
             // lblTabela
             // 
             this.lblTabela.AutoSize = true;
-            this.lblTabela.Location = new System.Drawing.Point(25, 125);
+            this.lblTabela.Location = new System.Drawing.Point(12, 175);
             this.lblTabela.Name = "lblTabela";
-            this.lblTabela.Size = new System.Drawing.Size(57, 20);
+            this.lblTabela.Size = new System.Drawing.Size(93, 20);
             this.lblTabela.TabIndex = 30;
-            this.lblTabela.Text = "Tabela";
+            this.lblTabela.Text = "Tabela SQL";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(17, 54);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(120, 20);
+            this.label7.TabIndex = 35;
+            this.label7.Text = "Base de dados:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(66, 20);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(71, 20);
+            this.label6.TabIndex = 34;
+            this.label6.Text = "Servidor:";
+            // 
+            // comboBoxBase
+            // 
+            this.comboBoxBase.FormattingEnabled = true;
+            this.comboBoxBase.Location = new System.Drawing.Point(140, 46);
+            this.comboBoxBase.Name = "comboBoxBase";
+            this.comboBoxBase.Size = new System.Drawing.Size(311, 28);
+            this.comboBoxBase.TabIndex = 32;
+            this.comboBoxBase.SelectedIndexChanged += new System.EventHandler(this.comboBoxBase_SelectedIndexChanged);
+            // 
+            // comboBoxServidor
+            // 
+            this.comboBoxServidor.FormattingEnabled = true;
+            this.comboBoxServidor.Location = new System.Drawing.Point(141, 12);
+            this.comboBoxServidor.Name = "comboBoxServidor";
+            this.comboBoxServidor.Size = new System.Drawing.Size(311, 28);
+            this.comboBoxServidor.TabIndex = 33;
+            this.comboBoxServidor.SelectedIndexChanged += new System.EventHandler(this.comboBoxServidor_SelectedIndexChanged);
+            this.comboBoxServidor.Enter += new System.EventHandler(this.comboBoxServidor_Enter);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(488, 313);
+            this.ClientSize = new System.Drawing.Size(484, 330);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.comboBoxBase);
+            this.Controls.Add(this.comboBoxServidor);
             this.Controls.Add(this.lblTabela);
             this.Controls.Add(this.cmbTabela);
             this.Controls.Add(this.lblPlanilha);
@@ -157,6 +202,10 @@
         private System.Windows.Forms.Label lblPlanilha;
         private System.Windows.Forms.ComboBox cmbTabela;
         private System.Windows.Forms.Label lblTabela;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox comboBoxBase;
+        private System.Windows.Forms.ComboBox comboBoxServidor;
     }
 }
 
