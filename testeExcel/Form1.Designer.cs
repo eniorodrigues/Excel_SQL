@@ -44,19 +44,19 @@
             // 
             // buttonAbrir
             // 
-            this.buttonAbrir.Location = new System.Drawing.Point(13, 82);
+            this.buttonAbrir.Location = new System.Drawing.Point(10, 92);
             this.buttonAbrir.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonAbrir.Name = "buttonAbrir";
-            this.buttonAbrir.Size = new System.Drawing.Size(210, 88);
-            this.buttonAbrir.TabIndex = 9;
-            this.buttonAbrir.Text = "Abrir Arquivo";
+            this.buttonAbrir.Size = new System.Drawing.Size(441, 66);
+            this.buttonAbrir.TabIndex = 3;
+            this.buttonAbrir.Text = "Abrir Arquivo Excel";
             this.buttonAbrir.UseVisualStyleBackColor = true;
             this.buttonAbrir.Click += new System.EventHandler(this.buttonAbrir_Click);
             // 
             // lblEndereço
             // 
             this.lblEndereço.AutoSize = true;
-            this.lblEndereço.Location = new System.Drawing.Point(17, 288);
+            this.lblEndereço.Location = new System.Drawing.Point(5, 253);
             this.lblEndereço.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblEndereço.Name = "lblEndereço";
             this.lblEndereço.Size = new System.Drawing.Size(0, 20);
@@ -65,7 +65,7 @@
             // cmbPlanilha
             // 
             this.cmbPlanilha.FormattingEnabled = true;
-            this.cmbPlanilha.Location = new System.Drawing.Point(13, 255);
+            this.cmbPlanilha.Location = new System.Drawing.Point(10, 204);
             this.cmbPlanilha.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cmbPlanilha.Name = "cmbPlanilha";
             this.cmbPlanilha.Size = new System.Drawing.Size(442, 28);
@@ -83,9 +83,9 @@
             // 
             // btnCarregar
             // 
-            this.btnCarregar.Location = new System.Drawing.Point(242, 82);
+            this.btnCarregar.Location = new System.Drawing.Point(245, 338);
             this.btnCarregar.Name = "btnCarregar";
-            this.btnCarregar.Size = new System.Drawing.Size(210, 88);
+            this.btnCarregar.Size = new System.Drawing.Size(206, 55);
             this.btnCarregar.TabIndex = 27;
             this.btnCarregar.Text = "Carregar";
             this.btnCarregar.UseVisualStyleBackColor = true;
@@ -94,7 +94,7 @@
             // lblPlanilha
             // 
             this.lblPlanilha.AutoSize = true;
-            this.lblPlanilha.Location = new System.Drawing.Point(12, 229);
+            this.lblPlanilha.Location = new System.Drawing.Point(9, 178);
             this.lblPlanilha.Name = "lblPlanilha";
             this.lblPlanilha.Size = new System.Drawing.Size(106, 20);
             this.lblPlanilha.TabIndex = 28;
@@ -113,7 +113,7 @@
             "D_Produtos",
             "D_Relacao_Carga",
             "D_Vendas_Itens"});
-            this.cmbTabela.Location = new System.Drawing.Point(13, 198);
+            this.cmbTabela.Location = new System.Drawing.Point(7, 296);
             this.cmbTabela.Name = "cmbTabela";
             this.cmbTabela.Size = new System.Drawing.Size(442, 28);
             this.cmbTabela.TabIndex = 29;
@@ -122,7 +122,7 @@
             // lblTabela
             // 
             this.lblTabela.AutoSize = true;
-            this.lblTabela.Location = new System.Drawing.Point(12, 175);
+            this.lblTabela.Location = new System.Drawing.Point(6, 273);
             this.lblTabela.Name = "lblTabela";
             this.lblTabela.Size = new System.Drawing.Size(93, 20);
             this.lblTabela.TabIndex = 30;
@@ -149,10 +149,10 @@
             // comboBoxBase
             // 
             this.comboBoxBase.FormattingEnabled = true;
-            this.comboBoxBase.Location = new System.Drawing.Point(140, 46);
+            this.comboBoxBase.Location = new System.Drawing.Point(141, 46);
             this.comboBoxBase.Name = "comboBoxBase";
             this.comboBoxBase.Size = new System.Drawing.Size(311, 28);
-            this.comboBoxBase.TabIndex = 32;
+            this.comboBoxBase.TabIndex = 2;
             this.comboBoxBase.SelectedIndexChanged += new System.EventHandler(this.comboBoxBase_SelectedIndexChanged);
             // 
             // comboBoxServidor
@@ -161,7 +161,7 @@
             this.comboBoxServidor.Location = new System.Drawing.Point(141, 12);
             this.comboBoxServidor.Name = "comboBoxServidor";
             this.comboBoxServidor.Size = new System.Drawing.Size(311, 28);
-            this.comboBoxServidor.TabIndex = 33;
+            this.comboBoxServidor.TabIndex = 1;
             this.comboBoxServidor.SelectedIndexChanged += new System.EventHandler(this.comboBoxServidor_SelectedIndexChanged);
             this.comboBoxServidor.Enter += new System.EventHandler(this.comboBoxServidor_Enter);
             // 
@@ -169,7 +169,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(484, 330);
+            this.ClientSize = new System.Drawing.Size(471, 405);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.comboBoxBase);
