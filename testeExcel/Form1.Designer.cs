@@ -40,6 +40,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.comboBoxBase = new System.Windows.Forms.ComboBox();
             this.comboBoxServidor = new System.Windows.Forms.ComboBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonAbrir
@@ -165,11 +166,22 @@
             this.comboBoxServidor.SelectedIndexChanged += new System.EventHandler(this.comboBoxServidor_SelectedIndexChanged);
             this.comboBoxServidor.Enter += new System.EventHandler(this.comboBoxServidor_Enter);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(473, 119);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 36;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click_5);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(471, 405);
+            this.ClientSize = new System.Drawing.Size(555, 405);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.comboBoxBase);
@@ -206,6 +218,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox comboBoxBase;
         private System.Windows.Forms.ComboBox comboBoxServidor;
+        private System.Windows.Forms.Button button1;
     }
 }
 
