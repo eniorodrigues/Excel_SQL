@@ -84,9 +84,9 @@
             // 
             // btnCarregar
             // 
-            this.btnCarregar.Location = new System.Drawing.Point(245, 338);
+            this.btnCarregar.Location = new System.Drawing.Point(163, 338);
             this.btnCarregar.Name = "btnCarregar";
-            this.btnCarregar.Size = new System.Drawing.Size(206, 55);
+            this.btnCarregar.Size = new System.Drawing.Size(288, 55);
             this.btnCarregar.TabIndex = 27;
             this.btnCarregar.Text = "Carregar";
             this.btnCarregar.UseVisualStyleBackColor = true;
@@ -168,11 +168,11 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(473, 119);
+            this.button1.Location = new System.Drawing.Point(10, 338);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(147, 55);
             this.button1.TabIndex = 36;
-            this.button1.Text = "button1";
+            this.button1.Text = "Gerar Excel Modelo";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_5);
             // 
@@ -180,7 +180,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(555, 405);
+            this.ClientSize = new System.Drawing.Size(468, 405);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);

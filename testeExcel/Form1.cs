@@ -136,9 +136,9 @@ namespace testeExcel
 
        public void Compras()
         {
-            string filePath = caminho;
-            //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-            //string filePath = @"C:\Base\compras.xlsx";
+            //string filePath = caminho;
+            conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+            string filePath = @"C:\Base\OK_ImportacΣes Acumulado 2018_01_09.xlsx";
             FileInfo existingFile = new FileInfo(filePath);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets[1];
@@ -387,7 +387,6 @@ namespace testeExcel
             {
                 for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                 {
-                    MessageBox.Show(j.ToString());
                     if (j == workSheet.Dimension.End.Column)
                     {
                         conteudo.Append(workSheet.Cells[i, j].Value == null ? " 0, '" + linha + "', " : " " + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + " , '" + linha + "', ");
@@ -536,7 +535,7 @@ namespace testeExcel
                     conteudo.Append(")");
                     conteudo.Append(Environment.NewLine);
                 }
-                Clipboard.SetText(conteudo.ToString());
+               // Clipboard.SetText(conteudo.ToString());
                 if (conn.State.ToString() == "Closed")
                 {
                     conn.Open();
@@ -580,17 +579,17 @@ namespace testeExcel
 
         public void Clientes()
         {
-            string filePath = caminho;
-            ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
+            //string filePath = caminho ;
+            conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+            string filePath = @"C:\Base\clientes.xlsx";
+            FileInfo existingFile = new FileInfo(filePath);
+            ExcelPackage package = new ExcelPackage(existingFile);
+            //ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-            DateTime hoje = DateTime.Now;
-            package.Save();
-            package.Dispose();
-            int linha = 1;
-            package = new ExcelPackage(new FileInfo(filePath));
-            workSheet = package.Workbook.Worksheets.First();
-            SqlCommand cmd = conn.CreateCommand();
             StringBuilder conteudo = new StringBuilder();
+            var lista = new List<String>();
+            SqlCommand cmd = conn.CreateCommand();
+            int linha = 1;
 
             if (conn.State.ToString() == "Closed")
             {
@@ -725,22 +724,18 @@ namespace testeExcel
 
         public void Fornecedores()
         {
-            string filePath = caminho;
-
-            ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
+            //string filePath = caminho ;
+            conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+            string filePath = @"C:\Base\OK_Cadastro novos fornecedores.xlsx";
+            FileInfo existingFile = new FileInfo(filePath);
+            ExcelPackage package = new ExcelPackage(existingFile);
+            //ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-            DateTime hoje = DateTime.Now;
-            package.Save();
-            package.Dispose();
-            int linha = 1;
-            package = new ExcelPackage(new FileInfo(filePath));
-            workSheet = package.Workbook.Worksheets.First();
-            SqlCommand cmd = conn.CreateCommand();
             StringBuilder conteudo = new StringBuilder();
-            if (conn.State.ToString() == "Closed")
-            {
-                conn.Open();
-            }
+            var lista = new List<String>();
+            SqlCommand cmd = conn.CreateCommand();
+            int linha = 1;
+
             try
             {
 
@@ -869,22 +864,19 @@ namespace testeExcel
         
         public void Produtos()
         {
-            string filePath = caminho;
-            ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
+            //string filePath = caminho ;
+            conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+            string filePath = @"C:\Base\produtos_evonik.xlsx";
+            FileInfo existingFile = new FileInfo(filePath);
+            ExcelPackage package = new ExcelPackage(existingFile);
+            //ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-            DateTime hoje = DateTime.Now;
-            string result = "";
-            package.Save();
-            package.Dispose();
-            package = new ExcelPackage(new FileInfo(filePath));
-            workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
             StringBuilder conteudo = new StringBuilder();
             var lista = new List<String>();
-            int linha = 1;
-            package = new ExcelPackage(new FileInfo(filePath));
-           // workSheet = package.Workbook.Worksheets.First();
             SqlCommand cmd = conn.CreateCommand();
- 
+            int linha = 1;
+
+
             try
             {
 
@@ -990,8 +982,6 @@ namespace testeExcel
             ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
             ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
             DateTime hoje = DateTime.Now;
-            package.Save();
-            package.Dispose();
             package = new ExcelPackage(new FileInfo(filePath));
             workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
             StringBuilder conteudo = new StringBuilder();
@@ -1257,8 +1247,6 @@ namespace testeExcel
             ExcelPackage package = new ExcelPackage(new FileInfo(filePath));
             ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
             DateTime hoje = DateTime.Now;
-            package.Save();
-            package.Dispose();
             package = new ExcelPackage(new FileInfo(filePath));
             workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
             StringBuilder conteudo = new StringBuilder();
@@ -1866,7 +1854,134 @@ namespace testeExcel
 
         private void button1_Click_5(object sender, EventArgs e)
         {
-            Teste();
+ 
+
+            using (ExcelPackage excel = new ExcelPackage())
+            {
+                excel.Workbook.Worksheets.Add("Compras");
+                excel.Workbook.Worksheets.Add("Vendas");
+                excel.Workbook.Worksheets.Add("Ordem");
+                excel.Workbook.Worksheets.Add("Inventario");
+                excel.Workbook.Worksheets.Add("Relacao");
+                excel.Workbook.Worksheets.Add("Custo");
+                excel.Workbook.Worksheets.Add("Clientes");
+                excel.Workbook.Worksheets.Add("Produtos");
+                excel.Workbook.Worksheets.Add("Fornecedores");
+
+                var comprasWorksheet = excel.Workbook.Worksheets["Compras"];
+                var vendasWorksheet = excel.Workbook.Worksheets["Vendas"];
+                var ordemWorksheet = excel.Workbook.Worksheets["Ordem"];
+                var custoWorksheet = excel.Workbook.Worksheets["Custo"];
+                var inventarioWorksheet = excel.Workbook.Worksheets["Inventario"];
+                var relacaoWorksheet = excel.Workbook.Worksheets["Relacao"];
+                var clientesWorksheet = excel.Workbook.Worksheets["Clientes"];
+                var produtosWorksheet = excel.Workbook.Worksheets["Produtos"];
+                var fornecedoresWorksheet = excel.Workbook.Worksheets["Fornecedores"];
+
+
+                List<string[]> headerRowCompras = new List<string[]>()
+                    {
+                    //  new string[] { "Código do Produto",   "Código Divisão",   "Código do Fornecedor", "Lançamento",   "Fatura",   "BL Data",  "Número da DI",    "Data da Importação",   "N da NF de Entrada",  "Serie",    "Data Entrada NF",  "CFOP NF Entrada",  "Data de Vencimento Média", "Dias", "Quantidade",   "Valor FOB (Moeda Estrangeira)",    "Código da Moeda Estrangeira",  "Frete",    "Seguro",   "Código Moeda Frete",   "Código Moeda Seguro",  "Imposto de Importação (Reais)",    "Icms", "Pis",  "Cofins",   "Id For Frete", "Id For Seguro",    "Incoterm"}
+                  new string[] { "Código do Produto",   "Código Divisão",   "Código do Fornecedor", "Lançamento",   "Fatura",   "BL Data",  "Número da DI",    "Data da Importação",   "N da NF de Entrada",  "Serie",    "Data Entrada NF",  "CFOP NF Entrada",  "Data de Vencimento Média", "Dias", "Quantidade",   "Valor FOB (Moeda Estrangeira)",    "Código da Moeda Estrangeira",  "Frete",    "Seguro",   "Código Moeda Frete",   "Código Moeda Seguro",  "Imposto de Importação (Reais)",    "Icms", "Pis",  "Cofins",   "Id For Frete", "Id For Seguro", "Incoterm"}
+
+                    };
+
+                List<string[]> headerRowVendas = new List<string[]>()
+                    {
+                      new string[] {"Código do Cliente",    "Número NF",    "Série NF", "CFOP", "Data Emissão", "Data Vencimento",  "Prazo de Vencimento",  "Código do Produto",    "Quantidade",   "Valor Venda sem o IPI (Reais)",  "Descontos Incondicionais", "ICMS", "PIS",  "COFINS",   "ISS",  "Comissão", "Frete",  "Seguro",   "Data de Embarque", "Código Moeda Estrangeira", "Valor em Moeda Estrangeira",   "Custo da Venda (CPV)" }
+                    };
+
+                List<string[]> headerRowOrdem = new List<string[]>()
+                    {
+                      new string[] { "Código do Produto Acabado",   "Quantidade Produzida", "Unidade de Medida Produto Acabado",    "Código Matéria-Prima", "Quantidade Requisitada",   "Unidade de Medida Matéria-Prima",  "N da Ordem de Produção",  "Data Inínio",  "Data Fim" }
+                    };
+
+                List<string[]> headerRowInventario = new List<string[]>()
+                    {
+                      new string[] { "Código do Produto",   "Data Inventário",  "Quantidade em Estoque",    "Unidade de Medida" }
+                    };
+
+                List<string[]> headerRowRelacao = new List<string[]>()
+                    {
+                      new string[] { "Produto Acabado", "Matéria Prima", "Quantidade Produzida", "Quantidade Requisitada", "Relacao", "Tipo Relação" }
+                    };
+
+                List<string[]> headerRowClientes = new List<string[]>()
+                    {
+                      new string[] { "Código do Cliente",   "Nome", "Código do País",   "Vínculo",  "Data Inicio",  "Data Fim", "CNPJ"}
+                    };
+
+                List<string[]> headerRowProdutos = new List<string[]>()
+                    {
+                      new string[] {"Código do Produto",    "Descrição",    "Unidade de Medida",    "Classificação Fiscal (NCM)"}
+                    };
+
+                List<string[]> headerRowFornecedores = new List<string[]>()
+                    {
+                      new string[] { "Código do Fornecedor",    "Nome", "Código do País",   "Vínculo"}
+                    };
+
+                List<string[]> headerRowCusto = new List<string[]>()
+                    {
+                      new string[] {"Código do Produto",    "Mês",  "Ano",  "Custo Médio Unitário"}
+                    };
+
+                string headerRangeFornecedores = "A1:" + Char.ConvertFromUtf32(headerRowFornecedores[0].Length + 64) + "1";
+                fornecedoresWorksheet.Cells[headerRangeFornecedores].LoadFromArrays(headerRowFornecedores);
+                fornecedoresWorksheet.Cells[headerRangeFornecedores].Style.Font.Bold = true;
+                fornecedoresWorksheet.Column(1).AutoFit();
+
+                string headerRangeCompras = "A1:AB1";
+                comprasWorksheet.Cells[headerRangeCompras].LoadFromArrays(headerRowCompras);
+                comprasWorksheet.Cells[headerRangeCompras].Style.Font.Bold = true;
+                comprasWorksheet.Column(1).AutoFit();
+
+                string headerRangeInventario = "A1:" + Char.ConvertFromUtf32(headerRowInventario[0].Length + 64) + "1";
+                inventarioWorksheet.Cells[headerRangeInventario].LoadFromArrays(headerRowInventario);
+                inventarioWorksheet.Cells[headerRangeInventario].Style.Font.Bold = true;
+                inventarioWorksheet.Column(1).AutoFit();
+                string headerRangeVendas = "A1:" + Char.ConvertFromUtf32(headerRowVendas[0].Length + 64) + "1";
+                vendasWorksheet.Cells[headerRangeVendas].LoadFromArrays(headerRowVendas);
+                vendasWorksheet.Cells[headerRangeVendas].Style.Font.Bold = true;
+                vendasWorksheet.Column(1).AutoFit();
+                string headerRangeOrdem = "A1:" + Char.ConvertFromUtf32(headerRowOrdem[0].Length + 64) + "1";
+                ordemWorksheet.Cells[headerRangeOrdem].LoadFromArrays(headerRowOrdem);
+                ordemWorksheet.Cells[headerRangeOrdem].Style.Font.Bold = true;
+                ordemWorksheet.Column(1).AutoFit();
+                string headerRangeClientes = "A1:" + Char.ConvertFromUtf32(headerRowClientes[0].Length + 64) + "1";
+                clientesWorksheet.Cells[headerRangeClientes].LoadFromArrays(headerRowClientes);
+                clientesWorksheet.Cells[headerRangeClientes].Style.Font.Bold = true;
+                clientesWorksheet.Column(1).AutoFit();
+                string headerRangeProdutos = "A1:" + Char.ConvertFromUtf32(headerRowProdutos[0].Length + 64) + "1";
+                produtosWorksheet.Cells[headerRangeProdutos].LoadFromArrays(headerRowProdutos);
+                produtosWorksheet.Cells[headerRangeProdutos].Style.Font.Bold = true;
+                produtosWorksheet.Column(1).AutoFit();
+                string headerRangeRelacao = "A1:" + Char.ConvertFromUtf32(headerRowRelacao[0].Length + 64) + "1";
+                relacaoWorksheet.Cells[headerRangeRelacao].LoadFromArrays(headerRowRelacao);
+                relacaoWorksheet.Cells[headerRangeRelacao].Style.Font.Bold = true;
+                relacaoWorksheet.Column(1).AutoFit();
+                string headerRangeCusto = "A1:" + Char.ConvertFromUtf32(headerRowCusto[0].Length + 64) + "1";
+                custoWorksheet.Cells[headerRangeCusto].LoadFromArrays(headerRowCusto);
+                custoWorksheet.Cells[headerRangeCusto].Style.Font.Bold = true;
+                custoWorksheet.Column(1).AutoFit();
+
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.Filter = "Excel Image|*.xlsx";
+                saveFileDialog1.Title = "Salvar Excel";
+                saveFileDialog1.ShowDialog();
+
+                // If the file name is not an empty string open it for saving.  
+                if (saveFileDialog1.FileName != "")
+                {
+                    // Saves the Image via a FileStream created by the OpenFile method.  
+                    System.IO.FileStream fs =
+                       (System.IO.FileStream)saveFileDialog1.OpenFile();
+                    excel.SaveAs(fs);
+                   
+                }
+                excel.Dispose();
+            }
+     
         }
 
 
