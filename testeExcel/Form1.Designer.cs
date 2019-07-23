@@ -71,7 +71,6 @@
             this.cmbPlanilha.Name = "cmbPlanilha";
             this.cmbPlanilha.Size = new System.Drawing.Size(442, 28);
             this.cmbPlanilha.TabIndex = 22;
-            this.cmbPlanilha.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -118,7 +117,6 @@
             this.cmbTabela.Name = "cmbTabela";
             this.cmbTabela.Size = new System.Drawing.Size(442, 28);
             this.cmbTabela.TabIndex = 29;
-            this.cmbTabela.SelectedIndexChanged += new System.EventHandler(this.cmbTabela_SelectedIndexChanged);
             // 
             // lblTabela
             // 
