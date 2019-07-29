@@ -361,10 +361,252 @@ namespace testeExcel
             }
          }
 
+        //public void Vendas()
+        //{
+        //    int linha = 0;
+        //    int inconsistencia = 0;
+        //    string filePath = caminho;
+
+        //    try
+        //    {
+        //        //FileInfo existingFile = new FileInfo(filePath);
+        //        //ExcelPackage package = new ExcelPackage(existingFile);
+        //        //ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
+        //        //StringBuilder conteudo = new StringBuilder();
+        //        //SqlCommand cmd = conn.CreateCommand();
+
+        //        ///// temporario
+        //        conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+        //        filePath = @"C:\Base\vendas.xlsx";
+        //        FileInfo existingFile = new FileInfo(filePath);
+        //        ExcelPackage package = new ExcelPackage(existingFile);
+        //        ExcelWorksheet workSheet = package.Workbook.Worksheets[1];
+        //        StringBuilder conteudo = new StringBuilder();
+        //        SqlCommand cmd = conn.CreateCommand();
+        //        workSheet = package.Workbook.Worksheets.First();
+
+        //        for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+        //        {
+        //            for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+        //            {
+        //                if (j == workSheet.Dimension.End.Column)
+        //                {
+        //                    conteudo.Append(workSheet.Cells[i, j].Value == null ? " 0, '" + linha + "', " : " " + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + " , '" + linha + "', ");
+        //                    conteudo.Append(" " + pegarID("D_Vendas_Itens") + " ");
+        //                }
+        //                else
+        //                {
+        //                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
+        //                {
+        //                    DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
+        //                };
+        //                if (j == 1)
+        //                {
+        //                    conteudo.Append(" INSERT INTO[dbo].[D_Vendas_Itens] " +
+        //                                      "([Vnd_Cli_ID] " +
+        //                                      ",[Vnd_NF_ID]" +
+        //                                      ",[Vnd_NF_Serie]" +
+        //                                      ",[Vnd_Cod_Divisao]" +
+        //                                      ",[Vnd_CFOP]" +
+        //                                      ",[Vnd_Dt_Emissao]" +
+        //                                      ",[Vnd_DT_Vencimento]" +
+        //                                      ",[Vnd_Dias]" +
+        //                                      ",[Vnd_Item]" +
+        //                                      ",[Vnd_Pro_id]" +
+        //                                      ",[Vnd_Qtde]" +
+        //                                      ",[Vnd_Vl_Nota]" +
+        //                                      ",[Vnd_Desconto]" +
+        //                                      ",[Vnd_ICMS]" +
+        //                                      ",[Vnd_PIS]" +
+        //                                      ",[Vnd_COFINS]" +
+        //                                      ",[Vnd_ISS]" +
+        //                                      ",[Vnd_Comissao]" +
+        //                                      ",[Vnd_Frete]" +
+        //                                      ",[Vnd_Seguro]" +
+        //                                      ",[Vnd_Dt_Embarque]" +
+        //                                      ",[Vnd_Cod_Moeda]" +
+        //                                      ",[Vnd_Vl_Moeda]" +
+        //                                      ",[Vnd_Custo] " +
+        //                                      ",[Vnd_CNPJ] " +
+        //                                      ",[Lin_Origem_ID] " +
+        //                                      ",[Arq_Origem_ID]) " +
+        //                                      " VALUES ( ");
+
+        //                    if (workSheet.Cells[i, j].Value == null)
+        //                    {
+        //                        conteudo.Replace("D_Vendas_Itens", "A_Vendas_Inconsistencias");
+        //                        conteudo.Append(" '', ");
+        //                    }
+        //                    else
+        //                    {
+        //                        conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+        //                    }
+        //                }
+        //                else if ((j == 2 || j == 5 || j == 10 )
+        //                    && (workSheet.Cells[i, j].Value == null))
+        //                {
+        //                    if (workSheet.Cells[i, j].Value == null)
+        //                    {
+        //                        conteudo.Replace("D_Vendas_Itens", "A_Vendas_Inconsistencias");
+        //                        conteudo.Append(" '', ");
+        //                    }
+        //                    else if (workSheet.Cells[i, j].Value.Equals(""))
+        //                    {
+        //                        conteudo.Replace("D_Vendas_Itens", "A_Vendas_Inconsistencias");
+        //                        conteudo.Append(" '', ");
+        //                    }
+        //                }
+        //                else if (j == 9 || j == 25 && (workSheet.Cells[i, j].Value == null))
+        //                {
+        //                    conteudo.Append(" '', ");
+        //                }
+        //                else if ((j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24)
+        //                   && (workSheet.Cells[i, j].Value == null))
+        //                {
+        //                    if (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals(""))
+        //                    {
+        //                            //  conteudo.Replace("D_Vendas_Itens", "A_Vendas_Inconsistencias");
+        //                    VendasPenLayout();
+        //                      //  conteudo.Append(" " + 0 + ", ");
+        //                    }
+        //                }
+        //                else if ((j == 6 || j == 7 || j == 21) && workSheet.Cells[i, j].Value != null && workSheet.Cells[i, j].Value.GetType().Name.ToString() == "DateTime")
+        //                {
+        //                    conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString() + "', ");
+        //                }
+        //                else if ((j == 6 || j == 7 || j == 21) && workSheet.Cells[i, j].Value != null && workSheet.Cells[i, j].Value.GetType().Name.ToString() == "Double")
+        //                {
+        //                    DateTime dt = DateTime.FromOADate(Convert.ToInt64(workSheet.Cells[i, j].Value));
+        //                    conteudo.Append("'" + dt + "', ");
+        //                }
+        //                else if ((j == 6 || j == 7 || j == 21) && workSheet.Cells[i, j].Value != null)
+        //                {
+        //                    DateTime dt = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", null);
+        //                    conteudo.Append("'" + dt + "', ");
+        //                }
+        //                else if ((j == 6 || j == 7 || j == 21) && workSheet.Cells[i, j].Value != null)
+        //                {
+        //                    DateTime dt = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", null);
+        //                    conteudo.Append("'" + dt + "', ");
+        //                }
+        //                else if ((j == 6 || j == 7 || j == 21 || j == 22) && workSheet.Cells[i, j].Value == null)
+        //                {
+        //                    conteudo.Append(" '', ");
+        //                }
+        //                else if ((j == 1 || j == 2 || j == 5 || j == 6 || j == 7 || j == 10 || j == 21 || j == 25) && (workSheet.Cells[i, j].Value.Equals("")))
+        //                {
+        //                    conteudo.Replace("D_Vendas_Itens", "A_Vendas_Inconsistencias");
+        //                    conteudo.Append(" '', ");
+        //                }
+        //                //caso o que não é numero esteja em branco colocar texto branco
+        //                else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value.Equals("")))
+        //                {
+        //                    conteudo.Append(" " + 0 + ", ");
+        //                }
+        //                //caso número seja nulo colocar zero
+        //                else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value.Equals("")))
+        //                {
+        //                    conteudo.Append(" " + 0 + ", ");
+        //                }
+        //                //caso número tirar  aspas simples
+        //                else if ((j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value != null))
+        //                {
+        //                    conteudo.Append("" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + ", ");
+        //                }
+        //                else if ((j == 4 || j == 3) && (workSheet.Cells[i, j].Value == null))
+        //                {
+        //                    conteudo.Append(" '', ");
+        //                }
+        //                else if (workSheet.Cells[i, j].Value != null || !workSheet.Cells[i, j].Value.Equals(""))
+        //                {
+        //                    if ((workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
+        //                    {
+        //                        workSheet.Cells[i, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
+        //                        conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString() + "', ");
+        //                    }
+        //                    else
+        //                    {
+        //                        conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+        //                    }
+        //                }
+        //                else if (workSheet.Cells[i, j].Value == null)
+        //                {
+        //                    conteudo.Append(" '', ");
+        //                }
+        //                }
+        //        }
+
+        //        if (i == workSheet.Dimension.End.Row)
+        //        {
+        //            conteudo.Append(" ) ");
+        //        }
+        //        else
+        //        {
+        //            conteudo.Append(")");
+        //            conteudo.Append(Environment.NewLine);
+        //        }
+
+        //        if(conteudo.ToString().Contains("Inconsistencia"))
+        //            {
+        //                inconsistencia++;
+        //            }
+        //        else
+        //            {
+        //                linha++;
+        //            }
+
+        //        Clipboard.SetText(conteudo.ToString());
+        //        //conn.Open();
+        //        //cmd.CommandText = conteudo.ToString();
+        //        //SqlTransaction trE = null;
+        //        //trE = conn.BeginTransaction();
+        //        //cmd.Transaction = trE;
+        //        //cmd.ExecuteNonQuery();
+        //        //trE.Commit();
+        //        MessageBox.Show(conteudo.ToString());
+        //        conteudo.Clear();
+        //    }
+
+        //    package.Dispose();
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show(ex.Message);
+        //    }
+        //    finally
+        //    {
+        //        SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+        //        cmdArquivoCarregado.CommandText =
+        //          "declare @tabela varchar(max) = 'D_Vendas_Itens';" +
+        //            " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
+        //            " insert into S_ArquivoCarregado" +
+        //            " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+        //            " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+        //            " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
+        //            " else" +
+        //            " insert into S_ArquivoCarregado" +
+        //            " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+        //            " values('" + +pegarID("D_Vendas_Itens") + "', '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+        //            " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
+        //        conn.Open();
+        //        SqlTransaction trA = null;
+        //        trA = conn.BeginTransaction();
+        //        cmdArquivoCarregado.Transaction = trA;
+        //        cmdArquivoCarregado.ExecuteNonQuery();
+        //        trA.Commit();
+        //        conn.Close();
+        //        MessageBox.Show("Carregamento de " + linha.ToString() + " registros de vendas");
+        //    }
+        //}
+
+
         public void Vendas()
         {
-            int linha = 0;
-            int inconsistencia = 0;
+            int linhaRegistro = 1;
+            int registroInconsistente = 0;
+            int registroConsistente = 0;
+            bool penLayout = false;
             string filePath = caminho;
 
             try
@@ -387,187 +629,165 @@ namespace testeExcel
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
+                    penLayout = false;
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
+                     //   MessageBox.Show(j.ToString() + " Vendas " + i.ToString());
                         if (j == workSheet.Dimension.End.Column)
                         {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " 0, '" + linha + "', " : " " + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + " , '" + linha + "', ");
+                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '', '" + linhaRegistro + "', " : " '" + workSheet.Cells[i, j].Value.ToString() + "' , '" + linhaRegistro + "', ");
                             conteudo.Append(" " + pegarID("D_Vendas_Itens") + " ");
                         }
                         else
                         {
-                        Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
-                        {
-                            DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
-                        };
-                        if (j == 1)
-                        {
-                            conteudo.Append(" INSERT INTO[dbo].[D_Vendas_Itens] " +
-                                              "([Vnd_Cli_ID] " +
-                                              ",[Vnd_NF_ID]" +
-                                              ",[Vnd_NF_Serie]" +
-                                              ",[Vnd_Cod_Divisao]" +
-                                              ",[Vnd_CFOP]" +
-                                              ",[Vnd_Dt_Emissao]" +
-                                              ",[Vnd_DT_Vencimento]" +
-                                              ",[Vnd_Dias]" +
-                                              ",[Vnd_Item]" +
-                                              ",[Vnd_Pro_id]" +
-                                              ",[Vnd_Qtde]" +
-                                              ",[Vnd_Vl_Nota]" +
-                                              ",[Vnd_Desconto]" +
-                                              ",[Vnd_ICMS]" +
-                                              ",[Vnd_PIS]" +
-                                              ",[Vnd_COFINS]" +
-                                              ",[Vnd_ISS]" +
-                                              ",[Vnd_Comissao]" +
-                                              ",[Vnd_Frete]" +
-                                              ",[Vnd_Seguro]" +
-                                              ",[Vnd_Dt_Embarque]" +
-                                              ",[Vnd_Cod_Moeda]" +
-                                              ",[Vnd_Vl_Moeda]" +
-                                              ",[Vnd_Custo] " +
-                                              ",[Vnd_CNPJ] " +
-                                              ",[Lin_Origem_ID] " +
-                                              ",[Arq_Origem_ID]) " +
-                                              " VALUES ( ");
+                            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
+                            {
+                                DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
+                            };
+                            if (j == 1)
+                            {
+                                conteudo.Append(" INSERT INTO[dbo].[D_Vendas_Itens] " +
+                                                  "([Vnd_Cli_ID] " +
+                                                  ",[Vnd_NF_ID]" +
+                                                  ",[Vnd_NF_Serie]" +
+                                                  ",[Vnd_Cod_Divisao]" +
+                                                  ",[Vnd_CFOP]" +
+                                                  ",[Vnd_Dt_Emissao]" +
+                                                  ",[Vnd_DT_Vencimento]" +
+                                                  ",[Vnd_Dias]" +
+                                                  ",[Vnd_Item]" +
+                                                  ",[Vnd_Pro_id]" +
+                                                  ",[Vnd_Qtde]" +
+                                                  ",[Vnd_Vl_Nota]" +
+                                                  ",[Vnd_Desconto]" +
+                                                  ",[Vnd_ICMS]" +
+                                                  ",[Vnd_PIS]" +
+                                                  ",[Vnd_COFINS]" +
+                                                  ",[Vnd_ISS]" +
+                                                  ",[Vnd_Comissao]" +
+                                                  ",[Vnd_Frete]" +
+                                                  ",[Vnd_Seguro]" +
+                                                  ",[Vnd_Dt_Embarque]" +
+                                                  ",[Vnd_Cod_Moeda]" +
+                                                  ",[Vnd_Vl_Moeda]" +
+                                                  ",[Vnd_Custo] " +
+                                                  ",[Vnd_CNPJ] " +
+                                                  ",[Lin_Origem_ID] " +
+                                                  ",[Arq_Origem_ID]) " +
+                                                  " VALUES ( ");
 
-                            if (workSheet.Cells[i, j].Value == null)
+                                if (workSheet.Cells[i, j].Value == null)
+                                {
+                                    VendasPenLayout(i);
+                                    j = workSheet.Dimension.End.Column;
+                                    penLayout = true;
+                                }
+                                else
+                                {
+                                    conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                                }
+                            }
+                            else if ((j == 2 || j == 5 || j == 6 || j == 7 || j == 10 || j == 11 || j == 12 ) && (workSheet.Cells[i, j].Value == null))
                             {
-                                conteudo.Replace("D_Vendas_Itens", "A_Vendas_Inconsistencias");
+                                VendasPenLayout(i);
+                                penLayout = true;
+                            }
+                            else if (j == 9 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals("") ))
+                            {
                                 conteudo.Append(" '', ");
                             }
-                            else
+                            else if ((j == 6 || j == 7 || j == 21) && workSheet.Cells[i, j].Value != null && workSheet.Cells[i, j].Value.GetType().Name.ToString() == "DateTime")
                             {
-                                conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
-                            }
-                        }
-                        else if ((j == 1 || j == 2 || j == 5 || j == 10 )
-                            && (workSheet.Cells[i, j].Value == null))
-                        {
-                            if (workSheet.Cells[i, j].Value == null)
-                            {
-                                conteudo.Replace("D_Vendas_Itens", "A_Vendas_Inconsistencias");
-                                conteudo.Append(" '', ");
-                            }
-                            else if (workSheet.Cells[i, j].Value.Equals(""))
-                            {
-                                conteudo.Replace("D_Vendas_Itens", "A_Vendas_Inconsistencias");
-                                conteudo.Append(" '', ");
-                            }
-                        }
-                        else if (j == 9 || j == 25 && (workSheet.Cells[i, j].Value == null))
-                        {
-                            conteudo.Append(" '', ");
-                        }
-                        else if ((j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24)
-                           && (workSheet.Cells[i, j].Value == null))
-                        {
-                            if (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals(""))
-                            {
-                              //  conteudo.Replace("D_Vendas_Itens", "A_Vendas_Inconsistencias");
-                                conteudo.Append(" " + 0 + ", ");
-                            }
-                        }
-                        else if ((j == 6 || j == 7 || j == 21) && workSheet.Cells[i, j].Value != null && workSheet.Cells[i, j].Value.GetType().Name.ToString() == "DateTime")
-                        {
-                            conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString() + "', ");
-                        }
-                        else if ((j == 6 || j == 7 || j == 21) && workSheet.Cells[i, j].Value != null && workSheet.Cells[i, j].Value.GetType().Name.ToString() == "Double")
-                        {
-                            DateTime dt = DateTime.FromOADate(Convert.ToInt64(workSheet.Cells[i, j].Value));
-                            conteudo.Append("'" + dt + "', ");
-                        }
-                        else if ((j == 6 || j == 7 || j == 21) && workSheet.Cells[i, j].Value != null)
-                        {
-                            DateTime dt = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", null);
-                            conteudo.Append("'" + dt + "', ");
-                        }
-                        else if ((j == 6 || j == 7 || j == 21) && workSheet.Cells[i, j].Value != null)
-                        {
-                            DateTime dt = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", null);
-                            conteudo.Append("'" + dt + "', ");
-                        }
-                        else if ((j == 6 || j == 7 || j == 21 || j == 22) && workSheet.Cells[i, j].Value == null)
-                        {
-                            conteudo.Append(" '', ");
-                        }
-                        else if ((j == 1 || j == 2 || j == 5 || j == 6 || j == 7 || j == 10 || j == 21 || j == 25) && (workSheet.Cells[i, j].Value.Equals("")))
-                        {
-                            conteudo.Replace("D_Vendas_Itens", "A_Vendas_Inconsistencias");
-                            conteudo.Append(" '', ");
-                        }
-                        //caso o que não é numero esteja em branco colocar texto branco
-                        else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value.Equals("")))
-                        {
-                            conteudo.Append(" " + 0 + ", ");
-                        }
-                        //caso número seja nulo colocar zero
-                        else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value.Equals("")))
-                        {
-                            conteudo.Append(" " + 0 + ", ");
-                        }
-                        //caso número tirar  aspas simples
-                        else if ((j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value != null))
-                        {
-                            conteudo.Append("" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + ", ");
-                        }
-                        else if ((j == 4 || j == 3) && (workSheet.Cells[i, j].Value == null))
-                        {
-                            conteudo.Append(" '', ");
-                        }
-                        else if (workSheet.Cells[i, j].Value != null || !workSheet.Cells[i, j].Value.Equals(""))
-                        {
-                            if ((workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
-                            {
-                                workSheet.Cells[i, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
                                 conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString() + "', ");
                             }
-                            else
+                            else if ((j == 6 || j == 7 || j == 21) && workSheet.Cells[i, j].Value != null && workSheet.Cells[i, j].Value.GetType().Name.ToString() == "Double")
                             {
-                                conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                                DateTime dt = DateTime.FromOADate(Convert.ToInt64(workSheet.Cells[i, j].Value));
+                                conteudo.Append("'" + dt + "', ");
+                            }
+                            else if ((j == 6 || j == 7 || j == 21) && workSheet.Cells[i, j].Value != null)
+                            {
+                                DateTime dt = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", null);
+                                conteudo.Append("'" + dt + "', ");
+                            }
+                            else if ((j == 6 || j == 7 || j == 21) && workSheet.Cells[i, j].Value != null)
+                            {
+                                DateTime dt = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", null);
+                                conteudo.Append("'" + dt + "', ");
+                            }
+                            else if ((j == 6 || j == 7 || j == 21 || j == 22) && workSheet.Cells[i, j].Value == null)
+                            {
+                                conteudo.Append(" '', ");
+                            }
+                            //caso o que não é numero esteja em branco colocar texto branco
+                            else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value.Equals("")))
+                            {
+                                conteudo.Append(" " + 0 + ", ");
+                            }
+                            //caso número seja nulo colocar zero
+                            else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value.Equals("")))
+                            {
+                                conteudo.Append(" " + 0 + ", ");
+                            }
+                            //caso número tirar  aspas simples
+                            else if ((j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value != null))
+                            {
+                                conteudo.Append("" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + ", ");
+                            }
+                            else if ((j == 4 || j == 3) && (workSheet.Cells[i, j].Value == null))
+                            {
+                                conteudo.Append(" '', ");
+                            }
+                            else if (workSheet.Cells[i, j].Value != null || !workSheet.Cells[i, j].Value.Equals(""))
+                            {
+                                if ((workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
+                                {
+                                    workSheet.Cells[i, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
+                                    conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString() + "', ");
+                                }
+                                else
+                                {
+                                    conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                                }
+                            }
+                            else if (workSheet.Cells[i, j].Value == null)
+                            {
+                                conteudo.Append(" '', ");
                             }
                         }
-                        else if (workSheet.Cells[i, j].Value == null)
-                        {
-                            conteudo.Append(" '', ");
-                        }
-                        }
-                }
-
-                if (i == workSheet.Dimension.End.Row)
-                {
-                    conteudo.Append(" ) ");
-                }
-                else
-                {
-                    conteudo.Append(")");
-                    conteudo.Append(Environment.NewLine);
-                }
-
-                if(conteudo.ToString().Contains("Inconsistencia"))
-                    {
-                        inconsistencia++;
                     }
-                else
+                    if (i == workSheet.Dimension.End.Row)
                     {
-                        linha++;
+                        conteudo.Append(" ) ");
                     }
-
-                Clipboard.SetText(conteudo.ToString());
-                //conn.Open();
-                //cmd.CommandText = conteudo.ToString();
-                //SqlTransaction trE = null;
-                //trE = conn.BeginTransaction();
-                //cmd.Transaction = trE;
-                //cmd.ExecuteNonQuery();
-                //trE.Commit();
-                MessageBox.Show(conteudo.ToString());
-                conteudo.Clear();
-            }
-
-            package.Dispose();
-
+                    else
+                    {
+                        conteudo.Append(")");
+                        conteudo.Append(Environment.NewLine);
+                    }
+                    if (penLayout == true)
+                    {
+                        registroInconsistente++;
+                    }
+                    else
+                    {
+                        registroConsistente++;
+                    }
+                    linhaRegistro++;
+                    if (penLayout == false)
+                    {
+                        Clipboard.SetText(conteudo.ToString());
+                        conn.Open();
+                        cmd.CommandText = conteudo.ToString();
+                        SqlTransaction trE = null;
+                        trE = conn.BeginTransaction();
+                        cmd.Transaction = trE;
+                        cmd.ExecuteNonQuery();
+                        trE.Commit();
+                        conteudo.Clear();
+                    }
+                }
+                package.Dispose();
             }
             catch (Exception ex)
             {
@@ -582,12 +802,12 @@ namespace testeExcel
                     " insert into S_ArquivoCarregado" +
                     " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
                     " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                    " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
+                    " GETDATE(), " + registroConsistente.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
                     " else" +
                     " insert into S_ArquivoCarregado" +
                     " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
                     " values('" + +pegarID("D_Vendas_Itens") + "', '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                    " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
+                    " GETDATE(), " + registroConsistente.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
                 conn.Open();
                 SqlTransaction trA = null;
                 trA = conn.BeginTransaction();
@@ -595,25 +815,17 @@ namespace testeExcel
                 cmdArquivoCarregado.ExecuteNonQuery();
                 trA.Commit();
                 conn.Close();
-                MessageBox.Show("Carregamento de " + linha.ToString() + " registros de vendas");
+                MessageBox.Show("Carregamento de " + registroConsistente.ToString() + " registros de vendas");
             }
-
         }
 
-        public void VendasPenLayout()
+        public void VendasPenLayout(int linha)
         {
-            int linha = 0;
-            int inconsistencia = 0;
+ 
             string filePath = caminho;
 
             try
             {
-                //FileInfo existingFile = new FileInfo(filePath);
-                //ExcelPackage package = new ExcelPackage(existingFile);
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-                //StringBuilder conteudo = new StringBuilder();
-                //SqlCommand cmd = conn.CreateCommand();
-
                 ///// temporario
                 conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
                 filePath = @"C:\Base\vendas.xlsx";
@@ -623,18 +835,12 @@ namespace testeExcel
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
                 workSheet = package.Workbook.Worksheets.First();
-
-                for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+                 
+                for (int i = 1; i <= 1 ; i++)
                 {
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
-                        if (j == workSheet.Dimension.End.Column)
-                        {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " 0, '" + linha + "', " : " " + workSheet.Cells[i, j].Value.ToString() + " , '" + linha + "', ");
-                            conteudo.Append(" " + pegarID("D_Vendas_Itens") + " ");
-                        }
-                        else
-                        {
+                   //     MessageBox.Show(j.ToString() + " VendasPenLayout " + i.ToString() );
                             if (j == 1)
                             {
                                 conteudo.Append(" INSERT INTO[dbo].[A_PendenciaLayout] " +
@@ -647,81 +853,50 @@ namespace testeExcel
                                                   " [pen_Registro]," +
                                                   " [pen_Arq_Origem])" +
                                                   " VALUES ( ");
+
+                                if (workSheet.Cells[i, j].Value == null)
+                                {
+                                    conteudo.Append(" " + linha + ", 'D_Vendas_Itens', Vnd_Pro_id, 0, 0, 'Campo [Nº Código Cliente] é obrigatório', '' ");
+                                }
+                                else
+                                {
+                                    conteudo.Append(" " + linha + ", 'D_Vendas_Itens', Vnd_Pro_id, 0, 0, 'Campo [Nº Código Cliente] é obrigatório', '', '"+workSheet.Cells[i, j].Value.ToString()+" ");
+                                }
                             }
-                            else if (workSheet.Cells[i, j].Value == null)
+                            else if(j ==  workSheet.Dimension.End.Column)
                             {
-                                conteudo.Append(" '', ");
+
+                            }
+                            else if (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals(""))
+                            {
+                                conteudo.Append(workSheet.Cells[i, j].Value == null ? " ' " : " " + workSheet.Cells[i, j].Value.ToString() + "', " + pegarID("D_Vendas_Itens"));
                             }
                             else
                             {
-                                conteudo.Append(" '" + workSheet.Cells[i, j].Value.ToString() + ", ");
+                                conteudo.Append(" " + workSheet.Cells[i, j].Value.ToString() + "', " + pegarID("D_Vendas_Itens"));
                             }
-                        }
                     }
-
-                    if (i == workSheet.Dimension.End.Row)
-                    {
-                        conteudo.Append(" ) ");
-                    }
-                    else
-                    {
-                        conteudo.Append(")");
-                        conteudo.Append(Environment.NewLine);
-                    }
-
-                    if (conteudo.ToString().Contains("Inconsistencia"))
-                    {
-                        inconsistencia++;
-                    }
-                    else
-                    {
-                        linha++;
-                    }
-
-                    Clipboard.SetText(conteudo.ToString());
-                    //conn.Open();
-                    //cmd.CommandText = conteudo.ToString();
-                    //SqlTransaction trE = null;
-                    //trE = conn.BeginTransaction();
-                    //cmd.Transaction = trE;
-                    //cmd.ExecuteNonQuery();
-                    //trE.Commit();
-                    MessageBox.Show(conteudo.ToString());
-                    conteudo.Clear();
+                    linha++;
                 }
-
-                package.Dispose();
-
+                Clipboard.SetText(conteudo.ToString());
+                MessageBox.Show(conteudo.ToString());
+                    conn.Open();
+                    cmd.CommandText = conteudo.ToString();
+                    SqlTransaction trE = null;
+                    trE = conn.BeginTransaction();
+                    cmd.Transaction = trE;
+                    cmd.ExecuteNonQuery();
+                    trE.Commit();
+                    conn.Close();
+                    conteudo.Clear();
+                    package.Dispose();
             }
+                          
+
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-            finally
-            {
-                SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-                cmdArquivoCarregado.CommandText =
-                  "declare @tabela varchar(max) = 'D_Vendas_Itens';" +
-                    " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
-                    " insert into S_ArquivoCarregado" +
-                    " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                    " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                    " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
-                    " else" +
-                    " insert into S_ArquivoCarregado" +
-                    " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                    " values('" + +pegarID("D_Vendas_Itens") + "', '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                    " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
-                conn.Open();
-                SqlTransaction trA = null;
-                trA = conn.BeginTransaction();
-                cmdArquivoCarregado.Transaction = trA;
-                cmdArquivoCarregado.ExecuteNonQuery();
-                trA.Commit();
-                conn.Close();
-                MessageBox.Show("Carregamento de " + linha.ToString() + " registros de vendas");
-            }
-
         }
 
         public void Clientes()
