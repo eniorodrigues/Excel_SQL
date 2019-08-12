@@ -109,22 +109,21 @@ namespace testeExcel
 
             try
             {
-                //FileInfo existingFile = new FileInfo(filePath);
-                //ExcelPackage package = new ExcelPackage(existingFile);
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-                //StringBuilder conteudo = new StringBuilder();
-                //SqlCommand cmd = conn.CreateCommand();
-
-                ///// temporario
-                conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                filePath = @"C:\Base\vendas.xlsx";
-
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
-                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
 
+                ///// temporario
+                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+                //filePath = @"C:\Base\vendas.xlsx";
+                //FileInfo existingFile = new FileInfo(filePath);
+                //ExcelPackage package = new ExcelPackage(existingFile);
+                //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                //StringBuilder conteudo = new StringBuilder();
+                //SqlCommand cmd = conn.CreateCommand();
+                 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
                     penLayout = false;
@@ -329,20 +328,20 @@ namespace testeExcel
 
             try
             {
-                //FileInfo existingFile = new FileInfo(filePath);
-                //ExcelPackage package = new ExcelPackage(existingFile);
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-                //StringBuilder conteudo = new StringBuilder();
-                //SqlCommand cmd = conn.CreateCommand();
-
-                ///// temporario
-                conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                filePath = @"C:\Base\compras.xlsx";
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
-                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
+
+                ///// temporario
+                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+                //filePath = @"C:\Base\compras.xlsx";
+                //FileInfo existingFile = new FileInfo(filePath);
+                //ExcelPackage package = new ExcelPackage(existingFile);
+                //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                //StringBuilder conteudo = new StringBuilder();
+                //SqlCommand cmd = conn.CreateCommand();
 
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
                 {
@@ -394,9 +393,9 @@ namespace testeExcel
                                 ",[Cmp_CNPJ]" +
                                 ",[Cmp_For_id_Frete]" +
                                 ",[Cmp_For_id_Seguro]" +
-                                ",[Cmp_Incoterm] " +
-                                ",[Lin_Origem_ID] " +
-                                ",[Arq_Origem_ID]) " +
+                                ",[Cmp_Incoterm]" +
+                                ",[Lin_Origem_ID]" +
+                                ",[Arq_Origem_ID])" +
                                 " VALUES ( ");
                                 if (workSheet.Cells[i, j].Value == null)
                                 {
@@ -1002,8 +1001,7 @@ namespace testeExcel
                             }
                         }
                     }
-
-
+                     
                     if (i == workSheet.Dimension.End.Row)
                     {
                         conteudo.Append(" ) ");
@@ -1013,7 +1011,7 @@ namespace testeExcel
                         conteudo.Append(")");
                         conteudo.Append(Environment.NewLine);
                     }
-                   // Clipboard.SetText(conteudo.ToString());
+                    //Clipboard.SetText(conteudo.ToString());
                     conn.Open();
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
@@ -1422,8 +1420,10 @@ namespace testeExcel
         public void Relacao_Carga()
         {
             string filePath = caminho;
+
             //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
             //string filePath = @"C:\Base\ordens_de_producao_evonik_2019.xlsx";
+
             FileInfo existingFile = new FileInfo(filePath);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
@@ -1441,7 +1441,7 @@ namespace testeExcel
                     {
                         if (j == workSheet.Dimension.End.Column)
                         {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? "0, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
+                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
                             conteudo.Append(" " + pegarID("D_Relacao_Carga") + " ");
                         }
                         else
@@ -1454,28 +1454,24 @@ namespace testeExcel
                             if (j == 1)
                             {
                                 conteudo.Append(" INSERT INTO D_RELACAO_CARGA " +
-                                     "([REL_PA_PRO_ID] " +
-                                      ",[REL_MP_PRO_ID] " +
-                                      ",[REL_PRODUZIDA] " +
-                                      ",[REL_REQUISITADA] " +
-                                      ",[REL_RELACAO] " +
-                                      ",[REL_TIPO] " +
-                                      ",[Lin_Origem_ID] " +
-                                      ",[Arq_Origem_ID]) " +
-                                " VALUES ( ");
+                                                " ([REL_PA_PRO_ID] " +
+                                                " ,[REL_MP_PRO_ID] " +
+                                                " ,[REL_PRODUZIDA] " +
+                                                " ,[REL_REQUISITADA] " +
+                                                " ,[REL_RELACAO] " +
+                                                " ,[REL_TIPO] " +
+                                                " ,[Lin_Origem_ID] " +
+                                                " ,[Arq_Origem_ID]) " +
+                                                " VALUES ( ");
                                 conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                            }
+                            else if (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals(""))
+                            {
+                                conteudo.Append(" NULL, ");
                             }
                             else
                             {
-                                if ((workSheet.Cells[i, j].Value == null ? " NULL " : workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
-                                {
-                                    workSheet.Cells[i, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
-                                    conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
-                                }
-                                else
-                                {
-                                    conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
-                                }
+                                conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
                             }
                         }
                     }
@@ -1509,6 +1505,142 @@ namespace testeExcel
             {
                 package.Dispose();
                 MessageBox.Show("Carregamento " + linha.ToString() + " registros de Relação Produção de Produção realizado com sucesso!");
+
+                SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+                cmdArquivoCarregado.CommandText =
+                " declare @tabela varchar(max) = 'D_Insumo_Produto';" +
+                " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
+                " insert into S_ArquivoCarregado" +
+                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                " GETDATE(), ' " + linha.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
+                " else" +
+                " insert into S_ArquivoCarregado" +
+                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                " values(" + pegarID("D_Insumo_Produto") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
+
+                conn.Open();
+                SqlTransaction trA = null;
+                trA = conn.BeginTransaction();
+                cmdArquivoCarregado.Transaction = trA;
+                cmdArquivoCarregado.ExecuteNonQuery();
+                trA.Commit();
+                conn.Close();
+            }
+        }
+
+        public void PIC()
+        {
+            string filePath = caminho;
+
+            //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+            //string filePath = @"C:\Base\ordens_de_producao_evonik_2019.xlsx";
+
+            FileInfo existingFile = new FileInfo(filePath);
+            ExcelPackage package = new ExcelPackage(existingFile);
+            ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
+            //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            StringBuilder conteudo = new StringBuilder();
+            var lista = new List<String>();
+            SqlCommand cmd = conn.CreateCommand();
+            int linha = 1;
+
+            try
+            {
+                for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+                {
+                    for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                    {
+                        if (j == workSheet.Dimension.End.Column)
+                        {
+                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
+                            conteudo.Append(" " + pegarID("D_Relacao_Carga") + " ");
+                        }
+                        else
+                        {
+                            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
+                            {
+                                DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
+                            };
+
+                            if (j == 1)
+                            {
+                                conteudo.Append(" INSERT INTO D_PIC " +
+                                "([Pic_For_Id] " +
+                                ",[PIC_For_Pais] " +
+                                ",[Pic_Pro_Id] " +
+                                ",[Pic_Qtde] " +
+                                ",[Pic_Vl_Moeda_Bruto] " +
+                                ",[Pic_Cod_Moeda] " +
+                                ",[Pic_Dt_Emissao] " +
+                                ",[Pic_Dt_Venc] " +
+                                ",[Pic_Cli_Id] " +
+                                ",[PIC_Cli_Pais] " +
+                                ",[Pic_Doc_Oper] " +
+                                ",[Pic_Dias] " +
+                                ",[Pic_CFOP] " +
+                                ",[Pic_Imposto_Intern] " +
+                                ",[Pic_FOB_Moeda] " +
+                                ",[Pic_IPI] " +
+                                ",[Pic_ICMS] " +
+                                ",[Pic_Pis] " +
+                                ",[Pic_Cofins] " +
+                                ",[Pic_Frete] " +
+                                ",[Pic_Seguro] " +
+                                ",[Lin_Origem_ID] " +
+                                ",[Arq_Origem_ID]) " +
+                                " VALUES ( ");
+                                conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                            }
+                            else
+                            {
+                                if ((workSheet.Cells[i, j].Value == null ? " NULL " : workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
+                                {
+                                    workSheet.Cells[i, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
+                                    conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                                }
+                                else if(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals(""))
+                                {
+                                    conteudo.Append(" NULL, ");
+                                }
+                                else 
+                                {
+                                    conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                                }
+                            }
+                        }
+                    }
+
+                    if (i == workSheet.Dimension.End.Row)
+                    {
+                        conteudo.Append(" ) ");
+                    }
+                    else
+                    {
+                        conteudo.Append(")");
+                        conteudo.Append(Environment.NewLine);
+                    }
+                    conn.Open();
+                    Clipboard.SetText(conteudo.ToString());
+                    linha = linha + 1;
+                    cmd.CommandText = conteudo.ToString();
+                    SqlTransaction trE = null;
+                    trE = conn.BeginTransaction();
+                    cmd.Transaction = trE;
+                    cmd.ExecuteNonQuery();
+                    trE.Commit();
+                    conteudo.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                package.Dispose();
+                MessageBox.Show("Carregamento " + linha.ToString() + " registros de PIC realizado com sucesso!");
 
                 SqlCommand cmdArquivoCarregado = conn.CreateCommand();
                 cmdArquivoCarregado.CommandText =
@@ -1679,7 +1811,11 @@ namespace testeExcel
             {
                Relacao_Carga();
             }
-            if(cmbTabela.SelectedItem == null)
+            if (cmbTabela.SelectedItem.Equals("D_PIC"))
+            {
+                PIC();
+            }
+            if (cmbTabela.SelectedItem == null)
             {
                 MessageBox.Show("Selecione uma tabela para carregamento");
             }
@@ -2091,6 +2227,7 @@ namespace testeExcel
             foreach (DataRow database in databases.Rows)
             {
                 databaseName = database.Field<String>("database_name");
+                if(databaseName != "master" && databaseName != "tempdb" && databaseName != "model" && databaseName != "msdb")
                 comboBoxBase.Items.Add(databaseName);
                
             }
@@ -2104,14 +2241,22 @@ namespace testeExcel
             string myServer = Environment.MachineName;
 
             System.Data.DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
+
+            comboBoxServidor.Items.Add(servers.Rows[0]["ServerName"]);
+
             for (int i = 0; i < servers.Rows.Count; i++)
             {
+        
                 if (myServer == servers.Rows[i]["ServerName"].ToString())
                 {
                     if ((servers.Rows[i]["InstanceName"] as string) != null)
+                    {
                         comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
+                    }
                     else
+                    {
                         comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"]);
+                    }
                 }
             }
         }

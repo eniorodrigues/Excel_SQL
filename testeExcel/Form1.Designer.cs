@@ -112,7 +112,8 @@
             "D_Inventario_Carga",
             "D_Produtos",
             "D_Relacao_Carga",
-            "D_Vendas_Itens"});
+            "D_Vendas_Itens",
+            "D_PIC"});
             this.cmbTabela.Location = new System.Drawing.Point(7, 296);
             this.cmbTabela.Name = "cmbTabela";
             this.cmbTabela.Size = new System.Drawing.Size(442, 28);
