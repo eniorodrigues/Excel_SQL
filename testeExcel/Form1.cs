@@ -109,31 +109,38 @@ namespace testeExcel
 
             try
             {
+                //FileInfo existingFile = new FileInfo(filePath);
+                //ExcelPackage package = new ExcelPackage(existingFile);
+                //ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
+                //StringBuilder conteudo = new StringBuilder();
+                //SqlCommand cmd = conn.CreateCommand();
+
+                ///// temporario
+                conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+                filePath = @"C:\Base\Vendas_Doosan_Jan_Jun_2019.xlsx";
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
-                ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
+                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
 
-                ///// temporario
-                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                //filePath = @"C:\Base\vendas.xlsx";
-                //FileInfo existingFile = new FileInfo(filePath);
-                //ExcelPackage package = new ExcelPackage(existingFile);
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-                //StringBuilder conteudo = new StringBuilder();
-                //SqlCommand cmd = conn.CreateCommand();
-                 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
                     penLayout = false;
-                    for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                    for (int j = workSheet.Dimension.Start.Column; j <= 25; j++)
                     {
-
-                        if (j == workSheet.Dimension.End.Column)
+                        if (j == 25)
                         {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '', '" + linhaRegistro + "', " : " '" + workSheet.Cells[i, j].Value.ToString() + "' , '" + linhaRegistro + "', ");
-                            conteudo.Append(" " + pegarID("D_Vendas_Itens") + " ");
+                            if(workSheet.Cells[i, j].Value == null)
+                            {
+                                conteudo.Append(" '', '" + linhaRegistro + "', ");
+                                conteudo.Append(" " + pegarID("D_Vendas_Itens") + " ");
+                            }
+                            else
+                            {
+                                conteudo.Append(" '" + workSheet.Cells[i, j].Value.ToString() + "' , '" + linhaRegistro + "', ");
+                                conteudo.Append(" " + pegarID("D_Vendas_Itens") + " ");
+                            }
                         }
                         else
                         {
@@ -184,12 +191,12 @@ namespace testeExcel
                                     conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
                                 }
                             }
-                            else if ((j == 2 || j == 5 || j == 6 || j == 7 || j == 10 || j == 11 || j == 12) && (workSheet.Cells[i, j].Value == null))
+                            else if ((j == 2 || j == 5 || j == 6 || j == 10 || j == 11 || j == 12) && (workSheet.Cells[i, j].Value == null))
                             {
                                 VendasPenLayout(i);
                                 penLayout = true;
                             }
-                            else if (j == 9 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals("")))
+                            else if (j == 9 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value == ""))
                             {
                                 conteudo.Append(" '', ");
                             }
@@ -212,17 +219,17 @@ namespace testeExcel
                                 DateTime dt = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", null);
                                 conteudo.Append("'" + dt + "', ");
                             }
-                            else if ((j == 6 || j == 7 || j == 21 || j == 22) && workSheet.Cells[i, j].Value == null)
+                            else if ((j == 6 || j == 7 || j == 8 || j == 21 || j == 22) && workSheet.Cells[i, j].Value == null)
                             {
                                 conteudo.Append(" '', ");
                             }
                             //caso o que não é numero esteja em branco colocar texto branco
-                            else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value.Equals("")))
+                            else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value == ""))
                             {
                                 conteudo.Append(" " + 0 + ", ");
                             }
-                            //caso número seja nulo colocar zero
-                            else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value.Equals("")))
+                            ////caso número seja nulo colocar zero
+                            else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value == null))
                             {
                                 conteudo.Append(" " + 0 + ", ");
                             }
@@ -235,7 +242,7 @@ namespace testeExcel
                             {
                                 conteudo.Append(" '', ");
                             }
-                            else if (workSheet.Cells[i, j].Value != null || !workSheet.Cells[i, j].Value.Equals(""))
+                            else if (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value != "")
                             {
                                 if ((workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
                                 {
@@ -274,7 +281,7 @@ namespace testeExcel
                     if (penLayout == false)
                     {
                         cmd = conn.CreateCommand();
-                        //Clipboard.SetText(conteudo.ToString());
+                        Clipboard.SetText(conteudo.ToString());
                         conn.Open();
                         cmd.CommandText = conteudo.ToString();
                         SqlTransaction trE = null;
@@ -328,20 +335,20 @@ namespace testeExcel
 
             try
             {
-                FileInfo existingFile = new FileInfo(filePath);
-                ExcelPackage package = new ExcelPackage(existingFile);
-                ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-                StringBuilder conteudo = new StringBuilder();
-                SqlCommand cmd = conn.CreateCommand();
-
-                ///// temporario
-                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                //filePath = @"C:\Base\compras.xlsx";
                 //FileInfo existingFile = new FileInfo(filePath);
                 //ExcelPackage package = new ExcelPackage(existingFile);
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                //ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
                 //StringBuilder conteudo = new StringBuilder();
                 //SqlCommand cmd = conn.CreateCommand();
+
+                ///// temporario
+                conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+                filePath = @"C:\Base\Compras_Doosan_Jan_Jun_2019.xlsx";
+                FileInfo existingFile = new FileInfo(filePath);
+                ExcelPackage package = new ExcelPackage(existingFile);
+                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                StringBuilder conteudo = new StringBuilder();
+                SqlCommand cmd = conn.CreateCommand();
 
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
                 {
@@ -355,7 +362,7 @@ namespace testeExcel
                     {
                         if (j == workSheet.Dimension.End.Column)
                         {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '', '" + linhaRegistro + "', " : " '" + workSheet.Cells[i, j].Value.ToString() + "' , '" + linhaRegistro + "', ");
+                            conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value == "" ? " '', '" + linhaRegistro + "', " : " '" + workSheet.Cells[i, j].Value.ToString() + "' , '" + linhaRegistro + "', ");
                             conteudo.Append(" " + pegarID("D_Compras") + "  ");
                         }
                         else
@@ -415,7 +422,7 @@ namespace testeExcel
                                     conteudo.Replace("[D_Compras]", "[D_Compras_Inconsistencias]");
                                     conteudo.Append(" '', ");
                                 }
-                                else if (workSheet.Cells[i, j].Value.Equals(""))
+                                else if (workSheet.Cells[i, j].Value == "")
                                 {
                                     conteudo.Replace("[D_Compras]", "[D_Compras_Inconsistencias]");
                                     conteudo.Append(" '', ");
@@ -434,7 +441,7 @@ namespace testeExcel
                             {
                                 DateTime dt = DateTime.FromOADate(Convert.ToInt64(workSheet.Cells[i, j].Value));
                                 conteudo.Append(" '" + dt + "', ");
-    }
+                            }
                             else if ((j == 6 || j == 8 || j == 11 || j == 13) && workSheet.Cells[i, j].Value != null)
                             {
                                 conteudo.Append(" '" + workSheet.Cells[i, j].Value.ToString() + "', ");
@@ -451,7 +458,7 @@ namespace testeExcel
                                 penLayout = true;
                             }
                             //caso número seja branco colocar zero
-                            else if ((j == 23 || j == 24 || j == 25 || j == 19 || j == 18 || j == 15 || j == 16 || j == 22) && (workSheet.Cells[i, j].Value.Equals("")))
+                            else if ((j == 23 || j == 24 || j == 25 || j == 19 || j == 18 || j == 15 || j == 16 || j == 22) && (workSheet.Cells[i, j].Value == ""))
                             {
                                 conteudo.Append(" " + 0 + ", ");
                             }
@@ -545,7 +552,7 @@ namespace testeExcel
             try
             {
                 ///// temporario
-                filePath = @"C:\Base\compras.xlsx";
+                filePath = @"C:\Base\Compras_Doosan_Jan_Jun_2019.xlsx";
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
@@ -576,22 +583,22 @@ namespace testeExcel
                             conteudo.Append(" " + registro + ", 'D_Compras', 'Cmp_Pro_id', 0, 0, 'Campo [Código do Produto] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
                         }
                     }
-                    else if (j == 12 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.Equals("")))
+                    else if (j == 12 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value == ""))
                     {
                         conteudo.Replace("[Código do Produto]", "[C.F.O.P. N.F. Entrada]");
                         conteudo.Replace("Cmp_Pro_id", "Cmp_CFOP");
                     }
-                    else if (j == 9 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.Equals("")))
+                    else if (j == 9 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value == ""))
                     {
                         conteudo.Replace("[Código do Produto]", "[Número da N.F.]");
                         conteudo.Replace("Cmp_Pro_id", "Cmp_NF_Entrada");
                     }
-                    else if (j == 3 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.Equals("")))
+                    else if (j == 3 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value == ""))
                     {
                         conteudo.Replace("[Código do Produto]", "[Código do Fornecedor]");
                         conteudo.Replace("Cmp_Pro_id", "Cmp_For_ID");
                     }
-                    else if (j == 11 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.Equals("")))
+                    else if (j == 11 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value == ""))
                     {
                         conteudo.Replace("[Código do Produto]", "[Data de Emissão NF]");
                         conteudo.Replace("Cmp_Pro_id", "Cmp_NF_DT");
@@ -599,7 +606,7 @@ namespace testeExcel
                     else if (j == workSheet.Dimension.End.Column)
                     {
 
-                        if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.Equals(""))
+                        if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value == "")
                         {
                             conteudo.Append(" ', " + pegarID("D_Vendas_Itens") + ") ");
                         }
@@ -608,7 +615,7 @@ namespace testeExcel
                             conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Vendas_Itens") + ") ");
                         }
                     }
-                    else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.Equals(""))
+                    else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value == "")
                     {
 
                         conteudo.Append(" ");
@@ -636,10 +643,7 @@ namespace testeExcel
                 MessageBox.Show(ex.Message);
             }
         }
-
-
-
-
+         
         public int pegarID(string tabela)
         {
             try
@@ -691,7 +695,7 @@ namespace testeExcel
             {
                 ///// temporario
                 conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                filePath = @"C:\Base\vendas.xlsx";
+                filePath = @"C:\Base\Vendas_Doosan_Jan_Jun_2019.xlsx";
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
@@ -723,26 +727,26 @@ namespace testeExcel
                                 conteudo.Append(" " + registro + ", 'D_Vendas_Itens', 'Vnd_Pro_id', 0, 0, 'Campo [Código Cliente] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
                             }
                         }
-                        else if (j == 5 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.Equals("")))
+                        else if (j == 5 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value == ""))
                         {
                             conteudo.Replace("[Código Cliente]", "[CFOP]");
                         }
-                        else if (j == 2 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.Equals("")))
+                        else if (j == 2 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value == ""))
                         {
                             conteudo.Replace("[Código Cliente]", "[Número NF]");
                         }
-                        else if (j == 10 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.Equals("")))
+                        else if (j == 10 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value == ""))
                         {
                         conteudo.Replace("[Código Cliente]", "[Código Produto]");
                         }
-                        else if (j == 6 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.Equals("")))
+                        else if (j == 6 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value == ""))
                         {
                             conteudo.Replace("[Código Cliente]", "[Data de Emissão NF]");
                         }
                         else if(j ==  workSheet.Dimension.End.Column)
                         {
 
-                        if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.Equals(""))
+                        if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value == "")
                             {
                                 conteudo.Append(" ', " + pegarID("D_Vendas_Itens") + ") ");
                             }
@@ -751,7 +755,7 @@ namespace testeExcel
                                 conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Vendas_Itens") + ") ");
                             }
                         }
-                        else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.Equals(""))
+                        else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value == "")
                         {
 
                         conteudo.Append(" " );
@@ -804,7 +808,7 @@ namespace testeExcel
                         // ultima coluna
                         if (j == workSheet.Dimension.End.Column)
                         {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals("") ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
+                            conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value == "" ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
                             conteudo.Append(" " + pegarID("D_Clientes") + " ");
                         }
                         else
@@ -835,9 +839,9 @@ namespace testeExcel
                                     " VALUES ( ");
                                     conteudo.Append("'" + workSheet.Cells[i, j].Value + "', ");
                                 }
-                                else if ((j == 5 || j == 6 ) && (workSheet.Cells[i, j].Value == null) || (workSheet.Cells[i, j].Value.Equals("")))
+                                else if ((j == 5 || j == 6 ) && (workSheet.Cells[i, j].Value == null) || (workSheet.Cells[i, j].Value == ""))
                                 {
-                                    conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals("") ? " NULL, " : " '" + workSheet.Cells[i, j].Value + "', ");
+                                    conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value == "" ? " NULL, " : " '" + workSheet.Cells[i, j].Value + "', ");
                                 }
                                 else if ((j == 5 || j == 6) && (workSheet.Cells[i, j].Value != null || (workSheet.Cells[i, j].Value.ToString() != "")))
                                 {
@@ -849,7 +853,6 @@ namespace testeExcel
                                     {
                                         conteudo.Append(" ' " + workSheet.Cells[i, j].Value + "', ");
                                     }
-                            
                                 }
                                 else if ((workSheet.Cells[i, j].Value == null ? " NULL " : workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
                                 {
@@ -858,7 +861,7 @@ namespace testeExcel
                                 }
                                 else
                                 {
-                                    conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals("") ? " NULL, " : " '" + workSheet.Cells[i, j].Value + "', ");
+                                    conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value == "" ? " NULL, " : " '" + workSheet.Cells[i, j].Value + "', ");
                                 }
                             }
                         }
@@ -944,7 +947,7 @@ namespace testeExcel
                         // ultima coluna
                         if (j == workSheet.Dimension.End.Column)
                         {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals("") ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
+                            conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value == "" ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
                             conteudo.Append(" " + pegarID("D_Fornecedores") + " ");
                         }
                         else
@@ -975,9 +978,9 @@ namespace testeExcel
                                 " VALUES ( ");
                                 conteudo.Append("'" + workSheet.Cells[i, j].Value + "', ");
                             }
-                            else if ((j == 5 || j == 6) && (workSheet.Cells[i, j].Value == null) || (workSheet.Cells[i, j].Value.Equals("")))
+                            else if ((j == 5 || j == 6) && (workSheet.Cells[i, j].Value == null) || (workSheet.Cells[i, j].Value == ""))
                             {
-                                conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals("") ? " NULL, " : " '" + workSheet.Cells[i, j].Value + "', ");
+                                conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value == "" ? " NULL, " : " '" + workSheet.Cells[i, j].Value + "', ");
                             }
                             else if ((j == 5 || j == 6) && (workSheet.Cells[i, j].Value != null || (workSheet.Cells[i, j].Value.ToString() != "")))
                             {
@@ -1106,8 +1109,8 @@ namespace testeExcel
                     }
                     else if (j == workSheet.Dimension.End.Column)
                         {
-                           conteudo.Append(workSheet.Cells[i, j].Value == null ? " ''," : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', '" + linha + "', ");
-                            conteudo.Append(" " + pegarID("D_Compras") + "  ");
+                           conteudo.Append(workSheet.Cells[i, j].Value == null ? " '', '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', '" + linha + "', ");
+                           conteudo.Append(" " + pegarID("D_Compras") + "  ");
                         }
                         else
                         {
@@ -1125,7 +1128,7 @@ namespace testeExcel
                     conteudo.Append(Environment.NewLine);
                 }
                 conn.Open();
-                //Clipboard.SetText(conteudo.ToString());
+                Clipboard.SetText(conteudo.ToString());
                 linha = linha + 1;
                 cmd.CommandText = conteudo.ToString();
                 SqlTransaction trE = null;
@@ -1144,7 +1147,6 @@ namespace testeExcel
             finally
             {
                 MessageBox.Show("Carregamento de " + linha + " registros de produtos realizados com sucesso");
-
             }
             SqlCommand cmdArquivoCarregado = conn.CreateCommand();
             cmdArquivoCarregado.CommandText =
@@ -1179,8 +1181,8 @@ namespace testeExcel
                 //string filePath = @"C:\Base\saldos_maio_evonik_2019.xlsx";
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
+               // ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
                 StringBuilder conteudo = new StringBuilder();
                 var lista = new List<String>();
                 SqlCommand cmd = conn.CreateCommand();
@@ -1224,6 +1226,7 @@ namespace testeExcel
                                 if ((workSheet.Cells[i, j].Value == null ? " NULL " : workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
                                 {
                                     //DateTime oDate = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                    //conteudo.Append("'" + oDate + "', ");
                                     conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString() + "', ");
                                 }
                                 else
@@ -1243,7 +1246,7 @@ namespace testeExcel
                         conteudo.Append(Environment.NewLine);
                     }
                     conn.Open();
-                    //Clipboard.SetText(conteudo.ToString());
+                    Clipboard.SetText(conteudo.ToString());
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
                     SqlTransaction trE = null;
@@ -1465,7 +1468,7 @@ namespace testeExcel
                                                 " VALUES ( ");
                                 conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
                             }
-                            else if (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals(""))
+                            else if (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value == "")
                             {
                                 conteudo.Append(" NULL, ");
                             }
@@ -1600,7 +1603,7 @@ namespace testeExcel
                                     workSheet.Cells[i, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
                                     conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
                                 }
-                                else if(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.Equals(""))
+                                else if(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value == "")
                                 {
                                     conteudo.Append(" NULL, ");
                                 }
@@ -2299,11 +2302,10 @@ namespace testeExcel
                 var clientesWorksheet = excel.Workbook.Worksheets["Clientes"];
                 var produtosWorksheet = excel.Workbook.Worksheets["Produtos"];
                 var fornecedoresWorksheet = excel.Workbook.Worksheets["Fornecedores"];
-
-
+                  
                 List<string[]> headerRowCompras = new List<string[]>()
                     {
-                        new string[] { "Código do Produto",   "Código Divisão",   "Código do Fornecedor", "Lançamento",   "Fatura",   "BL Data",  "Número da DI",    "Data da Importação",   "N da NF de Entrada",  "Serie",    "Data Entrada NF",  "CFOP NF Entrada",  "Data de Vencimento Média", "Dias", "Quantidade",   "Valor FOB (Moeda Estrangeira)",    "Código da Moeda Estrangeira",  "Frete",    "Seguro",   "Código Moeda Frete",   "Código Moeda Seguro",  "Imposto de Importação (Reais)",    "Icms", "Pis",  "Cofins",   "Id For Frete", "Id For Seguro", "Incoterm"}
+                        new string[] { "Código do Produto",   "Código Divisão",   "Código do Fornecedor", "Lançamento",   "Fatura",   "BL Data",  "Número da DI",    "Data da Importação",   "N da NF de Entrada",  "Serie",    "Data Entrada NF",  "CFOP NF Entrada",  "Data de Vencimento Média", "Dias", "Quantidade",   "Valor FOB (Moeda Estrangeira)",    "Código da Moeda Estrangeira",  "Frete",    "Seguro",   "Código Moeda Frete",   "Código Moeda Seguro",  "Imposto de Importação (Reais)",    "Icms", "Pis",  "Cofins", "Unidade", "CNPJ", "Id For Frete", "Id For Seguro", "Incoterm"}
                     };
 
                 List<string[]> headerRowVendas = new List<string[]>()
@@ -2318,7 +2320,7 @@ namespace testeExcel
 
                 List<string[]> headerRowInventario = new List<string[]>()
                     {
-                      new string[] { "Código do Produto",   "Data Inventário",  "Quantidade em Estoque",    "Unidade de Medida", "CNPJ" }
+                      new string[] { "Código do Produto",   "Data Inventário",  "Quantidade em Estoque", "Valor",   "Unidade de Medida", "CNPJ" }
                     };
 
                 List<string[]> headerRowRelacao = new List<string[]>()
@@ -2328,17 +2330,17 @@ namespace testeExcel
 
                 List<string[]> headerRowClientes = new List<string[]>()
                     {
-                      new string[] { "Código do Cliente",   "Nome", "Código do País",   "Vínculo",  "Data Inicio",  "Data Fim", "CNPJ"}
+                      new string[] { "Código do Cliente", "Nome", "Código do País","Vínculo",  "Data Inicio",  "Data Fim", "CNPJ"}
                     };
 
                 List<string[]> headerRowProdutos = new List<string[]>()
                     {
-                      new string[] {"Código do Produto",    "Descrição",    "Unidade de Medida",    "Classificação Fiscal (NCM)"}
+                      new string[] {"Código do Produto",    "Descrição",    "Unidade de Medida",    "Classificação Fiscal (NCM)", "Margem"}
                     };
 
                 List<string[]> headerRowFornecedores = new List<string[]>()
                     {
-                      new string[] { "Código do Fornecedor",    "Nome", "Código do País",   "Vínculo", "Data Inicio",  "Data Fim", "CNPJ"}
+                      new string[] { "Código do Fornecedor", "Nome", "Código do País","Vínculo", "Data Inicio",  "Data Fim", "CNPJ"}
                     };
 
                 List<string[]> headerRowCusto = new List<string[]>()
