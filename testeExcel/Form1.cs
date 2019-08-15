@@ -21,6 +21,7 @@ namespace testeExcel
         public Form1()
         {
             InitializeComponent();
+
         }
 
         public static string path;
@@ -124,11 +125,18 @@ namespace testeExcel
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
 
+                    label3.Text = workSheet.Dimension.End.Row.ToString();
+
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
+
+                    label2.Text = i.ToString();
+                    label2.Refresh();
+
                     penLayout = false;
                     for (int j = workSheet.Dimension.Start.Column; j <= 25; j++)
                     {
+                        
                         if (j == 25)
                         {
                             if(workSheet.Cells[i, j].Value == null)
@@ -340,6 +348,8 @@ namespace testeExcel
                 //ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
                 //StringBuilder conteudo = new StringBuilder();
                 //SqlCommand cmd = conn.CreateCommand();
+
+
 
                 ///// temporario
                 conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
