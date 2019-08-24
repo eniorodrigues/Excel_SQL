@@ -125,7 +125,9 @@ namespace testeExcel
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
 
-                    label3.Text = workSheet.Dimension.End.Row.ToString();
+                label3.Text = " / " + workSheet.Dimension.End.Row.ToString();
+                label3.Refresh();
+                //MessageBox.Show(workSheet.Dimension.End.Row.ToString());
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
@@ -289,7 +291,7 @@ namespace testeExcel
                     if (penLayout == false)
                     {
                         cmd = conn.CreateCommand();
-                        Clipboard.SetText(conteudo.ToString());
+                       // Clipboard.SetText(conteudo.ToString());
                         conn.Open();
                         cmd.CommandText = conteudo.ToString();
                         SqlTransaction trE = null;
