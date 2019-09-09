@@ -43,6 +43,8 @@
             this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonAbrir
@@ -73,6 +75,7 @@
             this.cmbPlanilha.Name = "cmbPlanilha";
             this.cmbPlanilha.Size = new System.Drawing.Size(442, 28);
             this.cmbPlanilha.TabIndex = 22;
+            this.cmbPlanilha.SelectedIndexChanged += new System.EventHandler(this.cmbPlanilha_SelectedIndexChanged);
             // 
             // label1
             // 
@@ -85,7 +88,7 @@
             // 
             // btnCarregar
             // 
-            this.btnCarregar.Location = new System.Drawing.Point(163, 338);
+            this.btnCarregar.Location = new System.Drawing.Point(162, 374);
             this.btnCarregar.Name = "btnCarregar";
             this.btnCarregar.Size = new System.Drawing.Size(288, 55);
             this.btnCarregar.TabIndex = 27;
@@ -116,7 +119,7 @@
             "D_Relacao_Carga",
             "D_Vendas_Itens",
             "D_PIC"});
-            this.cmbTabela.Location = new System.Drawing.Point(7, 296);
+            this.cmbTabela.Location = new System.Drawing.Point(6, 332);
             this.cmbTabela.Name = "cmbTabela";
             this.cmbTabela.Size = new System.Drawing.Size(442, 28);
             this.cmbTabela.TabIndex = 29;
@@ -124,7 +127,7 @@
             // lblTabela
             // 
             this.lblTabela.AutoSize = true;
-            this.lblTabela.Location = new System.Drawing.Point(6, 273);
+            this.lblTabela.Location = new System.Drawing.Point(5, 309);
             this.lblTabela.Name = "lblTabela";
             this.lblTabela.Size = new System.Drawing.Size(93, 20);
             this.lblTabela.TabIndex = 30;
@@ -169,7 +172,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(10, 338);
+            this.button1.Location = new System.Drawing.Point(9, 374);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(147, 55);
             this.button1.TabIndex = 36;
@@ -180,26 +183,46 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(322, 177);
+            this.label2.Location = new System.Drawing.Point(376, 309);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(51, 20);
+            this.label2.Size = new System.Drawing.Size(18, 20);
             this.label2.TabIndex = 37;
-            this.label2.Text = "label2";
+            this.label2.Text = "0";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(379, 177);
+            this.label3.Location = new System.Drawing.Point(376, 178);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(51, 20);
+            this.label3.Size = new System.Drawing.Size(18, 20);
             this.label3.TabIndex = 37;
-            this.label3.Text = "label2";
+            this.label3.Text = "0";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(224, 179);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(121, 20);
+            this.label4.TabIndex = 38;
+            this.label4.Text = "Total de Linhas:";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(224, 309);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(147, 20);
+            this.label5.TabIndex = 38;
+            this.label5.Text = "Linhas Carregadas:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(468, 405);
+            this.ClientSize = new System.Drawing.Size(461, 441);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button1);
@@ -242,6 +265,8 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
     }
 }
 

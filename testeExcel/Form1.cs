@@ -57,6 +57,8 @@ namespace testeExcel
             openFileDialog1.FilterIndex = 2;
             openFileDialog1.RestoreDirectory = true;
             openFileDialog1.Multiselect = true;
+            cmbPlanilha.Text = "";
+            label3.Text = "0";
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -72,6 +74,7 @@ namespace testeExcel
                             carregaLinhas();
                         }
                     }
+
                 }
                 catch (Exception ex)
                 {
@@ -125,7 +128,7 @@ namespace testeExcel
                 //StringBuilder conteudo = new StringBuilder();
                 //SqlCommand cmd = conn.CreateCommand();
 
-                label3.Text = " / " + workSheet.Dimension.End.Row.ToString();
+                label3.Text = workSheet.Dimension.End.Row.ToString();
                 label3.Refresh();
                 //MessageBox.Show(workSheet.Dimension.End.Row.ToString());
 
@@ -330,7 +333,7 @@ namespace testeExcel
                 cmdArquivoCarregado.ExecuteNonQuery();
                 trA.Commit();
                 conn.Close();
-                MessageBox.Show("Carregamento de " + registroConsistente.ToString() + " registros de vendas");
+                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + registroConsistente.ToString() + " registros de vendas");
             }
         }
 
@@ -351,7 +354,7 @@ namespace testeExcel
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
 
-                label3.Text = " / " + workSheet.Dimension.End.Row.ToString();
+                label3.Text = workSheet.Dimension.End.Row.ToString();
                 label3.Refresh();
 
                 ///// temporario
@@ -520,7 +523,7 @@ namespace testeExcel
                     if (penLayout == false)
                     {
                         cmd = conn.CreateCommand();
-                        Clipboard.SetText(conteudo.ToString());
+                      //  Clipboard.SetText(conteudo.ToString());
                         conn.Open();
                         cmd.CommandText = conteudo.ToString();
                         SqlTransaction trE = null;
@@ -539,21 +542,21 @@ namespace testeExcel
             }
             finally
             {
-                MessageBox.Show("Carregamento de " + registroConsistente.ToString() + " registros de compras concluído!");
-
+                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + registroConsistente.ToString() + " registros de compras concluído!");
+                 
                 SqlCommand cmdArquivoCarregado = conn.CreateCommand();
                 cmdArquivoCarregado.CommandText =
-                  "declare @tabela varchar(max) = 'D_Compras';" +
-                    " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
-                    " insert into S_ArquivoCarregado" +
-                    " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                    " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                    " GETDATE(), " + registroConsistente.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
-                    " else" +
-                    " insert into S_ArquivoCarregado" +
-                    " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                    " values(" + pegarID("D_Compras") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                    " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
+                "declare @tabela varchar(max) = 'D_Compras';" +
+                " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
+                " insert into S_ArquivoCarregado" +
+                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                " GETDATE(), " + registroConsistente.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
+                " else" +
+                " insert into S_ArquivoCarregado" +
+                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                " values(" + pegarID("D_Compras") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                " GETDATE(), " + registroConsistente.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
 
                 conn.Open();
                 SqlTransaction trA = null;
@@ -819,8 +822,13 @@ namespace testeExcel
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
 
+                label3.Text = workSheet.Dimension.End.Row.ToString();
+                label3.Refresh();
+
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
+                    label2.Text = i.ToString();
+                    label2.Refresh();
 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
@@ -935,7 +943,7 @@ namespace testeExcel
                 trA.Commit();
                 conn.Close();
 
-                MessageBox.Show("Carregamento de " + linha + " registros de clientes realizados com sucesso");
+                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de clientes realizados com sucesso");
             }
 
 
@@ -959,8 +967,15 @@ namespace testeExcel
                 var lista = new List<String>();
                 SqlCommand cmd = conn.CreateCommand();
 
+                label3.Text = workSheet.Dimension.End.Row.ToString();
+                label3.Refresh();
+
+
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
+                    label2.Text = i.ToString();
+                    label2.Refresh();
+
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
                         // ultima coluna
@@ -1074,7 +1089,7 @@ namespace testeExcel
             }
             finally
             {
-                MessageBox.Show("Carregamento de " + linha + " registros de Fornecedores realizados com sucesso");
+                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de Fornecedores realizados com sucesso");
             }
 
 
@@ -1097,8 +1112,14 @@ namespace testeExcel
                 var lista = new List<String>();
                 SqlCommand cmd = conn.CreateCommand();
 
+                label3.Text = workSheet.Dimension.End.Row.ToString();
+                label3.Refresh();
+
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
+                    label2.Text = i.ToString();
+                    label2.Refresh();
+
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
                         if ((j == 1) && workSheet.Cells[i, j].Value != null)
@@ -1147,7 +1168,7 @@ namespace testeExcel
                         conteudo.Append(Environment.NewLine);
                     }
                     conn.Open();
-                    Clipboard.SetText(conteudo.ToString());
+                    //Clipboard.SetText(conteudo.ToString());
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
                     SqlTransaction trE = null;
@@ -1165,7 +1186,18 @@ namespace testeExcel
             }
             finally
             {
-                MessageBox.Show("Carregamento de " + linha + " registros de produtos realizados com sucesso");
+                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de produtos realizados com sucesso");
+
+                var notification = new System.Windows.Forms.NotifyIcon()
+                {
+                    Visible = true,
+                    Icon = System.Drawing.SystemIcons.Information,
+                    // optional - BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info,
+                    // optional - BalloonTipTitle = "My Title",
+                    BalloonTipText = "Carregamento de " + linha + " registros de produtos realizados com sucesso",
+                };
+
+                notification.ShowBalloonTip(5000);
             }
             SqlCommand cmdArquivoCarregado = conn.CreateCommand();
             cmdArquivoCarregado.CommandText =
@@ -1192,22 +1224,31 @@ namespace testeExcel
 
         public void Inventario()
         {
+
             int linha = 1;
             string filePath = caminho;
+
             try
             {
                 //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
                 //string filePath = @"C:\Base\saldos_maio_evonik_2019.xlsx";
+                // ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-                // ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
                 StringBuilder conteudo = new StringBuilder();
                 var lista = new List<String>();
                 SqlCommand cmd = conn.CreateCommand();
 
+                label3.Text = workSheet.Dimension.End.Row.ToString();
+                label3.Refresh();
+
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
+                    label2.Text = i.ToString();
+                    label2.Refresh();
+
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
                         if (j == workSheet.Dimension.End.Column)
@@ -1265,7 +1306,7 @@ namespace testeExcel
                         conteudo.Append(Environment.NewLine);
                     }
                     conn.Open();
-                    Clipboard.SetText(conteudo.ToString());
+                  //Clipboard.SetText(conteudo.ToString());
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
                     SqlTransaction trE = null;
@@ -1305,7 +1346,7 @@ namespace testeExcel
             }
             finally
             {
-                MessageBox.Show("Carregamento de " + linha + " registros de inventario realizados com sucesso");
+                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de inventario realizados com sucesso");
             }
         }
 
@@ -1315,21 +1356,28 @@ namespace testeExcel
             string filePath = caminho;
             //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
             //string filePath = @"C:\Base\ordens_de_producao_evonik_2019.xlsx";
+            //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+
             FileInfo existingFile = new FileInfo(filePath);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-            //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             StringBuilder conteudo = new StringBuilder();
             var lista = new List<String>();
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
             conn.Open();
 
+            label3.Text = workSheet.Dimension.End.Row.ToString();
+            label3.Refresh();
+
             try
             {
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
+                    label2.Text = i.ToString();
+                    label2.Refresh();
+
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
                         if (j == workSheet.Dimension.End.Column)
@@ -1455,10 +1503,16 @@ namespace testeExcel
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
 
+            label3.Text = workSheet.Dimension.End.Row.ToString();
+            label3.Refresh();
+
             try
             {
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
+                    label2.Text = i.ToString();
+                    label2.Refresh();
+
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
                         if (j == workSheet.Dimension.End.Column)
@@ -1526,11 +1580,11 @@ namespace testeExcel
             finally
             {
                 package.Dispose();
-                MessageBox.Show("Carregamento " + linha.ToString() + " registros de Relação Produção de Produção realizado com sucesso!");
+                MessageBox.Show(new Form { TopMost = true }, "Carregamento " + linha.ToString() + " registros de Relação Produção de Produção realizado com sucesso!");
 
                 SqlCommand cmdArquivoCarregado = conn.CreateCommand();
                 cmdArquivoCarregado.CommandText =
-                " declare @tabela varchar(max) = 'D_Insumo_Produto';" +
+                " declare @tabela varchar(max) = 'D_RELACAO_CARGA';" +
                 " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
                 " insert into S_ArquivoCarregado" +
                 " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
@@ -1539,7 +1593,7 @@ namespace testeExcel
                 " else" +
                 " insert into S_ArquivoCarregado" +
                 " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                " values(" + pegarID("D_Insumo_Produto") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                " values(" + pegarID("D_RELACAO_CARGA") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
                 " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
 
                 conn.Open();
@@ -1568,16 +1622,22 @@ namespace testeExcel
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
 
+            label3.Text = workSheet.Dimension.End.Row.ToString();
+            label3.Refresh();
+
             try
             {
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
+                    label2.Text = i.ToString();
+                    label2.Refresh();
+
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
                         if (j == workSheet.Dimension.End.Column)
                         {
                             conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
-                            conteudo.Append(" " + pegarID("D_Relacao_Carga") + " ");
+                            conteudo.Append(" " + pegarID("D_PIC") + " ");
                         }
                         else
                         {
@@ -1622,6 +1682,10 @@ namespace testeExcel
                                     workSheet.Cells[i, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
                                     conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
                                 }
+                                else if ((j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 21) && (workSheet.Cells[i, j].Value == "" || (workSheet.Cells[i, j].Value == null)))
+                                {
+                                    conteudo.Append(" " + 0 + ", ");
+                                }
                                 else if (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value == "")
                                 {
                                     conteudo.Append(" NULL, ");
@@ -1662,7 +1726,7 @@ namespace testeExcel
             finally
             {
                 package.Dispose();
-                MessageBox.Show("Carregamento " + linha.ToString() + " registros de PIC realizado com sucesso!");
+                MessageBox.Show(new Form { TopMost = true }, "Carregamento " + linha.ToString() + " registros de PIC realizado com sucesso!");
 
                 SqlCommand cmdArquivoCarregado = conn.CreateCommand();
                 cmdArquivoCarregado.CommandText =
@@ -1675,7 +1739,7 @@ namespace testeExcel
                 " else" +
                 " insert into S_ArquivoCarregado" +
                 " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                " values(" + pegarID("D_Insumo_Produto") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                " values(" + pegarID("D_PIC") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
                 " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
 
                 conn.Open();
@@ -1703,10 +1767,16 @@ namespace testeExcel
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
 
+            label3.Text = workSheet.Dimension.End.Row.ToString();
+            label3.Refresh();
+
             try
             {
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
+                    label2.Text = i.ToString();
+                    label2.Refresh();
+
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
                         if ((j == 1))
@@ -1768,7 +1838,7 @@ namespace testeExcel
             finally
             {
                 package.Dispose();
-                MessageBox.Show("Carregamento de " + linha.ToString() + " registros de  Custo Médio");
+                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha.ToString() + " registros de  Custo Médio");
             }
 
             SqlCommand cmdArquivoCarregado = conn.CreateCommand();
@@ -2310,6 +2380,7 @@ namespace testeExcel
                 excel.Workbook.Worksheets.Add("Clientes");
                 excel.Workbook.Worksheets.Add("Produtos");
                 excel.Workbook.Worksheets.Add("Fornecedores");
+                excel.Workbook.Worksheets.Add("PIC");
 
                 var comprasWorksheet = excel.Workbook.Worksheets["Compras"];
                 var vendasWorksheet = excel.Workbook.Worksheets["Vendas"];
@@ -2320,6 +2391,7 @@ namespace testeExcel
                 var clientesWorksheet = excel.Workbook.Worksheets["Clientes"];
                 var produtosWorksheet = excel.Workbook.Worksheets["Produtos"];
                 var fornecedoresWorksheet = excel.Workbook.Worksheets["Fornecedores"];
+                var picWorksheet = excel.Workbook.Worksheets["PIC"];
 
                 List<string[]> headerRowCompras = new List<string[]>()
                     {
@@ -2363,7 +2435,12 @@ namespace testeExcel
 
                 List<string[]> headerRowCusto = new List<string[]>()
                     {
-                      new string[] {"Código do Produto", "Mês", "Ano", "Custo Médio Unitário"}
+                      new string[] {"Código do Produto", "Mês", "Ano", "Custo Médio Unitário", "CNPJ" }
+                    };
+
+           List<string[]> headerRowPIC = new List<string[]>()
+                    {
+                      new string[] {"Fornecedor Código",   "Fornecedor Pais", "Pro Código",   "Qtde", "Vl Moeda Bruto",   "Cod Moeda",    "Data Emissao",   "Data Venc",  "Cli Código",   "Cli Pais", "Doc Oper", "Dias", "CFOP", "Imposto Intern",   "FOB Moeda",    "IPI",  "ICMS", "Pis",  "Cofins",   "Frete",    "Seguro"}
                     };
 
                 string headerRangeFornecedores = "A1:" + Char.ConvertFromUtf32(headerRowFornecedores[0].Length + 64) + "1";
@@ -2380,34 +2457,46 @@ namespace testeExcel
                 inventarioWorksheet.Cells[headerRangeInventario].LoadFromArrays(headerRowInventario);
                 inventarioWorksheet.Cells[headerRangeInventario].Style.Font.Bold = true;
                 inventarioWorksheet.Column(1).AutoFit();
+
                 string headerRangeVendas = "A1:" + Char.ConvertFromUtf32(headerRowVendas[0].Length + 64) + "1";
                 vendasWorksheet.Cells[headerRangeVendas].LoadFromArrays(headerRowVendas);
                 vendasWorksheet.Cells[headerRangeVendas].Style.Font.Bold = true;
                 vendasWorksheet.Column(1).AutoFit();
+
                 string headerRangeOrdem = "A1:" + Char.ConvertFromUtf32(headerRowOrdem[0].Length + 64) + "1";
                 ordemWorksheet.Cells[headerRangeOrdem].LoadFromArrays(headerRowOrdem);
                 ordemWorksheet.Cells[headerRangeOrdem].Style.Font.Bold = true;
                 ordemWorksheet.Column(1).AutoFit();
+
                 string headerRangeClientes = "A1:" + Char.ConvertFromUtf32(headerRowClientes[0].Length + 64) + "1";
                 clientesWorksheet.Cells[headerRangeClientes].LoadFromArrays(headerRowClientes);
                 clientesWorksheet.Cells[headerRangeClientes].Style.Font.Bold = true;
                 clientesWorksheet.Column(1).AutoFit();
+
                 string headerRangeProdutos = "A1:" + Char.ConvertFromUtf32(headerRowProdutos[0].Length + 64) + "1";
                 produtosWorksheet.Cells[headerRangeProdutos].LoadFromArrays(headerRowProdutos);
                 produtosWorksheet.Cells[headerRangeProdutos].Style.Font.Bold = true;
                 produtosWorksheet.Column(1).AutoFit();
+
                 string headerRangeRelacao = "A1:" + Char.ConvertFromUtf32(headerRowRelacao[0].Length + 64) + "1";
                 relacaoWorksheet.Cells[headerRangeRelacao].LoadFromArrays(headerRowRelacao);
                 relacaoWorksheet.Cells[headerRangeRelacao].Style.Font.Bold = true;
                 relacaoWorksheet.Column(1).AutoFit();
+
                 string headerRangeCusto = "A1:" + Char.ConvertFromUtf32(headerRowCusto[0].Length + 64) + "1";
                 custoWorksheet.Cells[headerRangeCusto].LoadFromArrays(headerRowCusto);
                 custoWorksheet.Cells[headerRangeCusto].Style.Font.Bold = true;
                 custoWorksheet.Column(1).AutoFit();
 
+                string headerRangePIC = "A1:" + Char.ConvertFromUtf32(headerRowPIC[0].Length + 64) + "1";
+                picWorksheet.Cells[headerRangePIC].LoadFromArrays(headerRowPIC);
+                picWorksheet.Cells[headerRangePIC].Style.Font.Bold = true;
+                picWorksheet.Column(1).AutoFit();
+
                 SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-                saveFileDialog1.Filter = "Excel Image|*.xlsx";
+                saveFileDialog1.Filter = "Excel|*.xlsx";
                 saveFileDialog1.Title = "Salvar Excel";
+                saveFileDialog1.FileName = "Modelo Carregamento Dados TPS.xlsx";
                 saveFileDialog1.ShowDialog();
 
                 // If the file name is not an empty string open it for saving.  
@@ -2417,11 +2506,25 @@ namespace testeExcel
                     System.IO.FileStream fs =
                        (System.IO.FileStream)saveFileDialog1.OpenFile();
                     excel.SaveAs(fs);
-
                 }
                 excel.Dispose();
             }
 
+        }
+
+        private void cmbPlanilha_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string filePath = caminho;
+            FileInfo existingFile = new FileInfo(filePath);
+            ExcelPackage package = new ExcelPackage(existingFile);
+            ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
+            StringBuilder conteudo = new StringBuilder();
+            var lista = new List<String>();
+            SqlCommand cmd = conn.CreateCommand();
+            int linha = 1;
+
+            label3.Text = workSheet.Dimension.End.Row.ToString();
+            label3.Refresh();
         }
     }
 }
