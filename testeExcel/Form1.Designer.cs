@@ -41,10 +41,12 @@
             this.comboBoxBase = new System.Windows.Forms.ComboBox();
             this.comboBoxServidor = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblCarregada = new System.Windows.Forms.Label();
+            this.lblTotal = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lblPendencia = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonAbrir
@@ -180,23 +182,23 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_5);
             // 
-            // label2
+            // lblCarregada
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(376, 309);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(18, 20);
-            this.label2.TabIndex = 37;
-            this.label2.Text = "0";
+            this.lblCarregada.AutoSize = true;
+            this.lblCarregada.Location = new System.Drawing.Point(376, 270);
+            this.lblCarregada.Name = "lblCarregada";
+            this.lblCarregada.Size = new System.Drawing.Size(18, 20);
+            this.lblCarregada.TabIndex = 37;
+            this.lblCarregada.Text = "0";
             // 
-            // label3
+            // lblTotal
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(376, 178);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(18, 20);
-            this.label3.TabIndex = 37;
-            this.label3.Text = "0";
+            this.lblTotal.AutoSize = true;
+            this.lblTotal.Location = new System.Drawing.Point(376, 178);
+            this.lblTotal.Name = "lblTotal";
+            this.lblTotal.Size = new System.Drawing.Size(18, 20);
+            this.lblTotal.TabIndex = 37;
+            this.lblTotal.Text = "0";
             // 
             // label4
             // 
@@ -210,21 +212,41 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(224, 309);
+            this.label5.Location = new System.Drawing.Point(224, 270);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(147, 20);
             this.label5.TabIndex = 38;
             this.label5.Text = "Linhas Carregadas:";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(122, 309);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(249, 20);
+            this.label2.TabIndex = 38;
+            this.label2.Text = "Pendência de Layout e Conteúdo:";
+            // 
+            // lblPendencia
+            // 
+            this.lblPendencia.AutoSize = true;
+            this.lblPendencia.Location = new System.Drawing.Point(376, 309);
+            this.lblPendencia.Name = "lblPendencia";
+            this.lblPendencia.Size = new System.Drawing.Size(18, 20);
+            this.lblPendencia.TabIndex = 37;
+            this.lblPendencia.Text = "0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(461, 441);
+            this.ClientSize = new System.Drawing.Size(505, 441);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lblTotal);
+            this.Controls.Add(this.lblPendencia);
+            this.Controls.Add(this.lblCarregada);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
@@ -263,10 +285,12 @@
         private System.Windows.Forms.ComboBox comboBoxBase;
         private System.Windows.Forms.ComboBox comboBoxServidor;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblCarregada;
+        private System.Windows.Forms.Label lblTotal;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblPendencia;
     }
 }
 

@@ -58,7 +58,8 @@ namespace testeExcel
             openFileDialog1.RestoreDirectory = true;
             openFileDialog1.Multiselect = true;
             cmbPlanilha.Text = "";
-            label3.Text = "0";
+            lblTotal.Text = "0";
+            lblCarregada.Text = "0";
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -128,15 +129,15 @@ namespace testeExcel
                 //StringBuilder conteudo = new StringBuilder();
                 //SqlCommand cmd = conn.CreateCommand();
 
-                label3.Text = workSheet.Dimension.End.Row.ToString();
-                label3.Refresh();
+                lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+                lblTotal.Refresh();
                 //MessageBox.Show(workSheet.Dimension.End.Row.ToString());
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
 
-                    label2.Text = i.ToString();
-                    label2.Refresh();
+                    lblCarregada.Text = i.ToString();
+                    lblCarregada.Refresh();
 
                     penLayout = false;
                     for (int j = workSheet.Dimension.Start.Column; j <= 25; j++)
@@ -290,7 +291,7 @@ namespace testeExcel
                     {
                         registroConsistente++;
                     }
-                    linhaRegistro++;
+                        linhaRegistro++;
                     if (penLayout == false)
                     {
                         cmd = conn.CreateCommand();
@@ -340,7 +341,7 @@ namespace testeExcel
         public void Compras()
         {
             string filePath = caminho;
-            int linha = 1;
+            int linha = 0;
             int linhaRegistro = 1;
             int registroInconsistente = 0;
             int registroConsistente = 0;
@@ -348,14 +349,15 @@ namespace testeExcel
 
             try
             {
+                linha = 1;
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
 
-                label3.Text = workSheet.Dimension.End.Row.ToString();
-                label3.Refresh();
+                lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+                lblTotal.Refresh();
 
                 ///// temporario
                 //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
@@ -373,8 +375,11 @@ namespace testeExcel
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    label2.Text = i.ToString();
-                    label2.Refresh();
+                    lblCarregada.Text = registroConsistente.ToString();
+                    lblCarregada.Refresh();
+
+                    lblPendencia.Text = registroInconsistente.ToString();
+                    lblPendencia.Refresh();
 
                     penLayout = false;
                     for (int j = workSheet.Dimension.Start.Column; j <= 30; j++)
@@ -535,15 +540,9 @@ namespace testeExcel
                     }
                 }
                 package.Dispose();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
+
                 MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + registroConsistente.ToString() + " registros de compras concluído!");
-                 
+
                 SqlCommand cmdArquivoCarregado = conn.CreateCommand();
                 cmdArquivoCarregado.CommandText =
                 "declare @tabela varchar(max) = 'D_Compras';" +
@@ -565,7 +564,13 @@ namespace testeExcel
                 cmdArquivoCarregado.ExecuteNonQuery();
                 trA.Commit();
                 conn.Close();
+
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
 
         public void ComprasPenLayout(int linha)
@@ -822,13 +827,13 @@ namespace testeExcel
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
 
-                label3.Text = workSheet.Dimension.End.Row.ToString();
-                label3.Refresh();
+                lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+                lblTotal.Refresh();
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    label2.Text = i.ToString();
-                    label2.Refresh();
+                    lblCarregada.Text = i.ToString();
+                    lblCarregada.Refresh();
 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
@@ -967,14 +972,14 @@ namespace testeExcel
                 var lista = new List<String>();
                 SqlCommand cmd = conn.CreateCommand();
 
-                label3.Text = workSheet.Dimension.End.Row.ToString();
-                label3.Refresh();
+                lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+                lblTotal.Refresh();
 
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    label2.Text = i.ToString();
-                    label2.Refresh();
+                    lblCarregada.Text = i.ToString();
+                    lblCarregada.Refresh();
 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
@@ -1112,13 +1117,13 @@ namespace testeExcel
                 var lista = new List<String>();
                 SqlCommand cmd = conn.CreateCommand();
 
-                label3.Text = workSheet.Dimension.End.Row.ToString();
-                label3.Refresh();
+                lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+                lblTotal.Refresh();
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    label2.Text = i.ToString();
-                    label2.Refresh();
+                    lblCarregada.Text = i.ToString();
+                    lblCarregada.Refresh();
 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
@@ -1241,13 +1246,13 @@ namespace testeExcel
                 var lista = new List<String>();
                 SqlCommand cmd = conn.CreateCommand();
 
-                label3.Text = workSheet.Dimension.End.Row.ToString();
-                label3.Refresh();
+                lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+                lblTotal.Refresh();
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    label2.Text = i.ToString();
-                    label2.Refresh();
+                    lblCarregada.Text = i.ToString();
+                    lblCarregada.Refresh();
 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
@@ -1367,16 +1372,16 @@ namespace testeExcel
             int linha = 1;
             conn.Open();
 
-            label3.Text = workSheet.Dimension.End.Row.ToString();
-            label3.Refresh();
+            lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+            lblTotal.Refresh();
 
             try
             {
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    label2.Text = i.ToString();
-                    label2.Refresh();
+                    lblCarregada.Text = i.ToString();
+                    lblCarregada.Refresh();
 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
@@ -1503,15 +1508,15 @@ namespace testeExcel
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
 
-            label3.Text = workSheet.Dimension.End.Row.ToString();
-            label3.Refresh();
+            lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+            lblTotal.Refresh();
 
             try
             {
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    label2.Text = i.ToString();
-                    label2.Refresh();
+                    lblCarregada.Text = i.ToString();
+                    lblCarregada.Refresh();
 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
@@ -1622,15 +1627,15 @@ namespace testeExcel
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
 
-            label3.Text = workSheet.Dimension.End.Row.ToString();
-            label3.Refresh();
+            lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+            lblTotal.Refresh();
 
             try
             {
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    label2.Text = i.ToString();
-                    label2.Refresh();
+                    lblCarregada.Text = i.ToString();
+                    lblCarregada.Refresh();
 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
@@ -1767,15 +1772,15 @@ namespace testeExcel
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
 
-            label3.Text = workSheet.Dimension.End.Row.ToString();
-            label3.Refresh();
+            lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+            lblTotal.Refresh();
 
             try
             {
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    label2.Text = i.ToString();
-                    label2.Refresh();
+                    lblCarregada.Text = i.ToString();
+                    lblCarregada.Refresh();
 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
@@ -2523,8 +2528,8 @@ namespace testeExcel
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
 
-            label3.Text = workSheet.Dimension.End.Row.ToString();
-            label3.Refresh();
+            lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+            lblTotal.Refresh();
         }
     }
 }
