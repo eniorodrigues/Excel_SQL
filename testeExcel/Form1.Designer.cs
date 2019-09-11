@@ -47,6 +47,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lblPendencia = new System.Windows.Forms.Label();
+            this.lblRepetido = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonAbrir
@@ -63,7 +65,7 @@
             // lblEndereço
             // 
             this.lblEndereço.AutoSize = true;
-            this.lblEndereço.Location = new System.Drawing.Point(5, 253);
+            this.lblEndereço.Location = new System.Drawing.Point(13, 399);
             this.lblEndereço.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblEndereço.Name = "lblEndereço";
             this.lblEndereço.Size = new System.Drawing.Size(0, 20);
@@ -90,7 +92,7 @@
             // 
             // btnCarregar
             // 
-            this.btnCarregar.Location = new System.Drawing.Point(162, 374);
+            this.btnCarregar.Location = new System.Drawing.Point(162, 341);
             this.btnCarregar.Name = "btnCarregar";
             this.btnCarregar.Size = new System.Drawing.Size(288, 55);
             this.btnCarregar.TabIndex = 27;
@@ -121,15 +123,16 @@
             "D_Relacao_Carga",
             "D_Vendas_Itens",
             "D_PIC"});
-            this.cmbTabela.Location = new System.Drawing.Point(6, 332);
+            this.cmbTabela.Location = new System.Drawing.Point(6, 299);
             this.cmbTabela.Name = "cmbTabela";
             this.cmbTabela.Size = new System.Drawing.Size(442, 28);
             this.cmbTabela.TabIndex = 29;
+            this.cmbTabela.SelectedIndexChanged += new System.EventHandler(this.cmbTabela_SelectedIndexChanged);
             // 
             // lblTabela
             // 
             this.lblTabela.AutoSize = true;
-            this.lblTabela.Location = new System.Drawing.Point(5, 309);
+            this.lblTabela.Location = new System.Drawing.Point(5, 276);
             this.lblTabela.Name = "lblTabela";
             this.lblTabela.Size = new System.Drawing.Size(93, 20);
             this.lblTabela.TabIndex = 30;
@@ -174,7 +177,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(9, 374);
+            this.button1.Location = new System.Drawing.Point(9, 341);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(147, 55);
             this.button1.TabIndex = 36;
@@ -185,7 +188,7 @@
             // lblCarregada
             // 
             this.lblCarregada.AutoSize = true;
-            this.lblCarregada.Location = new System.Drawing.Point(376, 270);
+            this.lblCarregada.Location = new System.Drawing.Point(377, 237);
             this.lblCarregada.Name = "lblCarregada";
             this.lblCarregada.Size = new System.Drawing.Size(18, 20);
             this.lblCarregada.TabIndex = 37;
@@ -212,7 +215,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(224, 270);
+            this.label5.Location = new System.Drawing.Point(224, 237);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(147, 20);
             this.label5.TabIndex = 38;
@@ -221,7 +224,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(122, 309);
+            this.label2.Location = new System.Drawing.Point(122, 257);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(249, 20);
             this.label2.TabIndex = 38;
@@ -230,20 +233,40 @@
             // lblPendencia
             // 
             this.lblPendencia.AutoSize = true;
-            this.lblPendencia.Location = new System.Drawing.Point(376, 309);
+            this.lblPendencia.Location = new System.Drawing.Point(377, 257);
             this.lblPendencia.Name = "lblPendencia";
             this.lblPendencia.Size = new System.Drawing.Size(18, 20);
             this.lblPendencia.TabIndex = 37;
             this.lblPendencia.Text = "0";
             // 
+            // lblRepetido
+            // 
+            this.lblRepetido.AutoSize = true;
+            this.lblRepetido.Location = new System.Drawing.Point(377, 278);
+            this.lblRepetido.Name = "lblRepetido";
+            this.lblRepetido.Size = new System.Drawing.Size(18, 20);
+            this.lblRepetido.TabIndex = 37;
+            this.lblRepetido.Text = "0";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(285, 276);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(86, 20);
+            this.label8.TabIndex = 38;
+            this.label8.Text = "Repetidos:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(505, 441);
+            this.ClientSize = new System.Drawing.Size(468, 435);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
+            this.Controls.Add(this.lblRepetido);
             this.Controls.Add(this.lblTotal);
             this.Controls.Add(this.lblPendencia);
             this.Controls.Add(this.lblCarregada);
@@ -291,6 +314,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lblPendencia;
+        private System.Windows.Forms.Label lblRepetido;
+        private System.Windows.Forms.Label label8;
     }
 }
 

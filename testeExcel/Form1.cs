@@ -46,7 +46,7 @@ namespace testeExcel
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+    
         }
 
         private void buttonAbrir_Click(object sender, EventArgs e)
@@ -92,7 +92,7 @@ namespace testeExcel
             excelConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + caminho + ";Extended Properties=Excel 12.0;";
             MyApp.Workbooks.Add("");
             MyApp.Workbooks.Add(caminho);
-
+             
             for (int i = 1; i <= MyApp.Workbooks[2].Worksheets.Count; i++)
             {
                 cmbPlanilha.Items.Add(MyApp.Workbooks[2].Worksheets[i].Name);
@@ -345,6 +345,7 @@ namespace testeExcel
             int linhaRegistro = 1;
             int registroInconsistente = 0;
             int registroConsistente = 0;
+            int registroRepetido = 0;
             bool penLayout = false;
 
             try
@@ -395,39 +396,39 @@ namespace testeExcel
                             {
                                 conteudo.Clear();
                                 conteudo.Append(" INSERT INTO[dbo].[D_Compras] " +
-                                "([Cmp_Pro_ID] " +
-                                ",[Cmp_Cod_Divisao]" +
-                                ",[Cmp_For_ID]" +
-                                ",[Cmp_Lanc_Cont]" +
-                                ",[Cmp_Fat_Coml]" +
-                                ",[Cmp_BL_DT]" +
-                                ",[Cmp_DI_ID]" +
-                                ",[Cmp_DI_DT_Emissao]" +
-                                ",[Cmp_NF_Entrada]" +
-                                ",[Cmp_NF_Serie]" +
-                                ",[Cmp_NF_DT]" +
-                                ",[Cmp_CFOP]" +
-                                ",[Cmp_DI_DT_Vencimento]" +
-                                ",[Cmp_DI_Dias]" +
-                                ",[Cmp_Qtde]" +
-                                ",[Cmp_Valor_Fob]" +
-                                ",[Cmp_Cod_Moeda]" +
-                                ",[Cmp_Vl_Frete_Moeda]" +
-                                ",[Cmp_VL_Seguro_Moeda]" +
-                                ",[Cmp_Cod_Moeda_Frete]" +
-                                ",[Cmp_Cod_Moeda_Seguro]" +
-                                ",[Cmp_Imposto_Import]" +
-                                ",[Cmp_ICMS]" +
-                                ",[Cmp_PIS]" +
-                                ",[Cmp_COFINS]" +
-                                ",[Cmp_Und_Id]" +
-                                ",[Cmp_CNPJ]" +
-                                ",[Cmp_For_id_Frete]" +
-                                ",[Cmp_For_id_Seguro]" +
-                                ",[Cmp_Incoterm]" +
-                                ",[Lin_Origem_ID]" +
-                                ",[Arq_Origem_ID])" +
-                                " VALUES ( ");
+                                                "([Cmp_Pro_ID] " +
+                                                ",[Cmp_Cod_Divisao]" +
+                                                ",[Cmp_For_ID]" +
+                                                ",[Cmp_Lanc_Cont]" +
+                                                ",[Cmp_Fat_Coml]" +
+                                                ",[Cmp_BL_DT]" +
+                                                ",[Cmp_DI_ID]" +
+                                                ",[Cmp_DI_DT_Emissao]" +
+                                                ",[Cmp_NF_Entrada]" +
+                                                ",[Cmp_NF_Serie]" +
+                                                ",[Cmp_NF_DT]" +
+                                                ",[Cmp_CFOP]" +
+                                                ",[Cmp_DI_DT_Vencimento]" +
+                                                ",[Cmp_DI_Dias]" +
+                                                ",[Cmp_Qtde]" +
+                                                ",[Cmp_Valor_Fob]" +
+                                                ",[Cmp_Cod_Moeda]" +
+                                                ",[Cmp_Vl_Frete_Moeda]" +
+                                                ",[Cmp_VL_Seguro_Moeda]" +
+                                                ",[Cmp_Cod_Moeda_Frete]" +
+                                                ",[Cmp_Cod_Moeda_Seguro]" +
+                                                ",[Cmp_Imposto_Import]" +
+                                                ",[Cmp_ICMS]" +
+                                                ",[Cmp_PIS]" +
+                                                ",[Cmp_COFINS]" +
+                                                ",[Cmp_Und_Id]" +
+                                                ",[Cmp_CNPJ]" +
+                                                ",[Cmp_For_id_Frete]" +
+                                                ",[Cmp_For_id_Seguro]" +
+                                                ",[Cmp_Incoterm]" +
+                                                ",[Lin_Origem_ID]" +
+                                                ",[Arq_Origem_ID])" +
+                                                " VALUES ( ");
                                 if (workSheet.Cells[i, j].Value == null)
                                 {
                                     ComprasPenLayout(i);
@@ -545,7 +546,7 @@ namespace testeExcel
 
                 SqlCommand cmdArquivoCarregado = conn.CreateCommand();
                 cmdArquivoCarregado.CommandText =
-                "declare @tabela varchar(max) = 'D_Compras';" +
+                " declare @tabela varchar(max) = 'D_Compras';" +
                 " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
                 " insert into S_ArquivoCarregado" +
                 " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
@@ -721,8 +722,8 @@ namespace testeExcel
             try
             {
                 ///// temporario
-                //    conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                //  filePath = @"C:\Base\Vendas_Doosan_Jan_Jun_2019.xlsx";
+                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+                //filePath = @"C:\Base\Vendas_Doosan_Jan_Jun_2019.xlsx";
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
@@ -814,6 +815,8 @@ namespace testeExcel
         {
             string filePath = caminho;
             int linha = 1;
+            int cont = 0;
+            int registroRepetido = 0;
 
             try
             {
@@ -827,13 +830,12 @@ namespace testeExcel
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
 
-                lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+                lblTotal.Text = (workSheet.Dimension.End.Row - 1).ToString();
                 lblTotal.Refresh();
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    lblCarregada.Text = i.ToString();
-                    lblCarregada.Refresh();
+
 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
@@ -855,7 +857,7 @@ namespace testeExcel
                                 conteudo.Append(Environment.NewLine);
                                 conteudo.Append(" if  (select max(cli_id) from D_Clientes where cli_id = @cli_id) = (select (cli_id) from D_Clientes where cli_id = (@cli_id)) ");
                                 conteudo.Append(Environment.NewLine);
-                                conteudo.Append(" print 'OK' ");
+                                conteudo.Append(" SELECT 'REPETIDO' ");
                                 conteudo.Append(Environment.NewLine);
                                 conteudo.Append(" else ");
                                 conteudo.Append(" INSERT INTO D_CLIENTES " +
@@ -898,7 +900,6 @@ namespace testeExcel
                         }
                     }
 
-
                     if (i == workSheet.Dimension.End.Row)
                     {
                         conteudo.Append(" ) ");
@@ -908,8 +909,10 @@ namespace testeExcel
                         conteudo.Append(")");
                         conteudo.Append(Environment.NewLine);
                     }
+                     
                     //Clipboard.SetText(conteudo.ToString());
                     conn.Open();
+                     
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
                     SqlTransaction trE = null;
@@ -917,6 +920,24 @@ namespace testeExcel
                     cmd.Transaction = trE;
                     cmd.ExecuteNonQuery();
                     trE.Commit();
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            if (reader[0].ToString() == "REPETIDO")
+                            {
+                                registroRepetido++;
+                                lblRepetido.Text = registroRepetido.ToString();
+                                MessageBox.Show(i.ToString());
+                            }
+                            else
+                            {
+                                lblCarregada.Text = i.ToString();
+                                lblCarregada.Refresh();
+                            }
+                        }
+                    }
                     conteudo.Clear();
                 }
                 package.Dispose();
@@ -950,9 +971,7 @@ namespace testeExcel
 
                 MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de clientes realizados com sucesso");
             }
-
-
-
+             
         }
 
         public void Fornecedores()
@@ -1137,14 +1156,14 @@ namespace testeExcel
                             conteudo.Append(Environment.NewLine);
                             conteudo.Append(" else ");
                             conteudo.Append(" INSERT INTO D_PRODUTOS " +
-                                                               "(PRO_ID, " +
-                                                               "PRO_DESCRICAO, " +
-                                                               "PRO_UND_ID, " +
-                                                               "PRO_NCM, " +
-                                                               "PRO_MARGEM, " +
-                                                               "[Lin_Origem_ID], " +
-                                                               "[Arq_Origem_ID]) " +
-                                                               " VALUES ( ");
+                                            "(PRO_ID, " +
+                                            "PRO_DESCRICAO, " +
+                                            "PRO_UND_ID, " +
+                                            "PRO_NCM, " +
+                                            "PRO_MARGEM, " +
+                                            "[Lin_Origem_ID], " +
+                                            "[Arq_Origem_ID]) " +
+                                            " VALUES ( ");
                             conteudo.Append("'" + workSheet.Cells[i, j].Value + "', ");
                         }
                         else if ((j == 3) && workSheet.Cells[i, j].Value != null)
@@ -2313,6 +2332,7 @@ namespace testeExcel
         {
             conexao = comboBoxServidor.Text;
             conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True;");
+
             if (conn.State.ToString() == "Closed")
             {
                 conn.Open();
@@ -2528,8 +2548,15 @@ namespace testeExcel
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
 
-            lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+            lblTotal.Text = (workSheet.Dimension.End.Row - 1).ToString();
             lblTotal.Refresh();
+        }
+
+        private void cmbTabela_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            lblRepetido.Text = "0";
+            lblPendencia.Text = "0";
+            lblCarregada.Text = "0";
         }
     }
 }
