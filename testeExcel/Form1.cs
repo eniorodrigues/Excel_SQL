@@ -1,5 +1,6 @@
 ﻿using OfficeOpenXml;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Sql;
@@ -135,14 +136,12 @@ namespace testeExcel
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-
                     lblCarregada.Text = i.ToString();
                     lblCarregada.Refresh();
 
                     penLayout = false;
                     for (int j = workSheet.Dimension.Start.Column; j <= 25; j++)
                     {
-
                         if (j == 25)
                         {
                             if (workSheet.Cells[i, j].Value == null)
@@ -579,8 +578,9 @@ namespace testeExcel
             string filePath = caminho;
             try
             {
-                ///// temporario
-                //     filePath = @"C:\Base\Compras_Doosan_Jan_Jun_2019.xlsx";
+                /////temporario
+                /////filePath = @"C:\Base\Compras_Doosan_Jan_Jun_2019.xlsx";
+                
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
@@ -818,25 +818,70 @@ namespace testeExcel
             int cont = 0;
             int registroRepetido = 0;
 
-            try
+            //try
             {
-                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                //string filePath = @"C:\Base\clientes.xlsx";
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
 
+                conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+                filePath = @"C:\Base\cliente.xlsx";
+                 
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
-                ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
+                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                //   ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
-
+                ArrayList Excel = new ArrayList();
+                ArrayList SQL = new ArrayList();
+                IEnumerable<object> distinctItemsExcel = null;
+                ArrayList numListDiff3 = new ArrayList();
+                ArrayList numListDiff4 = new ArrayList();
+                 
                 lblTotal.Text = (workSheet.Dimension.End.Row - 1).ToString();
                 lblTotal.Refresh();
 
+                for (int o = workSheet.Dimension.Start.Row + 1; o <= workSheet.Dimension.End.Row; o++)
+                {
+                    Excel.Add(workSheet.Cells[o, 1].Value.ToString());
+                }
+
+                distinctItemsExcel = Excel.Cast<object>().Distinct();
+                int totalExcel = Excel.Cast<object>().Count();
+                int distinctCount = Excel.Cast<object>().Distinct().Count();
+                
+                conn.Open();
+
+                SqlConnection conn1 = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+
+
+                SqlCommand command = new SqlCommand("SELECT * FROM D_Clientes;", conn1);
+                conn1.Open();
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        SQL.Add(reader.GetString(0));
+                    }
+                    reader.NextResult();
+                }
+
+                foreach (string listElement in distinctItemsExcel)
+                {
+                    if (!SQL.Contains(listElement))
+                    {
+                        numListDiff3.Add(listElement);
+                    }
+                    else
+                    {
+                        numListDiff4.Add(listElement);
+                    }
+                }
+
+
+
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-
-
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
                         // ultima coluna
@@ -857,7 +902,7 @@ namespace testeExcel
                                 conteudo.Append(Environment.NewLine);
                                 conteudo.Append(" if  (select max(cli_id) from D_Clientes where cli_id = @cli_id) = (select (cli_id) from D_Clientes where cli_id = (@cli_id)) ");
                                 conteudo.Append(Environment.NewLine);
-                                conteudo.Append(" SELECT 'REPETIDO' ");
+                                conteudo.Append(" print 'REPETIDO' ");
                                 conteudo.Append(Environment.NewLine);
                                 conteudo.Append(" else ");
                                 conteudo.Append(" INSERT INTO D_CLIENTES " +
@@ -911,8 +956,12 @@ namespace testeExcel
                     }
                      
                     //Clipboard.SetText(conteudo.ToString());
-                    conn.Open();
-                     
+                    if(conn.State.ToString() =="Closed")
+                    {
+                        conn.Open();
+                    }
+  
+
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
                     SqlTransaction trE = null;
@@ -921,57 +970,53 @@ namespace testeExcel
                     cmd.ExecuteNonQuery();
                     trE.Commit();
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            if (reader[0].ToString() == "REPETIDO")
-                            {
-                                registroRepetido++;
-                                lblRepetido.Text = registroRepetido.ToString();
-                                MessageBox.Show(i.ToString());
-                            }
-                            else
-                            {
-                                lblCarregada.Text = i.ToString();
-                                lblCarregada.Refresh();
-                            }
-                        }
-                    }
                     conteudo.Clear();
-                }
-                package.Dispose();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-                cmdArquivoCarregado.CommandText =
-                " declare @tabela varchar(max) = 'D_Clientes';" +
-                " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
-                " insert into S_ArquivoCarregado" +
-                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                " GETDATE(), ' " + linha.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
-                " else" +
-                " insert into S_ArquivoCarregado" +
-                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                " values(" + pegarID("D_Clientes") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
-                conn.Open();
-                SqlTransaction trA = null;
-                trA = conn.BeginTransaction();
-                cmdArquivoCarregado.Transaction = trA;
-                cmdArquivoCarregado.ExecuteNonQuery();
-                trA.Commit();
-                conn.Close();
 
-                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de clientes realizados com sucesso");
+                    lblCarregada.Text = numListDiff3.Count.ToString();
+                    lblCarregada.Refresh();
+
+                }
+
+               // lblTotal.Text = distinctItemsExcel.Count().ToString();
+                lblRepetido.Text = numListDiff4.Count.ToString();
+
+//                MessageBox.Show("Únicos " + numListDiff3.Count.ToString() + " Repetidos " + numListDiff4.Count.ToString());
+
+                MessageBox.Show("Registros de Clientes carregados: " + numListDiff3.Count.ToString());
+
+
+                package.Dispose();
+
             }
-             
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
+            //finally
+            //{
+            //    SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+            //    cmdArquivoCarregado.CommandText =
+            //    " declare @tabela varchar(max) = 'D_Clientes';" +
+            //    " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
+            //    " insert into S_ArquivoCarregado" +
+            //    " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+            //    " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+            //    " GETDATE(), ' " + linha.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
+            //    " else" +
+            //    " insert into S_ArquivoCarregado" +
+            //    " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+            //    " values(" + pegarID("D_Clientes") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+            //    " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
+            //    conn.Open();
+            //    SqlTransaction trA = null;
+            //    trA = conn.BeginTransaction();
+            //    cmdArquivoCarregado.Transaction = trA;
+            //    cmdArquivoCarregado.ExecuteNonQuery();
+            //    trA.Commit();
+            //    conn.Close();
+            //    MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de clientes realizados com sucesso");
+            //}
+
         }
 
         public void Fornecedores()
@@ -994,12 +1039,10 @@ namespace testeExcel
                 lblTotal.Text = workSheet.Dimension.End.Row.ToString();
                 lblTotal.Refresh();
 
-
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
                     lblCarregada.Text = i.ToString();
                     lblCarregada.Refresh();
-
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
                         // ultima coluna
@@ -1115,8 +1158,6 @@ namespace testeExcel
             {
                 MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de Fornecedores realizados com sucesso");
             }
-
-
         }
 
         public void Produtos()
@@ -2528,8 +2569,7 @@ namespace testeExcel
                 if (saveFileDialog1.FileName != "")
                 {
                     // Saves the Image via a FileStream created by the OpenFile method.  
-                    System.IO.FileStream fs =
-                       (System.IO.FileStream)saveFileDialog1.OpenFile();
+                    System.IO.FileStream fs = (System.IO.FileStream)saveFileDialog1.OpenFile();
                     excel.SaveAs(fs);
                 }
                 excel.Dispose();
