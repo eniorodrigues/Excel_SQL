@@ -42,6 +42,7 @@ namespace testeExcel
         StringBuilder camposDataGrid = new StringBuilder();
         public List<String> itemsDataGrid = new List<String>();
         public SqlConnection conn = null;
+        public SqlConnection conn1 = null;
         public bool checado;
         String databaseName;
 
@@ -653,7 +654,7 @@ namespace testeExcel
                         conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
                     }
                 }
-                conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+              //  conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
                 conn.Open();
                 SqlCommand cmda = conn.CreateCommand();
                 cmda.CommandText = conteudo.ToString();
@@ -721,6 +722,7 @@ namespace testeExcel
             string filePath = caminho;
             try
             {
+
                 ///// temporario
                 //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
                 //filePath = @"C:\Base\Vendas_Doosan_Jan_Jun_2019.xlsx";
@@ -793,6 +795,7 @@ namespace testeExcel
                         conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
                     }
                 }
+
                 //Clipboard.SetText(conteudo.ToString());
                 conn.Open();
                 cmd.CommandText = conteudo.ToString();
@@ -821,8 +824,8 @@ namespace testeExcel
             //try
             {
 
-                conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                filePath = @"C:\Base\cliente.xlsx";
+              //  conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+               // filePath = @"C:\Base\cliente.xlsx";
                  
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
@@ -847,15 +850,24 @@ namespace testeExcel
                 distinctItemsExcel = Excel.Cast<object>().Distinct();
                 int totalExcel = Excel.Cast<object>().Count();
                 int distinctCount = Excel.Cast<object>().Distinct().Count();
+
+                MessageBox.Show(conn1.State.ToString());
+
+                if(conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+
+                // SqlConnection conn1 = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+                SqlCommand command1 = new SqlCommand("SELECT * FROM D_Clientes;", conn1);
+
+                if (conn1.State.ToString() == "Closed")
+                {
+                    conn1.Open();
+                }
                 
-                conn.Open();
 
-                SqlConnection conn1 = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-
-
-                SqlCommand command = new SqlCommand("SELECT * FROM D_Clientes;", conn1);
-                conn1.Open();
-                SqlDataReader reader = command.ExecuteReader();
+                SqlDataReader reader = command1.ExecuteReader();
 
                 while (reader.HasRows)
                 {
@@ -877,9 +889,7 @@ namespace testeExcel
                         numListDiff4.Add(listElement);
                     }
                 }
-
-
-
+                 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
@@ -969,7 +979,6 @@ namespace testeExcel
                     cmd.Transaction = trE;
                     cmd.ExecuteNonQuery();
                     trE.Commit();
-
                     conteudo.Clear();
 
                     lblCarregada.Text = numListDiff3.Count.ToString();
@@ -1024,8 +1033,8 @@ namespace testeExcel
             int cont = 0;
             int registroRepetido = 0;
 
-            conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-            filePath = @"C:\Base\info\fornecedores\fornecedor1.xlsx";
+         //   conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+         //   filePath = @"C:\Base\info\fornecedores\fornecedor1.xlsx";
 
             FileInfo existingFile = new FileInfo(filePath);
             ExcelPackage package = new ExcelPackage(existingFile);
@@ -1053,12 +1062,21 @@ namespace testeExcel
                 int totalExcel = Excel.Cast<object>().Count();
                 int distinctCount = Excel.Cast<object>().Distinct().Count();
  
-                conn.Open();
 
-                SqlConnection conn1 = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                 
+                if(conn.State.ToString() == "State")
+                {
+                    conn.Open();
+                }
+
+                //SqlConnection conn1 = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+
                 SqlCommand command = new SqlCommand("SELECT * FROM D_Fornecedores;", conn1);
-                conn1.Open();
+
+                if (conn1.State.ToString() == "State")
+                {
+                    conn1.Open();
+                }
+
                 SqlDataReader reader = command.ExecuteReader();
 
                 while (reader.HasRows)
@@ -1177,26 +1195,26 @@ namespace testeExcel
                 package.Dispose();
 
 
-                //SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-                //cmdArquivoCarregado.CommandText =
-                //" declare @tabela varchar(max) = 'D_Fornecedores';" +
-                //" if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
-                //" insert into S_ArquivoCarregado" +
-                //" (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                //" values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                //" GETDATE(), ' " + linha.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
-                //" else" +
-                //" insert into S_ArquivoCarregado" +
-                //" (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                //" values(" + pegarID("D_Fornecedores") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                //" GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
-                //conn.Open();
-                //SqlTransaction trA = null;
-                //trA = conn.BeginTransaction();
-                //cmdArquivoCarregado.Transaction = trA;
-                //cmdArquivoCarregado.ExecuteNonQuery();
-                //trA.Commit();
-                //conn.Close();
+                SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+                cmdArquivoCarregado.CommandText =
+                " declare @tabela varchar(max) = 'D_Fornecedores';" +
+                " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
+                " insert into S_ArquivoCarregado" +
+                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                " GETDATE(), ' " + linha.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
+                " else" +
+                " insert into S_ArquivoCarregado" +
+                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                " values(" + pegarID("D_Fornecedores") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
+                conn.Open();
+                SqlTransaction trA = null;
+                trA = conn.BeginTransaction();
+                cmdArquivoCarregado.Transaction = trA;
+                cmdArquivoCarregado.ExecuteNonQuery();
+                trA.Commit();
+                conn.Close();
             }
             catch (Exception ex)
             {
@@ -1215,28 +1233,79 @@ namespace testeExcel
         {
             string filePath = caminho;
             int linha = 1;
+            //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+            //filePath = @"C:\Base\info\produtos\produto.xlsx";
 
-            try
+            FileInfo existingFile = new FileInfo(filePath);
+            ExcelPackage package = new ExcelPackage(existingFile);
+            ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
+            //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            StringBuilder conteudo = new StringBuilder();
+            var lista = new List<String>();
+            SqlCommand cmd = conn.CreateCommand();
+            ArrayList Excel = new ArrayList();
+            ArrayList SQL = new ArrayList();
+            IEnumerable<object> distinctItemsExcel = null;
+            ArrayList numListDiff3 = new ArrayList();
+            ArrayList numListDiff4 = new ArrayList();
+
+            //try
+            //{
+
+            distinctItemsExcel = Excel.Cast<object>().Distinct();
+            int totalExcel = Excel.Cast<object>().Count();
+            int distinctCount = Excel.Cast<object>().Distinct().Count();
+
+            for (int o = workSheet.Dimension.Start.Row + 1; o <= workSheet.Dimension.End.Row; o++)
             {
-                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                //string filePath = @"C:\Base\produtos_evonik.xlsx";
-                FileInfo existingFile = new FileInfo(filePath);
-                ExcelPackage package = new ExcelPackage(existingFile);
-                ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-                StringBuilder conteudo = new StringBuilder();
-                var lista = new List<String>();
-                SqlCommand cmd = conn.CreateCommand();
+                Excel.Add(workSheet.Cells[o, 1].Value.ToString());
+            }
 
-                lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-                lblTotal.Refresh();
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
 
+            //SqlConnection conn1 = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");mbox      
+            SqlCommand command1 = new SqlCommand("SELECT * FROM D_Produtos;", conn1);
+            if(conn1.State.ToString() == "Closed")
+            {
+                conn1.Open();
+            }
+
+            SqlDataReader reader = command1.ExecuteReader();
+                while (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        SQL.Add(reader.GetString(0));
+                    }
+                    reader.NextResult();
+                }
+
+                foreach (string listElement in distinctItemsExcel)
+                {
+                    if (!SQL.Contains(listElement))
+                    {
+                        numListDiff3.Add(listElement);
+                        lblRepetido.Text = numListDiff3.ToString();
+                        lblRepetido.Refresh();
+                    }
+                    else
+                    {
+                        numListDiff4.Add(listElement);
+                        lblCarregada.Text = numListDiff4.ToString();
+                    lblCarregada.Refresh();
+                    }
+                }
+                 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    lblCarregada.Text = i.ToString();
-                    lblCarregada.Refresh();
 
-                    for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                lblCarregada.Text = i.ToString();
+                lblCarregada.Refresh();
+
+                for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
                         if ((j == 1) && workSheet.Cells[i, j].Value != null)
                         {
@@ -1265,12 +1334,12 @@ namespace testeExcel
                         }
                         else if (j == workSheet.Dimension.End.Column)
                         {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '', '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', '" + linha + "', ");
+                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '', '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace('\'', ' ') + "', '" + linha + "', ");
                             conteudo.Append(" " + pegarID("D_Compras") + "  ");
                         }
                         else
                         {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL " : "'" + workSheet.Cells[i, j].Value.ToString() + "', ");
+                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL " : "'" + workSheet.Cells[i, j].Value.ToString().Replace('\'', ' ') + "', ");
                         }
                     }
 
@@ -1283,38 +1352,37 @@ namespace testeExcel
                         conteudo.Append(")");
                         conteudo.Append(Environment.NewLine);
                     }
+
+                if (conn.State.ToString() == "Closed")
+                {
                     conn.Open();
-                    //Clipboard.SetText(conteudo.ToString());
-                    linha = linha + 1;
-                    cmd.CommandText = conteudo.ToString();
-                    SqlTransaction trE = null;
-                    trE = conn.BeginTransaction();
-                    cmd.Transaction = trE;
-                    cmd.ExecuteNonQuery();
-                    trE.Commit();
-                    conteudo.Clear();
+                }
+
+                //Clipboard.SetText(conteudo.ToString());
+                //linha = linha + 1;
+
+                cmd.CommandText = conteudo.ToString();
+                SqlTransaction trE = null;
+                //MessageBox.Show(conteudo.ToString());
+                trE = conn.BeginTransaction();
+                cmd.Transaction = trE;
+                cmd.ExecuteNonQuery();
+                trE.Commit();
+                conteudo.Clear();
+
                 }
                 package.Dispose();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de produtos realizados com sucesso");
 
-                var notification = new System.Windows.Forms.NotifyIcon()
-                {
-                    Visible = true,
-                    Icon = System.Drawing.SystemIcons.Information,
-                    // optional - BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info,
-                    // optional - BalloonTipTitle = "My Title",
-                    BalloonTipText = "Carregamento de " + linha + " registros de produtos realizados com sucesso",
-                };
+                //}
+                //catch (Exception ex)
+                //{
+                //    MessageBox.Show(ex.Message);
+                //}
+                //finally
+                //{
 
-                notification.ShowBalloonTip(5000);
-            }
+                //notification.ShowBalloonTip(5000);
+         //   }
             SqlCommand cmdArquivoCarregado = conn.CreateCommand();
             cmdArquivoCarregado.CommandText =
             " declare @tabela varchar(max) = 'D_Produtos';" +
@@ -1329,13 +1397,24 @@ namespace testeExcel
             " values(" + pegarID("D_Produtos") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
             " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
 
-            conn.Open();
+
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
+
             SqlTransaction trA = null;
             trA = conn.BeginTransaction();
             cmdArquivoCarregado.Transaction = trA;
             cmdArquivoCarregado.ExecuteNonQuery();
             trA.Commit();
             conn.Close();
+            conn1.Close();
+
+            MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + numListDiff3.Count.ToString() + " registros de produtos realizados com sucesso");
+
+            lblRepetido.Text = numListDiff4.Count.ToString();
+
         }
 
         public void Inventario()
@@ -2424,6 +2503,8 @@ namespace testeExcel
         {
             conexao = comboBoxServidor.Text;
             conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True;");
+            conn1 = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True;");
+
 
             if (conn.State.ToString() == "Closed")
             {
@@ -2473,6 +2554,8 @@ namespace testeExcel
         {
             baseDeDados = comboBoxBase.Text;
             conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
+            conn1 = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
+
         }
 
         private void button1_Click_3(object sender, EventArgs e)

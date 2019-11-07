@@ -10,4 +10,4 @@ C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\JACA.csproj.CoreCo
 C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\JACA.csproj.CopyComplete
 C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\testeCampos.exe
 C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\testeCampos.pdb
-C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\JACA.csprojResolveAssemblyReference.cache
+C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\JACA.csprojAssemblyReference.cache
