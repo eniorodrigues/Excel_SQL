@@ -192,6 +192,7 @@ namespace testeExcel
                                                   ",[Vnd_Cod_Moeda]" +
                                                   ",[Vnd_Vl_Moeda]" +
                                                   ",[Vnd_Custo] " +
+                                                  ",[Vnd_RE] " +
                                                   ",[Vnd_CNPJ] " +
                                                   ",[Lin_Origem_ID] " +
                                                   ",[Arq_Origem_ID]) " +
@@ -239,20 +240,20 @@ namespace testeExcel
                             {
                                 conteudo.Append(" '', ");
                             }
-                            //caso o que não é numero esteja em branco colocar texto branco
-                            else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value.ToString() == ""))
+                            ////caso número seja nulo colocar zero
+                            else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value == null))
                             {
                                 conteudo.Append(" " + 0 + ", ");
                             }
-                            ////caso número seja nulo colocar zero
-                            else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value == null))
+                            //caso o que não é numero esteja em branco colocar texto branco
+                            else if ((j == 9 || j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value.ToString().Equals("")))
                             {
                                 conteudo.Append(" " + 0 + ", ");
                             }
                             //caso número tirar  aspas simples
                             else if ((j == 11 || j == 12 || j == 13 || j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 23 || j == 24) && (workSheet.Cells[i, j].Value != null))
                             {
-                                conteudo.Append("" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + ", ");
+                                conteudo.Append(" " + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + ", ");
                             }
                             else if ((j == 4 || j == 3) && (workSheet.Cells[i, j].Value == null))
                             {
@@ -293,12 +294,17 @@ namespace testeExcel
                     {
                         registroConsistente++;
                     }
-                    linhaRegistro++;
+
                     if (penLayout == false)
                     {
                         cmd = conn.CreateCommand();
                         // Clipboard.SetText(conteudo.ToString());
+
+                        if(conn.State.ToString() == "Closed")
+                        {
                         conn.Open();
+                        }
+                         
                         cmd.CommandText = conteudo.ToString();
                         SqlTransaction trE = null;
                         trE = conn.BeginTransaction();
@@ -330,12 +336,14 @@ namespace testeExcel
                     " values('" + +pegarID("D_Vendas_Itens") + "', '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
                     " GETDATE(), " + registroConsistente.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
                 conn.Open();
+
                 SqlTransaction trA = null;
                 trA = conn.BeginTransaction();
                 cmdArquivoCarregado.Transaction = trA;
                 cmdArquivoCarregado.ExecuteNonQuery();
                 trA.Commit();
                 conn.Close();
+
                 MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + registroConsistente.ToString() + " registros de vendas");
             }
         }
@@ -425,9 +433,11 @@ namespace testeExcel
                                                 ",[Cmp_COFINS]" +
                                                 ",[Cmp_Und_Id]" +
                                                 ",[Cmp_CNPJ]" +
-                                                ",[Cmp_For_id_Frete]" +
-                                                ",[Cmp_For_id_Seguro]" +
                                                 ",[Cmp_Incoterm]" +
+                                                ",[Cmp_For_id_Seguro]" +
+                                                ",[Cmp_For_id_Frete]" +
+                                                ",[Cmp_Centro_Custo]" +
+                                                ",[Cmp_Centro_Lucro]" +
                                                 ",[Lin_Origem_ID]" +
                                                 ",[Arq_Origem_ID])" +
                                                 " VALUES ( ");
@@ -1171,7 +1181,7 @@ namespace testeExcel
             conteudo.Clear();
         }
 
-  
+
         public void Inventario()
         {
 
@@ -1632,17 +1642,20 @@ namespace testeExcel
                                     workSheet.Cells[i, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
                                     conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
                                 }
-                                else if ((j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 21) && (workSheet.Cells[linha, j].Value.ToString() == "" || (workSheet.Cells[i, j].Value == null)))
+                                else if ((j == 14 || j == 15 || j == 16 || j == 17 || j == 18 || j == 19 || j == 20 || j == 21) && ((workSheet.Cells[i, j].Value == null) ||workSheet.Cells[linha, j].Value.ToString() == ""))
                                 {
                                     conteudo.Append(" " + 0 + ", ");
+                                  
                                 }
                                 else if (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
                                 {
                                     conteudo.Append(" NULL, ");
+                                    
                                 }
                                 else
                                 {
-                                    conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                                    conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                                  
                                 }
                             }
                         }
@@ -1821,7 +1834,6 @@ namespace testeExcel
             try
             {
 
-<<<<<<< HEAD
 
                 string filePath = null;
                 //  string caminho = null;
@@ -1847,42 +1859,6 @@ namespace testeExcel
                 ArrayList repetido = new ArrayList();
                 ArrayList carregado = new ArrayList();
                 bool pendencia = false;
-=======
-            string filePath = null;
-          //  string caminho = null;
-
-            int linha = 1;
-            int numRepetidos = 0, numCarregados = 0,numPendencias = 0;
-
-//            SqlConnection conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\MSSQLSERVER01; Integrated Security=True; Initial Catalog=LAMPADA");
-
-  //          filePath = @"C:\Base\info\produtos\produto.xlsx";
-
-            filePath  = caminho;
-
-            FileInfo existingFile = new FileInfo(filePath);
-            ExcelPackage package = new ExcelPackage(existingFile);
-            ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-            //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-            StringBuilder conteudo = new StringBuilder();
-            var lista = new List<String>();
-            SqlCommand cmd = conn.CreateCommand();
-            ArrayList Excel = new ArrayList();
-            ArrayList SQL = new ArrayList();
-            ArrayList repetido = new ArrayList();
-            ArrayList carregado = new ArrayList();
-            bool pendencia = false;
-
-           // for (int o = workSheet.Dimension.Start.Row + 1; o <= workSheet.Dimension.End.Row; o++)
-          //  {
-            //    Excel.Add(workSheet.Cells[o, 1].Value.ToString());
-        //    }
-        
-            if (conn.State.ToString() == "Closed")
-            {
-                conn.Open();
-            }
->>>>>>> 1b92a970bd3774bc036c5c3ae53d41fe85dfad58
 
                 // for (int o = workSheet.Dimension.Start.Row + 1; o <= workSheet.Dimension.End.Row; o++)
                 //  {
@@ -1894,7 +1870,6 @@ namespace testeExcel
                     conn.Open();
                 }
 
-<<<<<<< HEAD
 
                 SqlCommand cmdProc = conn.CreateCommand();
                 SqlTransaction trProc = null;
@@ -1903,15 +1878,9 @@ namespace testeExcel
                 cmdProc.Transaction = trProc;
                 cmdProc.ExecuteNonQuery();
                 trProc.Commit();
-=======
-            for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
-            {
-                pendencia = false;
->>>>>>> 1b92a970bd3774bc036c5c3ae53d41fe85dfad58
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-<<<<<<< HEAD
                     pendencia = false;
 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
@@ -1928,47 +1897,8 @@ namespace testeExcel
                         //{
                         if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
                         {
-=======
-                    
-
-                    //if ((j == 1) && (workSheet.Cells[i, 1].Value == null))
-                    //{
-                    //    MessageBox.Show("Test");
-                    //    numPendencias++;
-                    //    lblPendencia.Text = numPendencias.ToString();
-                    //    lblPendencia.Refresh();
-                    //}
-                    //else
-                    //{
-                     if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value == ""))
-                    {
-
-                        
-                        pendencia = true;
-                        numPendencias++;
-                        lblPendencia.Text = numPendencias.ToString();
-                      
-                    }
-                    else if ((j == 1))
-                        {
-                       
-                        SqlCommand cmdeProc = conn.CreateCommand();
-                            cmdeProc.CommandType = CommandType.StoredProcedure;
-                            cmdeProc.CommandText = "[SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR]";
-                            cmdeProc.Parameters.Add("@PROD", SqlDbType.Int);
-                            cmdeProc.Parameters["@PROD"].Direction = ParameterDirection.ReturnValue;
-                            cmdeProc.Parameters.AddWithValue("@PROD", workSheet.Cells[i, j].Value);
 
 
-                            if (conn.State.ToString() == "Closed")
-                                conn.Open();
->>>>>>> 1b92a970bd3774bc036c5c3ae53d41fe85dfad58
-
-                            cmdeProc.ExecuteNonQuery();
-                            int ret = Convert.ToInt32(cmdeProc.Parameters["@PROD"].Value);
-                            conn.Close();
-
-<<<<<<< HEAD
                             pendencia = true;
                             numPendencias++;
                             lblPendencia.Text = numPendencias.ToString();
@@ -1976,21 +1906,6 @@ namespace testeExcel
                         }
                         else if ((j == 1))
                         {
-=======
-                        if (ret == 1)
-                            {
-                                numRepetidos++;
-                                lblRepetido.Text = numRepetidos.ToString();
-                                lblRepetido.Refresh();
-                            }
-                            else
-                            {
-                                numCarregados++;
-                                lblCarregada.Text = numCarregados.ToString();
-                                lblCarregada.Refresh();
-                            }
-
->>>>>>> 1b92a970bd3774bc036c5c3ae53d41fe85dfad58
 
                             SqlCommand cmdeProc = conn.CreateCommand();
                             cmdeProc.CommandType = CommandType.StoredProcedure;
@@ -1999,7 +1914,6 @@ namespace testeExcel
                             cmdeProc.Parameters["@PROD"].Direction = ParameterDirection.ReturnValue;
                             cmdeProc.Parameters.AddWithValue("@PROD", workSheet.Cells[i, j].Value);
 
-<<<<<<< HEAD
                             if (conn.State.ToString() == "Closed")
                                 conn.Open();
 
@@ -2020,8 +1934,6 @@ namespace testeExcel
                                 lblCarregada.Refresh();
                             }
 
-=======
->>>>>>> 1b92a970bd3774bc036c5c3ae53d41fe85dfad58
                             conteudo.Append(" declare @pro_id varchar(max) = '" + workSheet.Cells[i, j].Value + "';");
                             conteudo.Append(Environment.NewLine);
                             conteudo.Append(" if  (select max(pro_id) from D_Produtos where pro_id = @pro_id) = (select (pro_id) from D_Produtos where pro_id = (@pro_id)) ");
@@ -2044,27 +1956,17 @@ namespace testeExcel
                         {
                             Unidades unidade = (Unidades)System.Enum.Parse(typeof(Unidades), workSheet.Cells[i, j].Value.ToString());
                             conteudo.Append("'" + ((int)unidade).ToString() + "', ");
-<<<<<<< HEAD
-                        }
-                        else if (j == workSheet.Dimension.End.Column)
-                        {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '', '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace('\'', ' ') + "', '" + linha + "', ");
-                            conteudo.Append(" " + pegarID("D_Produtos") + "  ");
-=======
->>>>>>> 1b92a970bd3774bc036c5c3ae53d41fe85dfad58
                         }
                         else if (j == workSheet.Dimension.End.Column)
                         {
                             conteudo.Append(workSheet.Cells[i, j].Value == null ? " '', '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace('\'', ' ') + "', '" + linha + "', ");
                             conteudo.Append(" " + pegarID("D_Produtos") + "  ");
                         }
-             
                         else
                         {
                             conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL " : "'" + workSheet.Cells[i, j].Value.ToString().Replace('\'', ' ') + "', ");
                         }
 
-<<<<<<< HEAD
                     }
 
                     if (i == workSheet.Dimension.End.Row)
@@ -2080,18 +1982,10 @@ namespace testeExcel
                     if (conn.State.ToString() == "Closed")
                     {
                         conn.Open();
-=======
-                    }
-
-                    if (i == workSheet.Dimension.End.Row)
-                    {
-                        conteudo.Append(" ) ");
->>>>>>> 1b92a970bd3774bc036c5c3ae53d41fe85dfad58
                     }
 
                     if (pendencia == false)
                     {
-<<<<<<< HEAD
                         // Clipboard.SetText(conteudo.ToString());
                         cmd.CommandText = conteudo.ToString();
                         //SqlTransaction trE = null;
@@ -2127,36 +2021,6 @@ namespace testeExcel
                 throw;
             }
         }
-=======
-                        conteudo.Append(")");
-                        conteudo.Append(Environment.NewLine);
-                    }
-
-                    if (conn.State.ToString() == "Closed")
-                    {
-                        conn.Open();
-                    }
-
-                    if (pendencia == false) {
-                    Clipboard.SetText(conteudo.ToString());
-                    cmd.CommandText = conteudo.ToString();
-                    SqlTransaction trE = null;
-                    trE = conn.BeginTransaction();
-                    cmd.Transaction = trE;
-                    cmd.ExecuteNonQuery();
-                    trE.Commit();
-
-                    }
- 
-                conteudo.Clear();
-                //        }
-            }
-
-            
-
-
-            package.Dispose();
->>>>>>> 1b92a970bd3774bc036c5c3ae53d41fe85dfad58
 
 
         public void fazTransacao(SqlConnection conn, SqlCommand command)
@@ -2189,13 +2053,9 @@ namespace testeExcel
                 " GETDATE(), " + numCarregados.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
                 "IF (OBJECT_ID('SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR') IS NOT NULL)  DROP PROCEDURE SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR  ";
         }
- 
 
         private void button1_Click_2(object sender, EventArgs e)
         {
-            lblCarregada.Text = "0";
-            lblRepetido.Text = "0";
-            lblPendencia.Text = "0";
 
             if (cmbTabela.SelectedItem.Equals("D_Custo_Medio"))
             {
@@ -2243,7 +2103,9 @@ namespace testeExcel
             //    MessageBox.Show("Selecione uma tabela para carregamento");
             //}
 
-        
+            //  lblCarregada.Text = "0";
+            //  lblRepetido.Text = "0";
+            //  lblPendencia.Text = "0";
 
         }
 
@@ -2456,9 +2318,7 @@ namespace testeExcel
             FUA = 996,
             XAU = 998
         }
-
-
-
+         
         enum Unidades
         {
             NULL = 11,
@@ -2670,21 +2530,10 @@ namespace testeExcel
 
             System.Data.DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
 
-<<<<<<< HEAD
             if (servers.Rows.Count > 0)
             {
                 comboBoxServidor.Items.Add(servers.Rows[0]["ServerName"]);
-
-
-
-=======
-            if(servers.Rows.Count > 0)
-            {
-                comboBoxServidor.Items.Add(servers.Rows[0]["ServerName"]);
-            
-            
-
->>>>>>> 1b92a970bd3774bc036c5c3ae53d41fe85dfad58
+                 
                 for (int i = 0; i < servers.Rows.Count; i++)
                 {
 
@@ -2705,11 +2554,7 @@ namespace testeExcel
             {
                 comboBoxServidor.Items.Add(myServer);
             }
-<<<<<<< HEAD
 
-=======
-            
->>>>>>> 1b92a970bd3774bc036c5c3ae53d41fe85dfad58
         }
 
         private void comboBoxBase_SelectedIndexChanged(object sender, EventArgs e)
@@ -2757,12 +2602,12 @@ namespace testeExcel
 
                 List<string[]> headerRowCompras = new List<string[]>()
                     {
-                        new string[] { "Código do Produto",   "Código Divisão",   "Código do Fornecedor", "Lançamento",   "Fatura",   "BL Data",  "Número da DI",    "Data da Importação",   "N da NF de Entrada",  "Serie",    "Data Entrada NF",  "CFOP NF Entrada",  "Data de Vencimento Média", "Dias", "Quantidade",   "Valor FOB (Moeda Estrangeira)",    "Código da Moeda Estrangeira",  "Frete",    "Seguro",   "Código Moeda Frete",   "Código Moeda Seguro",  "Imposto de Importação (Reais)",    "Icms", "Pis",  "Cofins", "Unidade", "CNPJ", "Id For Frete", "Id For Seguro", "Incoterm"}
+                        new string[] { "Código do Produto",   "Código Divisão",   "Código do Fornecedor", "Lançamento",   "Fatura",   "BL Data",  "Número da DI",    "Data da Importação",   "N da NF de Entrada",  "Serie",    "Data Entrada NF",  "CFOP NF Entrada",  "Data de Vencimento Média", "Dias", "Quantidade",   "Valor FOB (Moeda Estrangeira)",    "Código da Moeda Estrangeira",  "Frete",    "Seguro",   "Código Moeda Frete",   "Código Moeda Seguro",  "Imposto de Importação (Reais)",    "Icms", "Pis",  "Cofins", "Unidade", "CNPJ", "Incoterm",  "Id Fornecedor Seguro", "Id Fornecedor Frete" , "Centro de Custo", "Centro de Lucro"}
                     };
 
                 List<string[]> headerRowVendas = new List<string[]>()
                     {
-                      new string[] {"Código do Cliente",    "Número NF",    "Série NF", "Código da Divisão", "CFOP", "Data Emissão", "Data Vencimento",  "Prazo de Vencimento", "Item Nota Fiscal", "Código do Produto",    "Quantidade",   "Valor Venda sem o IPI (Reais)",  "Descontos Incondicionais", "ICMS", "PIS",  "COFINS",   "ISS",  "Comissão", "Frete",  "Seguro",   "Data de Embarque", "Código Moeda Estrangeira", "Valor em Moeda Estrangeira",   "Custo da Venda (CPV)" , "CNPJ" }
+                      new string[] {"Código do Cliente",    "Número NF",    "Série NF", "Código da Divisão", "CFOP", "Data Emissão", "Data Vencimento",  "Prazo de Vencimento", "Item Nota Fiscal", "Código do Produto",    "Quantidade",   "Valor Venda sem o IPI (Reais)",  "Descontos Incondicionais", "ICMS", "PIS",  "COFINS",   "ISS",  "Comissão", "Frete",  "Seguro",   "Data de Embarque", "Código Moeda Estrangeira", "Valor em Moeda Estrangeira",   "Custo da Venda (CPV)" ,"RE", "CNPJ" }
                     };
 
                 List<string[]> headerRowOrdem = new List<string[]>()
