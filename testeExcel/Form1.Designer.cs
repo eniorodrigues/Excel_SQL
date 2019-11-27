@@ -188,7 +188,7 @@
             // lblCarregada
             // 
             this.lblCarregada.AutoSize = true;
-            this.lblCarregada.Location = new System.Drawing.Point(552, 237);
+            this.lblCarregada.Location = new System.Drawing.Point(528, 237);
             this.lblCarregada.Name = "lblCarregada";
             this.lblCarregada.Size = new System.Drawing.Size(18, 20);
             this.lblCarregada.TabIndex = 37;
@@ -197,7 +197,7 @@
             // lblTotal
             // 
             this.lblTotal.AutoSize = true;
-            this.lblTotal.Location = new System.Drawing.Point(553, 177);
+            this.lblTotal.Location = new System.Drawing.Point(528, 178);
             this.lblTotal.Name = "lblTotal";
             this.lblTotal.Size = new System.Drawing.Size(18, 20);
             this.lblTotal.TabIndex = 37;
@@ -215,7 +215,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(399, 237);
+            this.label5.Location = new System.Drawing.Point(375, 237);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(147, 20);
             this.label5.TabIndex = 38;
@@ -224,7 +224,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(297, 257);
+            this.label2.Location = new System.Drawing.Point(273, 257);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(249, 20);
             this.label2.TabIndex = 38;
@@ -233,7 +233,7 @@
             // lblPendencia
             // 
             this.lblPendencia.AutoSize = true;
-            this.lblPendencia.Location = new System.Drawing.Point(552, 257);
+            this.lblPendencia.Location = new System.Drawing.Point(528, 257);
             this.lblPendencia.Name = "lblPendencia";
             this.lblPendencia.Size = new System.Drawing.Size(18, 20);
             this.lblPendencia.TabIndex = 37;
@@ -242,7 +242,7 @@
             // lblRepetido
             // 
             this.lblRepetido.AutoSize = true;
-            this.lblRepetido.Location = new System.Drawing.Point(552, 278);
+            this.lblRepetido.Location = new System.Drawing.Point(528, 278);
             this.lblRepetido.Name = "lblRepetido";
             this.lblRepetido.Size = new System.Drawing.Size(18, 20);
             this.lblRepetido.TabIndex = 37;
@@ -251,7 +251,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(460, 276);
+            this.label8.Location = new System.Drawing.Point(436, 276);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(86, 20);
             this.label8.TabIndex = 38;

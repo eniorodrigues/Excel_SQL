@@ -45,7 +45,6 @@ C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\bin\Debug\EPPlus.xml
 C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Debug\testeExcel.Form1.resources
 C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Debug\testeCampos.Properties.Resources.resources
 C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Debug\JACA.csproj.GenerateResource.cache
-C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Debug\JACA.csproj.CoreCompileInputs.cache
 C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Debug\JACA.csproj.CopyComplete
 C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Debug\testeCampos.exe
 C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Debug\testeCampos.pdb

@@ -436,8 +436,6 @@ namespace testeExcel
                                                 ",[Cmp_Incoterm]" +
                                                 ",[Cmp_For_id_Seguro]" +
                                                 ",[Cmp_For_id_Frete]" +
-                                                ",[Cmp_Centro_Custo]" +
-                                                ",[Cmp_Centro_Lucro]" +
                                                 ",[Lin_Origem_ID]" +
                                                 ",[Arq_Origem_ID])" +
                                                 " VALUES ( ");
@@ -541,7 +539,7 @@ namespace testeExcel
                     if (penLayout == false)
                     {
                         cmd = conn.CreateCommand();
-                        //  Clipboard.SetText(conteudo.ToString());
+                          Clipboard.SetText(conteudo.ToString());
                         conn.Open();
                         cmd.CommandText = conteudo.ToString();
                         SqlTransaction trE = null;
@@ -1200,6 +1198,7 @@ namespace testeExcel
                 StringBuilder conteudo = new StringBuilder();
                 var lista = new List<String>();
                 SqlCommand cmd = conn.CreateCommand();
+                string produto = "", cnpj = "";
 
                 lblTotal.Text = workSheet.Dimension.End.Row.ToString();
                 lblTotal.Refresh();
@@ -1213,11 +1212,27 @@ namespace testeExcel
                     {
                         if (j == workSheet.Dimension.End.Column)
                         {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? "0, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
+
+                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '' , '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
+
+                            cnpj = (workSheet.Cells[i, j].Value == null ? " " :  workSheet.Cells[i, j].Value.ToString());;
+                            
                             conteudo.Append(" " + pegarID("D_INVENTARIO_CARGA") + "  ");
                         }
                         else if ((j == 1) && workSheet.Cells[i, j].Value != null)
                         {
+                            produto = workSheet.Cells[i, j].Value.ToString();
+
+                            conteudo.Append(" declare @inv_pro_id varchar(max)  = '" + produto + "';");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append(" declare @cnpj varchar(max) = '" + cnpj + "';");
+                           // MessageBox.Show("Test " + cnpj);
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append("  if  (select max(inv_pro_id) from D_Inventario_Carga where inv_pro_id = @inv_pro_id and  Inv_CNPJ = @cnpj) > '' ");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append(" print 'OK' ");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append(" else ");
                             conteudo.Append(" INSERT INTO D_INVENTARIO_CARGA " +
                                             " (INV_PRO_ID, " +
                                             " INV_DATA, " +
@@ -1230,8 +1245,10 @@ namespace testeExcel
                                             " VALUES ( ");
                             conteudo.Append(" '" + workSheet.Cells[i, j].Value.ToString() + "', ");
                         }
+  
                         else
                         {
+                         
                             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
                             {
                                 DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
@@ -1266,7 +1283,7 @@ namespace testeExcel
                         conteudo.Append(Environment.NewLine);
                     }
                     conn.Open();
-                    //Clipboard.SetText(conteudo.ToString());
+                    Clipboard.SetText(conteudo.ToString());
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
                     SqlTransaction trE = null;
@@ -1285,12 +1302,12 @@ namespace testeExcel
                 " insert into S_ArquivoCarregado" +
                 " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
                 " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                " GETDATE(), ' " + linha.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
+                " GETDATE(), ' " + lblCarregada.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
                 " else" +
                 " insert into S_ArquivoCarregado" +
                 " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
                 " values(" + pegarID("D_Inventario_Carga") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
+                " GETDATE(), " + lblCarregada.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
 
                 conn.Open();
                 SqlTransaction trA = null;
@@ -1325,6 +1342,7 @@ namespace testeExcel
             var lista = new List<String>();
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
+            if(conn.State.ToString() =="Closed")
             conn.Open();
 
             lblTotal.Text = workSheet.Dimension.End.Row.ToString();
@@ -2602,7 +2620,7 @@ namespace testeExcel
 
                 List<string[]> headerRowCompras = new List<string[]>()
                     {
-                        new string[] { "Código do Produto",   "Código Divisão",   "Código do Fornecedor", "Lançamento",   "Fatura",   "BL Data",  "Número da DI",    "Data da Importação",   "N da NF de Entrada",  "Serie",    "Data Entrada NF",  "CFOP NF Entrada",  "Data de Vencimento Média", "Dias", "Quantidade",   "Valor FOB (Moeda Estrangeira)",    "Código da Moeda Estrangeira",  "Frete",    "Seguro",   "Código Moeda Frete",   "Código Moeda Seguro",  "Imposto de Importação (Reais)",    "Icms", "Pis",  "Cofins", "Unidade", "CNPJ", "Incoterm",  "Id Fornecedor Seguro", "Id Fornecedor Frete" , "Centro de Custo", "Centro de Lucro"}
+                        new string[] { "Código do Produto",   "Código Divisão",   "Código do Fornecedor", "Lançamento",   "Fatura",   "BL Data",  "Número da DI",    "Data da Importação",   "N da NF de Entrada",  "Serie",    "Data Entrada NF",  "CFOP NF Entrada",  "Data de Vencimento Média", "Dias", "Quantidade",   "Valor FOB (Moeda Estrangeira)",    "Código da Moeda Estrangeira",  "Frete",    "Seguro",   "Código Moeda Frete",   "Código Moeda Seguro",  "Imposto de Importação (Reais)",    "Icms", "Pis",  "Cofins", "Unidade", "CNPJ", "Incoterm",  "Id Fornecedor Seguro", "Id Fornecedor Frete" }
                     };
 
                 List<string[]> headerRowVendas = new List<string[]>()
