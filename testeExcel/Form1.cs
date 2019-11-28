@@ -1183,15 +1183,14 @@ namespace testeExcel
         public void Inventario()
         {
 
-            int linha = 1;
-            string filePath = caminho;
-
-            try
-            {
+                int linha = 1;
+                string filePath = caminho;
+                int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
+                //try
+                //{
                 //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
                 //string filePath = @"C:\Base\saldos_maio_evonik_2019.xlsx";
                 // ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
@@ -1199,29 +1198,75 @@ namespace testeExcel
                 var lista = new List<String>();
                 SqlCommand cmd = conn.CreateCommand();
                 string produto = "", cnpj = "";
+                bool pendencia = false;
+             
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
 
-                lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-                lblTotal.Refresh();
-
+                SqlCommand cmdProc = conn.CreateCommand();
+                SqlTransaction trProc = null;
+                cmdProc.CommandText = "CREATE or ALTER PROCEDURE [dbo].[SP_VERIFICA_INVENTARIO_REPETIDOS_CARREGADOR] @PRO_ID VARCHAR(MAX), @CNPJ VARCHAR(MAX)  AS BEGIN IF NOT EXISTS(SELECT * FROM D_Inventario_Carga WHERE inv_pro_id = @PRO_ID and Inv_CNPJ = @CNPJ)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
+                trProc = conn.BeginTransaction();
+                cmdProc.Transaction = trProc;
+                cmdProc.ExecuteNonQuery();
+                trProc.Commit();
+             
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    lblCarregada.Text = i.ToString();
-                    lblCarregada.Refresh();
+                    pendencia = false;
 
-                    for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                   for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
-                        if (j == workSheet.Dimension.End.Column)
+                        if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
                         {
+                        pendencia = true;
+                        numPendencias++;
+                        lblPendencia.Text = numPendencias.ToString();
+                        }
 
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '' , '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
-
-                            cnpj = (workSheet.Cells[i, j].Value == null ? " " :  workSheet.Cells[i, j].Value.ToString());;
-                            
+                    if (j == workSheet.Dimension.End.Column)
+                        {
+                            cnpj = (workSheet.Cells[i, j].Value == null ? " " : workSheet.Cells[i, j].Value.ToString()); ;
+                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '' , '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString() + "' , '" + linha + "', ");
                             conteudo.Append(" " + pegarID("D_INVENTARIO_CARGA") + "  ");
                         }
                         else if ((j == 1) && workSheet.Cells[i, j].Value != null)
                         {
-                            produto = workSheet.Cells[i, j].Value.ToString();
+
+                        SqlCommand cmdeProc = conn.CreateCommand();
+                        cmdeProc.CommandType = CommandType.StoredProcedure;
+                        cmdeProc.CommandText = "[SP_VERIFICA_INVENTARIO_REPETIDOS_CARREGADOR]";
+                        cmdeProc.Parameters.Add("@PRO_ID", SqlDbType.VarChar);
+                        cmdeProc.Parameters["@PRO_ID"].Direction = ParameterDirection.ReturnValue;
+                        cmdeProc.Parameters.AddWithValue("@PRO_ID", produto);
+                        cmdeProc.Parameters.Add("@CNPJ", SqlDbType.VarChar);
+                        cmdeProc.Parameters["@CNPJ"].Direction = ParameterDirection.ReturnValue;
+                        cmdeProc.Parameters.AddWithValue("@CNPJ", cnpj);
+
+                        if (conn.State.ToString() == "Closed")
+                            conn.Open();
+
+                        cmdeProc.ExecuteNonQuery();
+                        int ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
+
+                        conn.Close();
+
+                        if (ret == 1)
+                        {
+                            numRepetidos++;
+                            lblRepetido.Text = numRepetidos.ToString();
+                            lblRepetido.Refresh();
+                        }
+                        else
+                        {
+                            numCarregados++;
+                            lblCarregada.Text = numCarregados.ToString();
+                            lblCarregada.Refresh();
+                        }
+
+                        produto = workSheet.Cells[i, j].Value.ToString();
 
                             conteudo.Append(" declare @inv_pro_id varchar(max)  = '" + produto + "';");
                             conteudo.Append(Environment.NewLine);
@@ -1295,36 +1340,44 @@ namespace testeExcel
                 }
                 package.Dispose();
 
-                SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-                cmdArquivoCarregado.CommandText =
-                " declare @tabela varchar(max) = 'D_Inventario_Carga';" +
-                " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
-                " insert into S_ArquivoCarregado" +
-                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                " GETDATE(), ' " + lblCarregada.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
-                " else" +
-                " insert into S_ArquivoCarregado" +
-                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                " values(" + pegarID("D_Inventario_Carga") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                " GETDATE(), " + lblCarregada.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
+         //       SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+                //cmdArquivoCarregado.CommandText =
+                //" declare @tabela varchar(max) = 'D_Inventario_Carga';" +
+                //" if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
+                //" insert into S_ArquivoCarregado" +
+                //" (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                //" values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                //" GETDATE(), ' " + lblCarregada.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
+                //" else" +
+                //" insert into S_ArquivoCarregado" +
+                //" (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                //" values(" + pegarID("D_Inventario_Carga") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                //" GETDATE(), " + lblCarregada.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
+             
+            if (numCarregados == 0)
+            {
+                MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de fornecedores carregado");
+            }
+            else
+            {
+                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + numCarregados.ToString() + " registros de inventario realizados com sucesso");
 
-                conn.Open();
-                SqlTransaction trA = null;
-                trA = conn.BeginTransaction();
-                cmdArquivoCarregado.Transaction = trA;
-                cmdArquivoCarregado.ExecuteNonQuery();
-                trA.Commit();
-                conn.Close();
+                SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+                cmdArquivoCarregado.CommandText = gravaId(caminho, numCarregados, "D_Inventario_Carga");
+                fazTransacao(conn, cmdArquivoCarregado);
+                gravaId(caminho, numCarregados, "D_Inventario_Carga");
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de inventario realizados com sucesso");
-            }
+            conteudo.Clear();
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show(ex.Message);
+            //}
+            //finally
+            //{
+            //    MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de inventario realizados com sucesso");
+            //}
         }
 
 
