@@ -1216,24 +1216,35 @@ namespace testeExcel
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
                     pendencia = false;
+                cnpj = null;
+                produto = null;
+                for (int k = workSheet.Dimension.End.Column; k <= workSheet.Dimension.End.Column; k++)
+                {
+                    cnpj = (workSheet.Cells[i, k].Value == null ? " " : workSheet.Cells[i, k].Value.ToString());
 
-                   for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                }
+
+                for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
-                        if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+
+                    if (j == workSheet.Dimension.End.Column)
+                    {
+                        conteudo.Append(workSheet.Cells[i, j].Value == null ? " '' , '" + linha + "', " : " '" + cnpj + "' , '" + linha + "', ");
+                        conteudo.Append(" " + pegarID("D_INVENTARIO_CARGA") + "  ");
+
+                    }
+
+                    else if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
                         {
                         pendencia = true;
                         numPendencias++;
                         lblPendencia.Text = numPendencias.ToString();
                         }
-
-                       if (j == workSheet.Dimension.End.Column)
-                        {
-                            cnpj = (workSheet.Cells[i, j].Value == null ? " " : workSheet.Cells[i, j].Value.ToString()); ;
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '' , '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString() + "' , '" + linha + "', ");
-                            conteudo.Append(" " + pegarID("D_INVENTARIO_CARGA") + "  ");
-                        }
+                                         
                         else if ((j == 1) && workSheet.Cells[i, j].Value != null)
                         {
+
+                        produto = workSheet.Cells[i, j].Value.ToString();
 
                         SqlCommand cmdeProc = conn.CreateCommand();
                         cmdeProc.CommandType = CommandType.StoredProcedure;
@@ -1245,22 +1256,11 @@ namespace testeExcel
                         cmdeProc.Parameters["@CNPJ"].Direction = ParameterDirection.ReturnValue;
                         cmdeProc.Parameters.AddWithValue("@CNPJ", cnpj);
 
-
+              
                         if (conn.State.ToString() == "Closed")
                             conn.Open();
                         cmdeProc.ExecuteNonQuery();
-
-                        //int ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
-                        //returnParameter.Direction = ParameterDirection.ReturnValue;
-                        //MessageBox.Show("PRO_ID " + cmdeProc.Parameters["@PRO_ID"].Value.ToString());
-
-                        var returnParameter = cmdeProc.Parameters.Add("@PRO_ID", SqlDbType.Int);
-                        returnParameter.Direction = ParameterDirection.ReturnValue;
-
-                        var result = returnParameter.Value;
-                        MessageBox.Show("Test " + result.ToString());
-
-                        int ret = 1;
+                        int ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
 
                         conn.Close();
 
@@ -1277,7 +1277,6 @@ namespace testeExcel
                             lblCarregada.Refresh();
                         }
 
-                        produto = workSheet.Cells[i, j].Value.ToString();
 
                             conteudo.Append(" declare @inv_pro_id varchar(max)  = '" + produto + "';");
                             conteudo.Append(Environment.NewLine);
@@ -1338,8 +1337,13 @@ namespace testeExcel
                         conteudo.Append(")");
                         conteudo.Append(Environment.NewLine);
                     }
-                    conn.Open();
-                    Clipboard.SetText(conteudo.ToString());
+                    if(conn.State.ToString() == "Closed")
+                        {
+                            conn.Open();
+
+                        }
+
+                Clipboard.SetText(conteudo.ToString());
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
                     SqlTransaction trE = null;
@@ -1367,7 +1371,7 @@ namespace testeExcel
              
             if (numCarregados == 0)
             {
-                MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de fornecedores carregado");
+                MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de imvdmtario carregado");
             }
             else
             {
@@ -1378,6 +1382,7 @@ namespace testeExcel
                 fazTransacao(conn, cmdArquivoCarregado);
                 gravaId(caminho, numCarregados, "D_Inventario_Carga");
             }
+
             conteudo.Clear();
 
             //}
