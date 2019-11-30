@@ -1226,7 +1226,7 @@ namespace testeExcel
                         lblPendencia.Text = numPendencias.ToString();
                         }
 
-                    if (j == workSheet.Dimension.End.Column)
+                       if (j == workSheet.Dimension.End.Column)
                         {
                             cnpj = (workSheet.Cells[i, j].Value == null ? " " : workSheet.Cells[i, j].Value.ToString()); ;
                             conteudo.Append(workSheet.Cells[i, j].Value == null ? " '' , '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString() + "' , '" + linha + "', ");
@@ -1245,11 +1245,22 @@ namespace testeExcel
                         cmdeProc.Parameters["@CNPJ"].Direction = ParameterDirection.ReturnValue;
                         cmdeProc.Parameters.AddWithValue("@CNPJ", cnpj);
 
+
                         if (conn.State.ToString() == "Closed")
                             conn.Open();
-
                         cmdeProc.ExecuteNonQuery();
-                        int ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
+
+                        //int ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
+                        //returnParameter.Direction = ParameterDirection.ReturnValue;
+                        //MessageBox.Show("PRO_ID " + cmdeProc.Parameters["@PRO_ID"].Value.ToString());
+
+                        var returnParameter = cmdeProc.Parameters.Add("@PRO_ID", SqlDbType.Int);
+                        returnParameter.Direction = ParameterDirection.ReturnValue;
+
+                        var result = returnParameter.Value;
+                        MessageBox.Show("Test " + result.ToString());
+
+                        int ret = 1;
 
                         conn.Close();
 
