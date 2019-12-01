@@ -143,11 +143,11 @@ namespace testeExcel
                     lblCarregada.Refresh();
 
                     penLayout = false;
-                    for (int j = workSheet.Dimension.Start.Column; j <= 25; j++)
+                    for (int j = workSheet.Dimension.Start.Column; j <= 26; j++)
                     {
-                        if (j == 25)
+                        if (j == 26)
                         {
-                            if (workSheet.Cells[i, j].Value == null)
+                            if (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString().Equals(""))
                             {
                                 conteudo.Append(" '', '" + linhaRegistro + "', ");
                                 conteudo.Append(" " + pegarID("D_Vendas_Itens") + " ");
@@ -236,7 +236,7 @@ namespace testeExcel
                                 DateTime dt = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", null);
                                 conteudo.Append("'" + dt + "', ");
                             }
-                            else if ((j == 6 || j == 7 || j == 8 || j == 21 || j == 22) && workSheet.Cells[i, j].Value == null)
+                            else if ((j == 6 || j == 7 || j == 8 || j == 21 || j == 22 || j == 25 || j == 26) && workSheet.Cells[i, j].Value == null)
                             {
                                 conteudo.Append(" '', ");
                             }
@@ -304,7 +304,7 @@ namespace testeExcel
                         {
                         conn.Open();
                         }
-                         
+                        Clipboard.SetText(conteudo.ToString());
                         cmd.CommandText = conteudo.ToString();
                         SqlTransaction trE = null;
                         trE = conn.BeginTransaction();
