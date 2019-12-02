@@ -189,7 +189,7 @@
             // lblCarregada
             // 
             this.lblCarregada.AutoSize = true;
-            this.lblCarregada.Location = new System.Drawing.Point(507, 261);
+            this.lblCarregada.Location = new System.Drawing.Point(507, 263);
             this.lblCarregada.Name = "lblCarregada";
             this.lblCarregada.Size = new System.Drawing.Size(18, 20);
             this.lblCarregada.TabIndex = 37;
@@ -234,7 +234,7 @@
             // lblPendencia
             // 
             this.lblPendencia.AutoSize = true;
-            this.lblPendencia.Location = new System.Drawing.Point(507, 281);
+            this.lblPendencia.Location = new System.Drawing.Point(507, 283);
             this.lblPendencia.Name = "lblPendencia";
             this.lblPendencia.Size = new System.Drawing.Size(18, 20);
             this.lblPendencia.TabIndex = 37;
@@ -243,7 +243,7 @@
             // lblRepetido
             // 
             this.lblRepetido.AutoSize = true;
-            this.lblRepetido.Location = new System.Drawing.Point(507, 302);
+            this.lblRepetido.Location = new System.Drawing.Point(507, 304);
             this.lblRepetido.Name = "lblRepetido";
             this.lblRepetido.Size = new System.Drawing.Size(18, 20);
             this.lblRepetido.TabIndex = 37;

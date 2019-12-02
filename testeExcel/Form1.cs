@@ -142,8 +142,8 @@ namespace testeExcel
                 //StringBuilder conteudo = new StringBuilder();
                 //SqlCommand cmd = conn.CreateCommand();
 
-                lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-                lblTotal.Refresh();
+                //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+                //lblTotal.Refresh();
                 //MessageBox.Show(workSheet.Dimension.End.Row.ToString());
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
@@ -378,8 +378,8 @@ namespace testeExcel
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
 
-                lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-                lblTotal.Refresh();
+                //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+                //lblTotal.Refresh();
 
                 ///// temporario
                 //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
@@ -873,7 +873,7 @@ namespace testeExcel
 
             SqlCommand cmdProc = conn.CreateCommand();
             SqlTransaction trProc = null;
-            cmdProc.CommandText = "create or alter PROCEDURE [dbo].[SP_VERIFICA_CLIENTES_REPETIDOS_CARREGADOR] @CLI VARCHAR(MAX) AS BEGIN IF NOT EXISTS(SELECT * FROM D_Clientes WHERE Cli_Id = @CLI)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
+            cmdProc.CommandText = "create or alter PROCEDURE [dbo].[SP_VERIF_CLI_REPT_CARREGADOR] @CLI VARCHAR(MAX) AS BEGIN IF NOT EXISTS(SELECT * FROM D_Clientes WHERE Cli_Id = @CLI)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
             trProc = conn.BeginTransaction();
             cmdProc.Transaction = trProc;
             cmdProc.ExecuteNonQuery();
@@ -1262,7 +1262,7 @@ namespace testeExcel
              
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    pendencia = false;
+                pendencia = false;
                 cnpj = null;
                 produto = null;
                 for (int k = workSheet.Dimension.End.Column; k <= workSheet.Dimension.End.Column; k++)
@@ -1474,8 +1474,8 @@ namespace testeExcel
             if(conn.State.ToString() =="Closed")
             conn.Open();
 
-            lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-            lblTotal.Refresh();
+            //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+            //lblTotal.Refresh();
 
             try
             {
@@ -1626,8 +1626,8 @@ namespace testeExcel
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
 
-            lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-            lblTotal.Refresh();
+            //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+            //lblTotal.Refresh();
 
             try
             {
@@ -1758,8 +1758,8 @@ namespace testeExcel
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
 
-            lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-            lblTotal.Refresh();
+            //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+            //lblTotal.Refresh();
 
             try
             {
@@ -1909,6 +1909,7 @@ namespace testeExcel
             try
             {
             string filePath = caminho;
+            int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
             //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
             //string filePath = @"C:\Base\custo.xlsx";
             FileInfo existingFile = new FileInfo(filePath);
@@ -1920,8 +1921,8 @@ namespace testeExcel
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
 
-            lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-            lblTotal.Refresh();
+            //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
+            //lblTotal.Refresh();
 
             try
             {
@@ -1947,7 +1948,7 @@ namespace testeExcel
                         }
                         if (j == workSheet.Dimension.End.Column)
                         {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? "0, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
+                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '' , '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
                             conteudo.Append(" " + pegarID("D_Custo_Medio") + " ");
                         }
                         else
@@ -1997,30 +1998,43 @@ namespace testeExcel
                 MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha.ToString() + " registros de  Custo Médio");
             }
 
-            SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-            cmdArquivoCarregado.CommandText =
-            " declare @tabela varchar(max) = 'D_Custo_Medio';" +
-            " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
-            " insert into S_ArquivoCarregado" +
-            " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-            " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-            " GETDATE(), ' " + linha.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
-            " else" +
-            " insert into S_ArquivoCarregado" +
-            " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-            " values(" + pegarID("D_Custo_Medio") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-            " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
-            if (conn.State.ToString() == "Closed")
-            {
-                conn.Open();
-            }
-            SqlTransaction trA = null;
-            trA = conn.BeginTransaction();
-            cmdArquivoCarregado.Transaction = trA;
-            cmdArquivoCarregado.ExecuteNonQuery();
-            trA.Commit();
+                //SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+                //cmdArquivoCarregado.CommandText =
+                //" declare @tabela varchar(max) = 'D_Custo_Medio';" +
+                //" if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
+                //" insert into S_ArquivoCarregado" +
+                //" (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                //" values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                //" GETDATE(), ' " + linha.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
+                //" else" +
+                //" insert into S_ArquivoCarregado" +
+                //" (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                //" values(" + pegarID("D_Custo_Medio") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                //" GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
+                //if (conn.State.ToString() == "Closed")
+                //{
+                //    conn.Open();
+                //}
+                //SqlTransaction trA = null;
+                //trA = conn.BeginTransaction();
+                //cmdArquivoCarregado.Transaction = trA;
+                //cmdArquivoCarregado.ExecuteNonQuery();
+                //trA.Commit();
 
-            conn.Close();
+                //conn.Close();
+
+
+                //if (numCarregados == 0)
+                //{
+                //    MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de produtos carregado");
+                //}
+                //else
+                //{
+                    MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + numCarregados.ToString() + " registros de produtos realizados com sucesso");
+                    SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+                    cmdArquivoCarregado.CommandText = gravaId(caminho, numCarregados, "D_Produtos");
+                    fazTransacao(conn, cmdArquivoCarregado);
+              //  }
 
 
             }
@@ -2953,7 +2967,7 @@ namespace testeExcel
             StringBuilder conteudo = new StringBuilder();
             var lista = new List<String>();
             SqlCommand cmd = conn.CreateCommand();
-            int linha = 1;
+         //   int linha = 1;
 
             lblTotal.Text = (workSheet.Dimension.End.Row - 1).ToString();
             lblTotal.Refresh();
