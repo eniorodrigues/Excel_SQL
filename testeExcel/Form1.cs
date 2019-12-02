@@ -54,7 +54,7 @@ namespace testeExcel
         private void buttonAbrir_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.InitialDirectory = "C:\\";
+          //  openFileDialog1.InitialDirectory = "C:\\";
             openFileDialog1.Filter = "Excel files (*.xlsx)|*.xlsx";
             openFileDialog1.FilterIndex = 2;
             openFileDialog1.RestoreDirectory = true;
@@ -304,7 +304,7 @@ namespace testeExcel
                         {
                         conn.Open();
                         }
-                        Clipboard.SetText(conteudo.ToString());
+                       // Clipboard.SetText(conteudo.ToString());
                         cmd.CommandText = conteudo.ToString();
                         SqlTransaction trE = null;
                         trE = conn.BeginTransaction();
@@ -335,7 +335,10 @@ namespace testeExcel
                     " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
                     " values('" + +pegarID("D_Vendas_Itens") + "', '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
                     " GETDATE(), " + registroConsistente.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
-                conn.Open();
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
 
                 SqlTransaction trA = null;
                 trA = conn.BeginTransaction();
@@ -539,8 +542,11 @@ namespace testeExcel
                     if (penLayout == false)
                     {
                         cmd = conn.CreateCommand();
-                          Clipboard.SetText(conteudo.ToString());
-                        conn.Open();
+                        //     Clipboard.SetText(conteudo.ToString());
+                        if (conn.State.ToString() == "Closed")
+                        {
+                            conn.Open();
+                        }
                         cmd.CommandText = conteudo.ToString();
                         SqlTransaction trE = null;
                         trE = conn.BeginTransaction();
@@ -567,8 +573,10 @@ namespace testeExcel
                 " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
                 " values(" + pegarID("D_Compras") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
                 " GETDATE(), " + registroConsistente.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
-
-                conn.Open();
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
                 SqlTransaction trA = null;
                 trA = conn.BeginTransaction();
                 cmdArquivoCarregado.Transaction = trA;
@@ -665,7 +673,10 @@ namespace testeExcel
                     }
                 }
                 //  conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                conn.Open();
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
                 SqlCommand cmda = conn.CreateCommand();
                 cmda.CommandText = conteudo.ToString();
                 SqlTransaction trEa = null;
@@ -807,7 +818,11 @@ namespace testeExcel
                 }
 
                 //Clipboard.SetText(conteudo.ToString());
-                conn.Open();
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+
                 cmd.CommandText = conteudo.ToString();
                 SqlTransaction trE = null;
                 trE = conn.BeginTransaction();
@@ -881,8 +896,10 @@ namespace testeExcel
                         cmdeProc.Parameters.AddWithValue("@CLI", workSheet.Cells[i, j].Value.ToString());
 
                         if (conn.State.ToString() == "Closed")
-                            conn.Open();
-
+                        {
+                        conn.Open();
+                        }
+                           
                         cmdeProc.ExecuteNonQuery();
                         int ret = Convert.ToInt32(cmdeProc.Parameters["@CLI"].Value);
 
@@ -1066,7 +1083,10 @@ namespace testeExcel
                         cmdeProc.Parameters.AddWithValue("@FOR", workSheet.Cells[i, j].Value.ToString());
 
                         if (conn.State.ToString() == "Closed")
-                            conn.Open();
+                        {
+                        conn.Open();
+                        }
+                            
 
                         cmdeProc.ExecuteNonQuery();
                         int ret = Convert.ToInt32(cmdeProc.Parameters["@FOR"].Value);
@@ -1207,7 +1227,7 @@ namespace testeExcel
 
                 SqlCommand cmdProc = conn.CreateCommand();
                 SqlTransaction trProc = null;
-                cmdProc.CommandText = "CREATE or ALTER PROCEDURE [dbo].[SP_VERIFICA_INVENTARIO_REPETIDOS_CARREGADOR] @PRO_ID VARCHAR(MAX), @CNPJ VARCHAR(MAX)  AS BEGIN IF NOT EXISTS(SELECT * FROM D_Inventario_Carga WHERE inv_pro_id = @PRO_ID and Inv_CNPJ = @CNPJ)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
+                cmdProc.CommandText = "CREATE or ALTER PROCEDURE [SP_VERF_INV_REPETIDOS] @PRO_ID VARCHAR(MAX), @CNPJ VARCHAR(MAX)  AS BEGIN IF NOT EXISTS(SELECT * FROM D_Inventario_Carga WHERE inv_pro_id = @PRO_ID and Inv_CNPJ = @CNPJ)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
                 trProc = conn.BeginTransaction();
                 cmdProc.Transaction = trProc;
                 cmdProc.ExecuteNonQuery();
@@ -1248,7 +1268,7 @@ namespace testeExcel
 
                         SqlCommand cmdeProc = conn.CreateCommand();
                         cmdeProc.CommandType = CommandType.StoredProcedure;
-                        cmdeProc.CommandText = "[SP_VERIFICA_INVENTARIO_REPETIDOS_CARREGADOR]";
+                        cmdeProc.CommandText = "[SP_VERF_INV_REPETIDOS]";
                         cmdeProc.Parameters.Add("@PRO_ID", SqlDbType.VarChar);
                         cmdeProc.Parameters["@PRO_ID"].Direction = ParameterDirection.ReturnValue;
                         cmdeProc.Parameters.AddWithValue("@PRO_ID", produto);
@@ -1258,7 +1278,11 @@ namespace testeExcel
 
               
                         if (conn.State.ToString() == "Closed")
-                            conn.Open();
+                        {
+                        conn.Open();
+                        }
+                            
+
                         cmdeProc.ExecuteNonQuery();
                         int ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
 
@@ -1343,7 +1367,7 @@ namespace testeExcel
 
                         }
 
-                Clipboard.SetText(conteudo.ToString());
+              //  Clipboard.SetText(conteudo.ToString());
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
                     SqlTransaction trE = null;
@@ -1490,7 +1514,10 @@ namespace testeExcel
                         conteudo.Append(")");
                         conteudo.Append(Environment.NewLine);
                     }
-                    conn.Open();
+                    if (conn.State.ToString() == "Closed")
+                    {
+                        conn.Open();
+                    }
                     //Clipboard.SetText(conteudo.ToString());
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
@@ -1524,7 +1551,11 @@ namespace testeExcel
                 " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
                 " values(" + pegarID("D_Insumo_Produto") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
                 " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
-                conn.Open();
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+
                 SqlTransaction trA = null;
                 trA = conn.BeginTransaction();
                 cmdArquivoCarregado.Transaction = trA;
@@ -1608,7 +1639,10 @@ namespace testeExcel
                         conteudo.Append(")");
                         conteudo.Append(Environment.NewLine);
                     }
-                    conn.Open();
+                    if (conn.State.ToString() == "Closed")
+                    {
+                        conn.Open();
+                    }
                     //Clipboard.SetText(conteudo.ToString());
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
@@ -1642,8 +1676,10 @@ namespace testeExcel
                 " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
                 " values(" + pegarID("D_RELACAO_CARGA") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
                 " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
-
-                conn.Open();
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
                 SqlTransaction trA = null;
                 trA = conn.BeginTransaction();
                 cmdArquivoCarregado.Transaction = trA;
@@ -1757,8 +1793,12 @@ namespace testeExcel
                         conteudo.Append(")");
                         conteudo.Append(Environment.NewLine);
                     }
-                    conn.Open();
-                    Clipboard.SetText(conteudo.ToString());
+
+                    if (conn.State.ToString() == "Closed")
+                    {
+                        conn.Open();
+                    }
+                   // Clipboard.SetText(conteudo.ToString());
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
                     SqlTransaction trE = null;
@@ -1792,7 +1832,10 @@ namespace testeExcel
                 " values(" + pegarID("D_PIC") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
                 " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
 
-                conn.Open();
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
                 SqlTransaction trA = null;
                 trA = conn.BeginTransaction();
                 cmdArquivoCarregado.Transaction = trA;
@@ -1869,7 +1912,10 @@ namespace testeExcel
                         conteudo.Append(Environment.NewLine);
                     }
                     //Clipboard.SetText(conteudo.ToString());
-                    conn.Open();
+                    if (conn.State.ToString() == "Closed")
+                    {
+                        conn.Open();
+                    }
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
                     SqlTransaction trE = null;
@@ -1903,8 +1949,10 @@ namespace testeExcel
             " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
             " values(" + pegarID("D_Custo_Medio") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
             " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
-
-            conn.Open();
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
             SqlTransaction trA = null;
             trA = conn.BeginTransaction();
             cmdArquivoCarregado.Transaction = trA;
@@ -2790,6 +2838,7 @@ namespace testeExcel
                 SaveFileDialog saveFileDialog1 = new SaveFileDialog();
                 saveFileDialog1.Filter = "Excel|*.xlsx";
                 saveFileDialog1.Title = "Salvar Excel";
+                saveFileDialog1.RestoreDirectory = true;
                 saveFileDialog1.FileName = "Modelo Carregamento Dados TPS.xlsx";
                 saveFileDialog1.ShowDialog();
 
