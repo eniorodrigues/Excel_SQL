@@ -83,13 +83,16 @@ namespace testeExcel
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show("Erro no carregamento do arquivo " + ex.Message);
                 }
             }
         }
 
         public void carregaLinhas()
         {
+            try
+            {
+
             cmbPlanilha.Items.Clear();
             lblEndereço.Text = caminho;
             MyApp = new Excel.Application();
@@ -100,6 +103,12 @@ namespace testeExcel
             for (int i = 1; i <= MyApp.Workbooks[2].Worksheets.Count; i++)
             {
                 cmbPlanilha.Items.Add(MyApp.Workbooks[2].Worksheets[i].Name);
+            }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro no carregalinha " + ex.Message);
             }
         }
 
@@ -315,13 +324,7 @@ namespace testeExcel
                     }
                 }
                 package.Dispose();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
+
                 SqlCommand cmdArquivoCarregado = conn.CreateCommand();
                 cmdArquivoCarregado.CommandText =
                     " declare @tabela varchar(max) = 'D_Vendas_Itens';" +
@@ -348,6 +351,11 @@ namespace testeExcel
                 conn.Close();
 
                 MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + registroConsistente.ToString() + " registros de vendas");
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro no carregamento de vendas " + ex.Message);
             }
         }
 
@@ -587,7 +595,7 @@ namespace testeExcel
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Erro no carregamento de compras " + ex.Message);
             }
 
         }
@@ -690,7 +698,7 @@ namespace testeExcel
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Erro na ComprasPenLayout" + ex.Message);
             }
         }
 
@@ -729,7 +737,7 @@ namespace testeExcel
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Erro na pegarID " + ex.Message);
                 return 0;
             }
             finally
@@ -835,12 +843,15 @@ namespace testeExcel
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Erro na VendasPenLayout: " + ex.Message);
             }
         }
 
         public void Clientes()
         {
+            try
+            {
+
             int linha = 1;
             int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
             FileInfo existingFile = new FileInfo(caminho);
@@ -854,6 +865,7 @@ namespace testeExcel
             ArrayList repetido = new ArrayList();
             ArrayList carregado = new ArrayList();
             bool pendencia = false;
+
             if (conn.State.ToString() == "Closed")
             {
                 conn.Open();
@@ -983,7 +995,7 @@ namespace testeExcel
                     conteudo.Append(Environment.NewLine);
                 }
 
-                //Clipboard.SetText(conteudo.ToString());
+                Clipboard.SetText(conteudo.ToString());
                 if (conn.State.ToString() == "Closed")
                 {
                     conn.Open();
@@ -1018,12 +1030,18 @@ namespace testeExcel
 
             conteudo.Clear();
 
-
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(" Erro ao carregar clientes : " + ex.Message);
+            }
         }
 
 
         public void Fornecedores()
         {
+            try
+            {
             int linha = 1;
             int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
             FileInfo existingFile = new FileInfo(caminho);
@@ -1196,12 +1214,21 @@ namespace testeExcel
                 fazTransacao(conn, cmdArquivoCarregado);
                 gravaId(caminho, numCarregados, "D_Fornecedores");
             }
+
             conteudo.Clear();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar fornecedores " + ex.Message);
+            }
         }
 
 
         public void Inventario()
         {
+            try
+            {
 
                 int linha = 1;
                 string filePath = caminho;
@@ -1409,20 +1436,29 @@ namespace testeExcel
 
             conteudo.Clear();
 
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show(ex.Message);
-            //}
-            //finally
-            //{
-            //    MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de inventario realizados com sucesso");
-            //}
+                //}
+                //catch (Exception ex)
+                //{
+                //    MessageBox.Show(ex.Message);
+                //}
+                //finally
+                //{
+                //    MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de inventario realizados com sucesso");
+                //}
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar inventario " + ex.Message);
+            }
         }
 
 
         public void Insumo_Produto()
         {
+            try
+            {
             string filePath = caminho;
             //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
             //string filePath = @"C:\Base\ordens_de_producao_evonik_2019.xlsx";
@@ -1563,10 +1599,19 @@ namespace testeExcel
                 trA.Commit();
                 conn.Close();
             }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro na tabela de Insumo " + ex.Message);
+            }
         }
 
         public void Relacao_Carga()
         {
+            try
+            {
+
             string filePath = caminho;
 
             //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
@@ -1687,10 +1732,18 @@ namespace testeExcel
                 trA.Commit();
                 conn.Close();
             }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro no carregamento de Relação de Produção " + ex.Message);
+            }
         }
 
         public void PIC()
         {
+            try
+            {
+
             string filePath = caminho;
 
             //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
@@ -1843,10 +1896,18 @@ namespace testeExcel
                 trA.Commit();
                 conn.Close();
             }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro no carregamento de PIC " + ex.Message);
+            }
         }
 
         public void Custo()
         {
+            try
+            {
             string filePath = caminho;
             //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
             //string filePath = @"C:\Base\custo.xlsx";
@@ -1960,6 +2021,13 @@ namespace testeExcel
             trA.Commit();
 
             conn.Close();
+
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar custo " + ex.Message);
+            }
         }
 
 
@@ -1968,7 +2036,6 @@ namespace testeExcel
         {
             try
             {
-
 
                 string filePath = null;
                 //  string caminho = null;
@@ -2150,10 +2217,9 @@ namespace testeExcel
                     fazTransacao(conn, cmdArquivoCarregado);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                MessageBox.Show("Erro no carregamento de produtos " + ex.Message);
             }
         }
 
@@ -2161,20 +2227,32 @@ namespace testeExcel
         public void fazTransacao(SqlConnection conn, SqlCommand command)
         {
 
-            if (conn.State.ToString() == "Closed")
-                conn.Open();
+            try
+            {
+                if (conn.State.ToString() == "Closed")
+                    conn.Open();
 
-            SqlTransaction trA = null;
-            trA = conn.BeginTransaction();
-            command.Transaction = trA;
-            command.ExecuteNonQuery();
-            trA.Commit();
-            conn.Close();
+                SqlTransaction trA = null;
+                trA = conn.BeginTransaction();
+                command.Transaction = trA;
+                command.ExecuteNonQuery();
+                trA.Commit();
+                conn.Close();
 
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro código 111 : " + ex.Message);
+             
+            }
+   
         }
 
         public string gravaId(string caminho, int numCarregados, string tabela)
         {
+            try
+            {
+
             return " declare @tabela varchar(max) = '" + tabela + "';" +
                 " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
                 " insert into S_ArquivoCarregado" +
@@ -2187,60 +2265,72 @@ namespace testeExcel
                 " values( '" + pegarID(tabela) + "',  '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
                 " GETDATE(), " + numCarregados.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
                 "IF (OBJECT_ID('SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR') IS NOT NULL)  DROP PROCEDURE SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR  ";
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro no método gravaID: " + ex.Message);
+                return null;
+            }
         }
 
         private void button1_Click_2(object sender, EventArgs e)
         {
-
-            if (cmbTabela.SelectedItem.Equals("D_Custo_Medio"))
+            try
             {
-                Custo();
-            }
-            if (cmbTabela.SelectedItem.Equals("D_Clientes"))
+                 
+            if(cmbTabela.SelectedIndex == -1)
             {
-                Clientes();
+                MessageBox.Show("Escolha a tabela do SQL para carregamento ");
             }
-            if (cmbTabela.SelectedItem.Equals("D_Produtos"))
+            else
             {
-                Produtos();
+                if (cmbTabela.SelectedItem.Equals("D_Custo_Medio"))
+                {
+                    Custo();
+                }
+                if (cmbTabela.SelectedItem.Equals("D_Clientes"))
+                {
+                    Clientes();
+                }
+                if (cmbTabela.SelectedItem.Equals("D_Produtos"))
+                {
+                    Produtos();
+                }
+                if (cmbTabela.SelectedItem.Equals("D_Inventario_Carga"))
+                {
+                    Inventario();
+                }
+                if (cmbTabela.SelectedItem.Equals("D_Compras"))
+                {
+                    Compras();
+                }
+                if (cmbTabela.SelectedItem.Equals("D_Vendas_Itens"))
+                {
+                    Vendas();
+                }
+                if (cmbTabela.SelectedItem.Equals("D_Fornecedores"))
+                {
+                    Fornecedores();
+                }
+                if (cmbTabela.SelectedItem.Equals("D_Insumo_Produto"))
+                {
+                    Insumo_Produto();
+                }
+                if (cmbTabela.SelectedItem.Equals("D_Relacao_Carga"))
+                {
+                    Relacao_Carga();
+                }
+                if (cmbTabela.SelectedItem.Equals("D_PIC"))
+                {
+                    PIC();
+                }
             }
-            if (cmbTabela.SelectedItem.Equals("D_Inventario_Carga"))
+            }
+            catch (Exception ex)
             {
-                Inventario();
+                MessageBox.Show("Erro no botão carregar nas escolha da tabela: " + ex.Message);
             }
-            if (cmbTabela.SelectedItem.Equals("D_Compras"))
-            {
-                Compras();
-            }
-            if (cmbTabela.SelectedItem.Equals("D_Vendas_Itens"))
-            {
-                Vendas();
-            }
-            if (cmbTabela.SelectedItem.Equals("D_Fornecedores"))
-            {
-                Fornecedores();
-            }
-            if (cmbTabela.SelectedItem.Equals("D_Insumo_Produto"))
-            {
-                Insumo_Produto();
-            }
-            if (cmbTabela.SelectedItem.Equals("D_Relacao_Carga"))
-            {
-                Relacao_Carga();
-            }
-            if (cmbTabela.SelectedItem.Equals("D_PIC"))
-            {
-                PIC();
-            }
-
-            //if (cmbTabela.SelectedItem == null || cmbTabela.SelectedIndex == 0 )
-            //{
-            //    MessageBox.Show("Selecione uma tabela para carregamento");
-            //}
-
-            //  lblCarregada.Text = "0";
-            //  lblRepetido.Text = "0";
-            //  lblPendencia.Text = "0";
 
         }
 
