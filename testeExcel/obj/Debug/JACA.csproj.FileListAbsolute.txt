@@ -61,3 +61,4 @@ C:\Users\Enio\Source\Repos\eniorodrigues\jaca\testeExcel\obj\Debug\JACA.csproj.G
 C:\Users\Enio\Source\Repos\eniorodrigues\jaca\testeExcel\obj\Debug\JACA.csproj.CopyComplete
 C:\Users\Enio\Source\Repos\eniorodrigues\jaca\testeExcel\obj\Debug\testeCampos.exe
 C:\Users\Enio\Source\Repos\eniorodrigues\jaca\testeExcel\obj\Debug\testeCampos.pdb
+C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Debug\JACA.Form1.resources

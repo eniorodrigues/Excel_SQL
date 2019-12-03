@@ -1,4 +1,4 @@
-﻿namespace testeExcel
+﻿namespace JACA
 {
     partial class Form1
     {

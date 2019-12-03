@@ -15,7 +15,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Excel = Microsoft.Office.Interop.Excel;
 
-namespace testeExcel
+namespace JACA
 {
     public partial class Form1 : Form
     {
