@@ -45,7 +45,7 @@ namespace JACA
         public SqlConnection conn1 = null;
         public bool checado;
         String databaseName;
-
+        bool cmbSelecionado = false;
         private void button1_Click(object sender, EventArgs e)
         {
 
@@ -79,7 +79,7 @@ namespace JACA
                             carregaLinhas();
                         }
                     }
-
+                    cmbPlanilha.Enabled = true;
                 }
                 catch (Exception ex)
                 {
@@ -2482,12 +2482,28 @@ namespace JACA
         {
             //try
             //{
-                 
-            if(cmbTabela.SelectedIndex == -1)
+           if (comboBoxServidor.SelectedIndex == -1)
+            {
+                MessageBox.Show("Escolha o servidor do SQL para carregamento ");
+            }
+
+            if (comboBoxBase.SelectedIndex == -1 && comboBoxBase.Enabled == true)
+            {
+                MessageBox.Show("Escolha a Base de Dados para carregamento ");
+            }
+
+            if (cmbPlanilha.SelectedIndex == -1 && cmbPlanilha.Enabled == true)
+            {
+                MessageBox.Show("Escolha a planilha do Excel para carregamento ");
+            }
+
+            if (cmbTabela.SelectedIndex == -1 && cmbTabela.Enabled == true)
             {
                 MessageBox.Show("Escolha a tabela do SQL para carregamento ");
             }
-            else
+
+             
+            else if (cmbSelecionado == true)
             {
                 if (cmbTabela.SelectedItem.Equals("D_Custo_Medio"))
                 {
@@ -2949,6 +2965,8 @@ namespace JACA
                     comboBoxBase.Items.Add(databaseName);
             }
             conn.Close();
+
+            comboBoxBase.Enabled = true;
         }
 
 
@@ -3161,6 +3179,9 @@ namespace JACA
 
             lblTotal.Text = (workSheet.Dimension.End.Row - 1).ToString();
             lblTotal.Refresh();
+
+            cmbTabela.Enabled = true;
+
         }
 
         private void cmbTabela_SelectedIndexChanged(object sender, EventArgs e)
@@ -3168,6 +3189,8 @@ namespace JACA
             lblRepetido.Text = "0";
             lblPendencia.Text = "0";
             lblCarregada.Text = "0";
+            cmbSelecionado = true;
+            btnCarregar.Enabled = true;
         }
     }
 }

@@ -53,7 +53,7 @@
             // 
             // buttonAbrir
             // 
-            this.buttonAbrir.Location = new System.Drawing.Point(13, 92);
+            this.buttonAbrir.Location = new System.Drawing.Point(13, 123);
             this.buttonAbrir.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonAbrir.Name = "buttonAbrir";
             this.buttonAbrir.Size = new System.Drawing.Size(554, 66);
@@ -73,6 +73,7 @@
             // 
             // cmbPlanilha
             // 
+            this.cmbPlanilha.Enabled = false;
             this.cmbPlanilha.FormattingEnabled = true;
             this.cmbPlanilha.Location = new System.Drawing.Point(13, 230);
             this.cmbPlanilha.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -92,6 +93,7 @@
             // 
             // btnCarregar
             // 
+            this.btnCarregar.Enabled = false;
             this.btnCarregar.Location = new System.Drawing.Point(13, 359);
             this.btnCarregar.Name = "btnCarregar";
             this.btnCarregar.Size = new System.Drawing.Size(554, 55);
@@ -111,6 +113,7 @@
             // 
             // cmbTabela
             // 
+            this.cmbTabela.Enabled = false;
             this.cmbTabela.FormattingEnabled = true;
             this.cmbTabela.Items.AddRange(new object[] {
             "D_Clientes",
@@ -158,6 +161,7 @@
             // 
             // comboBoxBase
             // 
+            this.comboBoxBase.Enabled = false;
             this.comboBoxBase.FormattingEnabled = true;
             this.comboBoxBase.Location = new System.Drawing.Point(141, 46);
             this.comboBoxBase.Name = "comboBoxBase";
@@ -178,7 +182,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(13, 166);
+            this.button1.Location = new System.Drawing.Point(13, 80);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(187, 35);
             this.button1.TabIndex = 36;
@@ -189,7 +193,7 @@
             // lblCarregada
             // 
             this.lblCarregada.AutoSize = true;
-            this.lblCarregada.Location = new System.Drawing.Point(507, 263);
+            this.lblCarregada.Location = new System.Drawing.Point(475, 263);
             this.lblCarregada.Name = "lblCarregada";
             this.lblCarregada.Size = new System.Drawing.Size(18, 20);
             this.lblCarregada.TabIndex = 37;
@@ -198,7 +202,7 @@
             // lblTotal
             // 
             this.lblTotal.AutoSize = true;
-            this.lblTotal.Location = new System.Drawing.Point(508, 204);
+            this.lblTotal.Location = new System.Drawing.Point(475, 204);
             this.lblTotal.Name = "lblTotal";
             this.lblTotal.Size = new System.Drawing.Size(18, 20);
             this.lblTotal.TabIndex = 37;
@@ -207,7 +211,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(379, 204);
+            this.label4.Location = new System.Drawing.Point(346, 204);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(121, 20);
             this.label4.TabIndex = 38;
@@ -216,7 +220,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(354, 263);
+            this.label5.Location = new System.Drawing.Point(322, 263);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(147, 20);
             this.label5.TabIndex = 38;
@@ -225,7 +229,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(252, 283);
+            this.label2.Location = new System.Drawing.Point(220, 283);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(249, 20);
             this.label2.TabIndex = 38;
@@ -234,7 +238,7 @@
             // lblPendencia
             // 
             this.lblPendencia.AutoSize = true;
-            this.lblPendencia.Location = new System.Drawing.Point(507, 283);
+            this.lblPendencia.Location = new System.Drawing.Point(475, 283);
             this.lblPendencia.Name = "lblPendencia";
             this.lblPendencia.Size = new System.Drawing.Size(18, 20);
             this.lblPendencia.TabIndex = 37;
@@ -243,7 +247,7 @@
             // lblRepetido
             // 
             this.lblRepetido.AutoSize = true;
-            this.lblRepetido.Location = new System.Drawing.Point(507, 304);
+            this.lblRepetido.Location = new System.Drawing.Point(475, 304);
             this.lblRepetido.Name = "lblRepetido";
             this.lblRepetido.Size = new System.Drawing.Size(18, 20);
             this.lblRepetido.TabIndex = 37;
@@ -252,7 +256,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(415, 302);
+            this.label8.Location = new System.Drawing.Point(383, 302);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(86, 20);
             this.label8.TabIndex = 38;
