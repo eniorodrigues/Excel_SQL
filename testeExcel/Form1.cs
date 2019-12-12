@@ -54,7 +54,7 @@ namespace JACA
         private void buttonAbrir_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
-          //  openFileDialog1.InitialDirectory = "C:\\";
+          //openFileDialog1.InitialDirectory = "C:\\";
             openFileDialog1.Filter = "Excel files (*.xlsx)|*.xlsx";
             openFileDialog1.FilterIndex = 2;
             openFileDialog1.RestoreDirectory = true;
