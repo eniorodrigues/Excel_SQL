@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using Microsoft.Win32;
+using OfficeOpenXml;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -148,8 +149,12 @@ namespace JACA
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    lblCarregada.Text = i.ToString();
+ 
+                    lblCarregada.Text = registroConsistente.ToString();
                     lblCarregada.Refresh();
+
+                    lblPendencia.Text = registroInconsistente.ToString();
+                    lblPendencia.Refresh();
 
                     penLayout = false;
                     for (int j = workSheet.Dimension.Start.Column; j <= 26; j++)
@@ -358,6 +363,9 @@ namespace JACA
                 MessageBox.Show("Erro no carregamento de vendas " + ex.Message);
             }
         }
+
+
+
 
         public void Compras()
         {
@@ -804,7 +812,6 @@ namespace JACA
                     }
                     else if (j == workSheet.Dimension.End.Column)
                     {
-
                         if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
                         {
                             conteudo.Append(" ', " + pegarID("D_Vendas_Itens") + ") ");
@@ -1229,7 +1236,6 @@ namespace JACA
         {
             try
             {
-
                 int linha = 1;
                 string filePath = caminho;
                 int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
@@ -1303,12 +1309,10 @@ namespace JACA
                         cmdeProc.Parameters["@CNPJ"].Direction = ParameterDirection.ReturnValue;
                         cmdeProc.Parameters.AddWithValue("@CNPJ", cnpj);
 
-              
                         if (conn.State.ToString() == "Closed")
                         {
                         conn.Open();
                         }
-                            
 
                         cmdeProc.ExecuteNonQuery();
                         int ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
@@ -1992,9 +1996,9 @@ namespace JACA
 
         public void Custo()
         {
-            try
-            {
-                int linha = 1;
+            //try
+            //{
+            int linha = 1;
             string filePath = caminho;
             int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
             //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
@@ -2006,22 +2010,23 @@ namespace JACA
             StringBuilder conteudo = new StringBuilder();
             var lista = new List<String>();
             SqlCommand cmd = conn.CreateCommand();
+            bool penLayout = false;
+            string produto = "", cnpj = "", mes = "", ano = "";
+            bool pendencia = false;
+            
 
-                string produto = "", cnpj = "", mes = "", ano = "";
-                bool pendencia = false;
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
 
-                if (conn.State.ToString() == "Closed")
-                {
-                    conn.Open();
-                }
-
-                SqlCommand cmdProc = conn.CreateCommand();
-                SqlTransaction trProc = null;
-                cmdProc.CommandText = "CREATE or ALTER PROCEDURE [SP_VERF_CST_REPETIDOS]  @PRO_ID varchar(max), @CNPJ varchar(max), @MES varchar(max), @ANO varchar(max) AS BEGIN IF NOT EXISTS (SELECT * FROM D_Custo_Medio WHERE Cst_Pro_Id = @PRO_ID and Cst_Mes = @MES AND Cst_Ano = @ANO AND Cst_CNPJ = @CNPJ)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
-                trProc = conn.BeginTransaction();
-                cmdProc.Transaction = trProc;
-                cmdProc.ExecuteNonQuery();
-                trProc.Commit();
+            SqlCommand cmdProc = conn.CreateCommand();
+            SqlTransaction trProc = null;
+            cmdProc.CommandText = "CREATE or ALTER PROCEDURE [SP_VERF_CST_REPETIDOS]  @PRO_ID varchar(max), @CNPJ varchar(max), @MES varchar(max), @ANO varchar(max) AS BEGIN IF NOT EXISTS (SELECT * FROM D_Custo_Medio WHERE Cst_Pro_Id = @PRO_ID and Cst_Mes = @MES AND Cst_Ano = @ANO AND Cst_CNPJ = @CNPJ)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
+            trProc = conn.BeginTransaction();
+            cmdProc.Transaction = trProc;
+            cmdProc.ExecuteNonQuery();
+            trProc.Commit();
 
                 //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
                 //lblTotal.Refresh();
@@ -2036,8 +2041,15 @@ namespace JACA
                 produto = null;
                 mes = null;
                 ano = null;
+                penLayout = false;
 
-                for (int k = workSheet.Dimension.End.Column; k <= workSheet.Dimension.End.Column; k++)
+                 lblCarregada.Text = numCarregados.ToString();
+                lblCarregada.Refresh();
+
+                lblPendencia.Text = numPendencias.ToString();
+                lblPendencia.Refresh();
+
+                    for (int k = workSheet.Dimension.End.Column; k <= workSheet.Dimension.End.Column; k++)
                 {
                   cnpj = (workSheet.Cells[i, k].Value == null ? " " : workSheet.Cells[i, k].Value.ToString());
                 }
@@ -2057,21 +2069,27 @@ namespace JACA
 
                 for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
+                        if ((j == 1 || j == 2 || j == 3 || j == 4) && (workSheet.Cells[i, j].Value == null))
+                        {
+                            CustosPenLayout(i);
+                            penLayout = true;
+                            numPendencias++;
+                            conteudo.Clear();
+                    }
 
-
-                    if (j == workSheet.Dimension.End.Column)
+                        if (j == workSheet.Dimension.End.Column)
                         {
                             conteudo.Append(workSheet.Cells[i, j].Value == null ? " '' , '" + linha + "', " : " '" + cnpj + "' , '" + linha + "', ");
                             conteudo.Append(" " + pegarID("D_Custo_Medio") + " ");
                         }
 
                        
-                   else if((j == 1) && workSheet.Cells[i, j].Value != null)
+                        else if((j == 1) && workSheet.Cells[i, j].Value != null)
                         {
-                                 
-                                produto = workSheet.Cells[i, j].Value.ToString();
+                        conteudo.Clear();
+                        produto = workSheet.Cells[i, j].Value.ToString();
                          
-                                  SqlCommand cmdeProc = conn.CreateCommand();
+                                 SqlCommand cmdeProc = conn.CreateCommand();
                                 cmdeProc.CommandType = CommandType.StoredProcedure;
                                 cmdeProc.CommandText = "[SP_VERF_CST_REPETIDOS]";
                                 cmdeProc.Parameters.Add("@PRO_ID", SqlDbType.VarChar);
@@ -2162,79 +2180,133 @@ namespace JACA
                         conteudo.Append(")");
                         conteudo.Append(Environment.NewLine);
                     }
-                    Clipboard.SetText(conteudo.ToString());
+
+                    //Clipboard.SetText(conteudo.ToString());
+ 
+                     if (penLayout == false)
+                    {
+                        cmd = conn.CreateCommand();
+                        // Clipboard.SetText(conteudo.ToString());
+
+                        if (conn.State.ToString() == "Closed")
+                        {
+                            conn.Open();
+                        }
+                       // Clipboard.SetText(conteudo.ToString());
+                        cmd.CommandText = conteudo.ToString();
+                        SqlTransaction trE = null;
+                        trE = conn.BeginTransaction();
+                        cmd.Transaction = trE;
+                        cmd.ExecuteNonQuery();
+                        trE.Commit();
+                        conteudo.Clear();
+                    }
                     if (conn.State.ToString() == "Closed")
                     {
                         conn.Open();
                     }
-                    linha = linha + 1;
-                    cmd.CommandText = conteudo.ToString();
-                    SqlTransaction trE = null;
-                    trE = conn.BeginTransaction();
-                    cmd.Transaction = trE;
-                    cmd.ExecuteNonQuery();
-                    trE.Commit();
-                    conteudo.Clear();
+ 
                 }
-                // }
-                //catch (Exception ex)
-                //{
-                //    MessageBox.Show(ex.Message);
-                //}
-                //finally
-                //{
-                //    package.Dispose();
-                //    MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha.ToString() + " registros de  Custo Médio");
-                //}
-
-                //SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-                //cmdArquivoCarregado.CommandText =
-                //" declare @tabela varchar(max) = 'D_Custo_Medio';" +
-                //" if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
-                //" insert into S_ArquivoCarregado" +
-                //" (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                //" values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                //" GETDATE(), ' " + linha.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
-                //" else" +
-                //" insert into S_ArquivoCarregado" +
-                //" (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                //" values(" + pegarID("D_Custo_Medio") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                //" GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
-                //if (conn.State.ToString() == "Closed")
-                //{
-                //    conn.Open();
-                //}
-                //SqlTransaction trA = null;
-                //trA = conn.BeginTransaction();
-                //cmdArquivoCarregado.Transaction = trA;
-                //cmdArquivoCarregado.ExecuteNonQuery();
-                //trA.Commit();
-
-                //conn.Close();
-
-
-                if (numCarregados == 0)
-                {
-                    MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de custo carregado");
-                }
-                else
-                {
-                    MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + numCarregados.ToString() + " registros de custos realizados com sucesso");
-                    
-                    SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-                    cmdArquivoCarregado.CommandText = gravaId(caminho, numCarregados, "D_Custo_Medio");
-                    fazTransacao(conn, cmdArquivoCarregado);
-              }
-
-
-        }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro ao carregar custo " + ex.Message);
-            }
+           
 }
 
+        private void CustosPenLayout(int linha)
+        {
+           
+            string filePath = caminho;
+            //try
+            //{
 
+                ///// temporario
+                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+                //filePath = @"C:\Base\Vendas_Doosan_Jan_Jun_2019.xlsx";
+                FileInfo existingFile = new FileInfo(filePath);
+                ExcelPackage package = new ExcelPackage(existingFile);
+                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                StringBuilder conteudo = new StringBuilder();
+                SqlCommand cmd = conn.CreateCommand();
+            
+                for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                {
+                    if (j == 1)
+                    {
+                        conteudo.Append(" INSERT INTO[dbo].[A_PendenciaLayout] " +
+                                            " ([pen_Linha], " +
+                                            " [pen_Tabela]," +
+                                            " [pen_Campo]," +
+                                            " [pen_Posi]," +
+                                            " [pen_Tam]," +
+                                            " [pen_Erro]," +
+                                            " [pen_Registro]," +
+                                            " [pen_Arq_Origem])" +
+                                            " VALUES ( ");
+                        if (workSheet.Cells[linha, j].Value == null)
+                        {
+                            int registro = linha - 1;
+                            conteudo.Append(" " + registro + ", 'D_Custo_Medio', 'Cst_Pro_id', 0, 0, 'Campo [Código Produto] é obrigatório', '");
+                        }
+                        else
+                        {
+                            int registro = linha - 1;
+                            conteudo.Append(" " + registro + ", 'D_Custo_Medio', 'Cst_Pro_id', 0, 0, 'Campo [Código do Produto] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
+                        }
+                    }
+                    else if (j == 2 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código do Produto]", "[Mês]");
+                    }
+                    else if (j == 3 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código do Produto]", "[Ano]");
+                    }
+                    else if (j == 4 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código do Produto]", "[Custo Médio]");
+                    }
+                    else if (j == workSheet.Dimension.End.Column)
+                    {
+                        if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                        {
+                            conteudo.Append(" ', " + pegarID("D_Custo_Medio") + ") ");
+                        }
+                        else
+                        {
+                            conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Vendas_Itens") + ") ");
+                        }
+                    }
+                    else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                    {
+
+                        conteudo.Append(" ");
+                    }
+                    else
+                    {
+                        conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
+                    }
+                }
+
+                Clipboard.SetText(conteudo.ToString());
+
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+
+            cmd.CommandText = conteudo.ToString();
+            SqlTransaction trE = null;
+            trE = conn.BeginTransaction();
+            cmd.Transaction = trE;
+            cmd.ExecuteNonQuery();
+            trE.Commit();
+            conn.Close();
+            conteudo.Clear();
+            package.Dispose();
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Erro na CustoPenLayout: " + ex.Message);
+            //}
+        }
 
         public void Produtos()
         {
@@ -2275,8 +2347,7 @@ namespace JACA
                 {
                     conn.Open();
                 }
-
-
+                 
                 SqlCommand cmdProc = conn.CreateCommand();
                 SqlTransaction trProc = null;
                 cmdProc.CommandText = "create or alter PROCEDURE [dbo].[SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR] @PROD VARCHAR(MAX) AS BEGIN IF NOT EXISTS(SELECT * FROM D_Produtos WHERE Pro_ID = @PROD)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
@@ -2945,28 +3016,50 @@ namespace JACA
 
         private void comboBoxServidor_SelectedIndexChanged(object sender, EventArgs e)
         {
-            conexao = comboBoxServidor.Text;
-            conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True;");
-            conn1 = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True;");
 
-
-            if (conn.State.ToString() == "Closed")
+            try
             {
-                conn.Open();
+                conexao = comboBoxServidor.Text;
+                conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True;");
+
+          
+                    if (conn.State.ToString() == "Closed")
+                    {
+                        conn.Open();
+                    }
+                    System.Data.DataTable databases = conn.GetSchema("Databases");
+
+                    comboBoxBase.Items.Clear();
+            
+                    foreach (DataRow database in databases.Rows)
+                {
+
+                    databaseName = database.Field<String>("database_name");
+
+                    if(databaseName != "master" && databaseName != "tempdb" && databaseName != "model" && databaseName != "msdb")
+                    {
+                       
+                        comboBoxBase.Items.Add(databaseName);
+                        conn.Close();
+                        comboBoxBase.Enabled = true;
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("Instância do SQL sem base de Dados");
+                    }
+
+                }
+
+
             }
-            System.Data.DataTable databases = conn.GetSchema("Databases");
-
-            comboBoxBase.Items.Clear();
-
-            foreach (DataRow database in databases.Rows)
+            catch (Exception ex)
             {
-                databaseName = database.Field<String>("database_name");
-                if (databaseName != "master" && databaseName != "tempdb" && databaseName != "model" && databaseName != "msdb")
-                    comboBoxBase.Items.Add(databaseName);
+                MessageBox.Show(ex.Message);
             }
-            conn.Close();
+     
 
-            comboBoxBase.Enabled = true;
+ 
         }
 
 
@@ -2975,33 +3068,46 @@ namespace JACA
             comboBoxServidor.Items.Clear();
             string myServer = Environment.MachineName;
 
-            System.Data.DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
+            //System.Data.DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
 
-            if (servers.Rows.Count > 0)
+            //if (servers.Rows.Count > 0)
+            //{
+            //    comboBoxServidor.Items.Add(servers.Rows[0]["ServerName"]);
+
+            //    for (int i = 0; i < servers.Rows.Count; i++)
+            //    {
+
+            //        if (myServer == servers.Rows[i]["ServerName"].ToString())
+            //        {
+            //            if ((servers.Rows[i]["InstanceName"] as string) != null)
+            //            {
+            //                comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
+            //            }
+            //            else
+            //            {
+            //                comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"]);
+            //            }
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    comboBoxServidor.Items.Add(myServer);
+            //}
+            comboBoxServidor.Items.Add(myServer);
+            string ServerName = Environment.MachineName;
+            RegistryView registryView = Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Registry32;
+            using (RegistryKey hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView))
             {
-                comboBoxServidor.Items.Add(servers.Rows[0]["ServerName"]);
-                 
-                for (int i = 0; i < servers.Rows.Count; i++)
+                RegistryKey instanceKey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\Instance Names\SQL", false);
+                if (instanceKey != null)
                 {
-
-                    if (myServer == servers.Rows[i]["ServerName"].ToString())
+                    foreach (var instanceName in instanceKey.GetValueNames())
                     {
-                        if ((servers.Rows[i]["InstanceName"] as string) != null)
-                        {
-                            comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
-                        }
-                        else
-                        {
-                            comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"]);
-                        }
+                        comboBoxServidor.Items.Add(ServerName + "\\" + instanceName);
                     }
                 }
             }
-            else
-            {
-                comboBoxServidor.Items.Add(myServer);
-            }
-
         }
 
         private void comboBoxBase_SelectedIndexChanged(object sender, EventArgs e)
