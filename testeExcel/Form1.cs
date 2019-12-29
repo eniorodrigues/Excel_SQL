@@ -1079,7 +1079,7 @@ namespace JACA
             for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
             {
                 pendencia = false;
-
+                    conteudo.Clear();
                 for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                 {
                     if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
@@ -1087,7 +1087,9 @@ namespace JACA
                         pendencia = true;
                         numPendencias++;
                         lblPendencia.Text = numPendencias.ToString();
-                    }
+                            FornecedoresPenLayout(linha);
+                            conteudo.Clear();
+                        }
                     else if (j == workSheet.Dimension.End.Column)
                     {
                         conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "" ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
@@ -2308,6 +2310,104 @@ namespace JACA
             //}
         }
 
+        void FornecedoresPenLayout(int linha) 
+        {
+           
+            string filePath = caminho;
+        //try
+        //{
+
+        ///// temporario
+        //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+        //filePath = @"C:\Base\Vendas_Doosan_Jan_Jun_2019.xlsx";
+        FileInfo existingFile = new FileInfo(filePath);
+        ExcelPackage package = new ExcelPackage(existingFile);
+        ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+        StringBuilder conteudo = new StringBuilder();
+        SqlCommand cmd = conn.CreateCommand();
+            
+                for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                {
+                    if (j == 1)
+                    {
+                        conteudo.Append(" INSERT INTO[dbo].[A_PendenciaLayout] " +
+                                            " ([pen_Linha], " +
+                                            " [pen_Tabela]," +
+                                            " [pen_Campo]," +
+                                            " [pen_Posi]," +
+                                            " [pen_Tam]," +
+                                            " [pen_Erro]," +
+                                            " [pen_Registro]," +
+                                            " [pen_Arq_Origem])" +
+                                            " VALUES ( ");
+                        if (workSheet.Cells[linha, j].Value == null)
+                        {
+                            int registro = linha - 1;
+        conteudo.Append(" " + registro + ", 'D_Forcedores', 'For_id', 0, 0, 'Campo [Código do Fornecedor] é obrigatório', '");
+                        }
+                        else
+                        {
+                            int registro = linha - 1;
+    conteudo.Append(" " + registro + ", 'D_Forcedores', 'For_id', 0, 0, 'Campo [Código do Fornecedor] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
+                        }
+                    }
+                    else if (j == 2 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código do Fornecedor]", "[Descrição do Fornecedor]");
+                    }
+                    else if (j == 3 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código do Fornecedor]", "[País do Forneceodr]");
+                    }
+                    else if (j == 4 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código do Fornecedor]", "[Vinculo do Fornecedor]");
+                    }
+                    else if (j == workSheet.Dimension.End.Column)
+                    {
+                        if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                        {
+                            conteudo.Append(" ', " + pegarID("D_Fornecedores") + ") ");
+                        }
+                        else
+                        {
+                            conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Fornecedores") + ") ");
+                        }
+                    }
+                    else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                    {
+
+                        conteudo.Append(" ");
+                    }
+                    else
+                    {
+                        conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
+                    }
+                }
+
+                Clipboard.SetText(conteudo.ToString());
+
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+
+            cmd.CommandText = conteudo.ToString();
+            SqlTransaction trE = null;
+trE = conn.BeginTransaction();
+            cmd.Transaction = trE;
+            cmd.ExecuteNonQuery();
+            trE.Commit();
+            conn.Close();
+            conteudo.Clear();
+            package.Dispose();
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Erro na CustoPenLayout: " + ex.Message);
+            //}
+        }
+
         public void Produtos()
         {
             try
@@ -3043,10 +3143,6 @@ namespace JACA
                         conn.Close();
                         comboBoxBase.Enabled = true;
 
-                    }
-                    else
-                    {
-                        MessageBox.Show("Instância do SQL sem base de Dados");
                     }
 
                 }
