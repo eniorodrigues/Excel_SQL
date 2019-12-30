@@ -40,7 +40,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.comboBoxBase = new System.Windows.Forms.ComboBox();
             this.comboBoxServidor = new System.Windows.Forms.ComboBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnGerarModelo = new System.Windows.Forms.Button();
             this.lblCarregada = new System.Windows.Forms.Label();
             this.lblTotal = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -100,7 +100,7 @@
             this.btnCarregar.TabIndex = 27;
             this.btnCarregar.Text = "Carregar";
             this.btnCarregar.UseVisualStyleBackColor = true;
-            this.btnCarregar.Click += new System.EventHandler(this.button1_Click_2);
+            this.btnCarregar.Click += new System.EventHandler(this.btnCarregar_Click);
             // 
             // lblPlanilha
             // 
@@ -180,15 +180,15 @@
             this.comboBoxServidor.SelectedIndexChanged += new System.EventHandler(this.comboBoxServidor_SelectedIndexChanged);
             this.comboBoxServidor.Enter += new System.EventHandler(this.comboBoxServidor_Enter);
             // 
-            // button1
+            // btnGerarModelo
             // 
-            this.button1.Location = new System.Drawing.Point(13, 80);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(187, 35);
-            this.button1.TabIndex = 36;
-            this.button1.Text = "Gerar Modelo de Excel ";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click_5);
+            this.btnGerarModelo.Location = new System.Drawing.Point(13, 80);
+            this.btnGerarModelo.Name = "btnGerarModelo";
+            this.btnGerarModelo.Size = new System.Drawing.Size(187, 35);
+            this.btnGerarModelo.TabIndex = 36;
+            this.btnGerarModelo.Text = "Gerar Modelo de Excel ";
+            this.btnGerarModelo.UseVisualStyleBackColor = true;
+            this.btnGerarModelo.Click += new System.EventHandler(this.btnGerarModelo_Click);
             // 
             // lblCarregada
             // 
@@ -275,7 +275,7 @@
             this.Controls.Add(this.lblTotal);
             this.Controls.Add(this.lblPendencia);
             this.Controls.Add(this.lblCarregada);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnGerarModelo);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.comboBoxBase);
@@ -293,7 +293,6 @@
             this.Name = "Form1";
             this.ShowIcon = false;
             this.Text = "Tool";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -312,7 +311,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox comboBoxBase;
         private System.Windows.Forms.ComboBox comboBoxServidor;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnGerarModelo;
         private System.Windows.Forms.Label lblCarregada;
         private System.Windows.Forms.Label lblTotal;
         private System.Windows.Forms.Label label4;

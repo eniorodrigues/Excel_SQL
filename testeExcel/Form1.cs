@@ -47,76 +47,6 @@ namespace JACA
         public bool checado;
         String databaseName;
         bool cmbSelecionado = false;
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void buttonAbrir_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-          //openFileDialog1.InitialDirectory = "C:\\";
-            openFileDialog1.Filter = "Excel files (*.xlsx)|*.xlsx";
-            openFileDialog1.FilterIndex = 2;
-            openFileDialog1.RestoreDirectory = true;
-            openFileDialog1.Multiselect = true;
-            cmbPlanilha.Text = "";
-            lblTotal.Text = "0";
-            lblCarregada.Text = "0";
-            lblPendencia.Text = "0";
-            lblRepetido.Text = "0";
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    if ((myStream = openFileDialog1.OpenFile()) != null)
-                    {
-                        using (myStream)
-                        {
-                            caminho = openFileDialog1.FileName;
-                            directoryPath = Path.GetDirectoryName(openFileDialog1.FileName);
-                            files = (openFileDialog1.SafeFileNames);
-                            carregaLinhas();
-                        }
-                    }
-                    cmbPlanilha.Enabled = true;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Erro no carregamento do arquivo " + ex.Message);
-                }
-            }
-        }
-
-        public void carregaLinhas()
-        {
-            try
-            {
-
-            cmbPlanilha.Items.Clear();
-            lblEndereço.Text = caminho;
-            MyApp = new Excel.Application();
-            excelConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + caminho + ";Extended Properties=Excel 12.0;";
-            MyApp.Workbooks.Add("");
-            MyApp.Workbooks.Add(caminho);
-
-            for (int i = 1; i <= MyApp.Workbooks[2].Worksheets.Count; i++)
-            {
-                cmbPlanilha.Items.Add(MyApp.Workbooks[2].Worksheets[i].Name);
-            }
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro no carregalinha " + ex.Message);
-            }
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
 
         public void Vendas()
         {
@@ -364,9 +294,6 @@ namespace JACA
             }
         }
 
-
-
-
         public void Compras()
         {
             string filePath = caminho;
@@ -608,252 +535,6 @@ namespace JACA
 
         }
 
-        public void ComprasPenLayout(int linha)
-        {
-            string filePath = caminho;
-            try
-            {
-                /////temporario
-                /////filePath = @"C:\Base\Compras_Doosan_Jan_Jun_2019.xlsx";
-
-                FileInfo existingFile = new FileInfo(filePath);
-                ExcelPackage package = new ExcelPackage(existingFile);
-                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-                StringBuilder conteudo = new StringBuilder();
-
-                for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
-                {
-                    if (j == 1)
-                    {
-                        conteudo.Append(" INSERT INTO[dbo].[A_PendenciaLayout] " +
-                                            " ([pen_Linha], " +
-                                            " [pen_Tabela]," +
-                                            " [pen_Campo]," +
-                                            " [pen_Posi]," +
-                                            " [pen_Tam]," +
-                                            " [pen_Erro]," +
-                                            " [pen_Registro]," +
-                                            " [pen_Arq_Origem])" +
-                                            " VALUES ( ");
-                        if (workSheet.Cells[linha, j].Value == null)
-                        {
-                            int registro = linha - 1;
-                            conteudo.Append(" " + registro + ", 'D_Compras', 'Cmp_Pro_id', 0, 0, 'Campo [Código do Produto] é obrigatório', '");
-                        }
-                        else
-                        {
-                            int registro = linha - 1;
-                            conteudo.Append(" " + registro + ", 'D_Compras', 'Cmp_Pro_id', 0, 0, 'Campo [Código do Produto] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
-                        }
-                    }
-                    else if (j == 12 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
-                    {
-                        conteudo.Replace("[Código do Produto]", "[C.F.O.P. N.F. Entrada]");
-                        conteudo.Replace("Cmp_Pro_id", "Cmp_CFOP");
-                    }
-                    else if (j == 9 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
-                    {
-                        conteudo.Replace("[Código do Produto]", "[Número da N.F.]");
-                        conteudo.Replace("Cmp_Pro_id", "Cmp_NF_Entrada");
-                    }
-                    else if (j == 3 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
-                    {
-                        conteudo.Replace("[Código do Produto]", "[Código do Fornecedor]");
-                        conteudo.Replace("Cmp_Pro_id", "Cmp_For_ID");
-                    }
-                    else if (j == 11 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
-                    {
-                        conteudo.Replace("[Código do Produto]", "[Data de Emissão NF]");
-                        conteudo.Replace("Cmp_Pro_id", "Cmp_NF_DT");
-                    }
-                    else if (j == workSheet.Dimension.End.Column)
-                    {
-
-                        if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
-                        {
-                            conteudo.Append(" ', " + pegarID("D_Compras") + ") ");
-                        }
-                        else
-                        {
-                            conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Compras") + ") ");
-                        }
-                    }
-                    else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
-                    {
-
-                        conteudo.Append(" ");
-                    }
-                    else
-                    {
-                        conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
-                    }
-                }
-                //  conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                if (conn.State.ToString() == "Closed")
-                {
-                    conn.Open();
-                }
-                SqlCommand cmda = conn.CreateCommand();
-                cmda.CommandText = conteudo.ToString();
-                SqlTransaction trEa = null;
-                trEa = conn.BeginTransaction();
-                cmda.Transaction = trEa;
-                cmda.ExecuteNonQuery();
-                trEa.Commit();
-                conn.Close();
-                conteudo.Clear();
-                package.Dispose();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro na ComprasPenLayout" + ex.Message);
-            }
-        }
-
-        public int pegarID(string tabela)
-        {
-            try
-            {
-                int arqId = 0;
-                string oString = "select max(Arq_ID) from S_ArquivoCarregado where Arq_Tabela = @tabela";
-                SqlCommand oCmd = new SqlCommand(oString, conn);
-                oCmd.Parameters.AddWithValue("@tabela", tabela);
-
-                if (conn.State.ToString() == "Closed")
-                {
-                    conn.Open();
-                }
-                using (SqlDataReader oReader = oCmd.ExecuteReader())
-                {
-
-                    while (oReader.Read())
-                    {
-
-                        if (oReader[0].ToString() == "")
-                        {
-                            arqId = 1;
-                        }
-                        else
-                        {
-                            arqId = Int16.Parse(oReader[0].ToString());
-                            arqId = arqId + 1;
-                        }
-                    }
-
-                }
-                return arqId;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro na pegarID " + ex.Message);
-                return 0;
-            }
-            finally
-            {
-                conn.Close();
-            }
-        }
-
-        public void VendasPenLayout(int linha)
-        {
-            string filePath = caminho;
-            try
-            {
-
-                ///// temporario
-                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                //filePath = @"C:\Base\Vendas_Doosan_Jan_Jun_2019.xlsx";
-                FileInfo existingFile = new FileInfo(filePath);
-                ExcelPackage package = new ExcelPackage(existingFile);
-                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-                StringBuilder conteudo = new StringBuilder();
-                SqlCommand cmd = conn.CreateCommand();
-
-                for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
-                {
-                    if (j == 1)
-                    {
-                        conteudo.Append(" INSERT INTO[dbo].[A_PendenciaLayout] " +
-                                            " ([pen_Linha], " +
-                                            " [pen_Tabela]," +
-                                            " [pen_Campo]," +
-                                            " [pen_Posi]," +
-                                            " [pen_Tam]," +
-                                            " [pen_Erro]," +
-                                            " [pen_Registro]," +
-                                            " [pen_Arq_Origem])" +
-                                            " VALUES ( ");
-                        if (workSheet.Cells[linha, j].Value == null)
-                        {
-                            int registro = linha - 1;
-                            conteudo.Append(" " + registro + ", 'D_Vendas_Itens', 'Vnd_Pro_id', 0, 0, 'Campo [Código Cliente] é obrigatório', '");
-                        }
-                        else
-                        {
-                            int registro = linha - 1;
-                            conteudo.Append(" " + registro + ", 'D_Vendas_Itens', 'Vnd_Pro_id', 0, 0, 'Campo [Código Cliente] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
-                        }
-                    }
-                    else if (j == 5 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
-                    {
-                        conteudo.Replace("[Código Cliente]", "[CFOP]");
-                    }
-                    else if (j == 2 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
-                    {
-                        conteudo.Replace("[Código Cliente]", "[Número NF]");
-                    }
-                    else if (j == 10 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
-                    {
-                        conteudo.Replace("[Código Cliente]", "[Código Produto]");
-                    }
-                    else if (j == 6 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
-                    {
-                        conteudo.Replace("[Código Cliente]", "[Data de Emissão NF]");
-                    }
-                    else if (j == workSheet.Dimension.End.Column)
-                    {
-                        if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
-                        {
-                            conteudo.Append(" ', " + pegarID("D_Vendas_Itens") + ") ");
-                        }
-                        else
-                        {
-                            conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Vendas_Itens") + ") ");
-                        }
-                    }
-                    else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
-                    {
-
-                        conteudo.Append(" ");
-                    }
-                    else
-                    {
-                        conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
-                    }
-                }
-
-                //Clipboard.SetText(conteudo.ToString());
-                if (conn.State.ToString() == "Closed")
-                {
-                    conn.Open();
-                }
-
-                cmd.CommandText = conteudo.ToString();
-                SqlTransaction trE = null;
-                trE = conn.BeginTransaction();
-                cmd.Transaction = trE;
-                cmd.ExecuteNonQuery();
-                trE.Commit();
-                conn.Close();
-                conteudo.Clear();
-                package.Dispose();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro na VendasPenLayout: " + ex.Message);
-            }
-        }
-
         public void Clientes()
         {
             try
@@ -889,7 +570,7 @@ namespace JACA
             for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
             {
                 pendencia = false;
-
+                conteudo.Clear();
                 for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                 {
 
@@ -898,6 +579,8 @@ namespace JACA
                         pendencia = true;
                         numPendencias++;
                         lblPendencia.Text = numPendencias.ToString();
+                        ClientesPenLayout(i);
+                        conteudo.Clear();
                     }
 
                     else if (j == 1)
@@ -921,10 +604,7 @@ namespace JACA
                            
                         cmdeProc.ExecuteNonQuery();
                         int ret = Convert.ToInt32(cmdeProc.Parameters["@CLI"].Value);
-
                         conn.Close();
-
-
                         if (ret == 1)
                         {
                             numRepetidos++;
@@ -1044,7 +724,6 @@ namespace JACA
             }
         }
 
-
         public void Fornecedores()
         {
             try
@@ -1079,7 +758,7 @@ namespace JACA
             for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
             {
                 pendencia = false;
-                    conteudo.Clear();
+                conteudo.Clear();
                 for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                 {
                     if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
@@ -1087,9 +766,9 @@ namespace JACA
                         pendencia = true;
                         numPendencias++;
                         lblPendencia.Text = numPendencias.ToString();
-                            FornecedoresPenLayout(linha);
-                            conteudo.Clear();
-                        }
+                        FornecedoresPenLayout(i);
+                        conteudo.Clear();
+                    }
                     else if (j == workSheet.Dimension.End.Column)
                     {
                         conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "" ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
@@ -1232,7 +911,6 @@ namespace JACA
                 MessageBox.Show("Erro ao carregar fornecedores " + ex.Message);
             }
         }
-
 
         public void Inventario()
         {
@@ -1459,7 +1137,6 @@ namespace JACA
                 MessageBox.Show("Erro ao carregar inventario " + ex.Message);
             }
         }
-
 
         public void Insumo_Produto()
         {
@@ -1829,7 +1506,6 @@ namespace JACA
                 MessageBox.Show("Erro no carregamento de Relação de Produção " + ex.Message);
             }
         }
-
 
         public void PIC()
         {
@@ -2210,14 +1886,282 @@ namespace JACA
  
                 }
            
-}
-
-        private void CustosPenLayout(int linha)
+        }
+         
+        public void Produtos()
         {
-           
+            try
+            {
+
+                string filePath = null;
+                int linha = 1;
+                int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
+                filePath = caminho;
+
+                FileInfo existingFile = new FileInfo(filePath);
+                ExcelPackage package = new ExcelPackage(existingFile);
+                ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
+                StringBuilder conteudo = new StringBuilder();
+                var lista = new List<String>();
+                SqlCommand cmd = conn.CreateCommand();
+                ArrayList Excel = new ArrayList();
+                ArrayList SQL = new ArrayList();
+                ArrayList repetido = new ArrayList();
+                ArrayList carregado = new ArrayList();
+                bool pendencia = false;
+ 
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+
+                SqlCommand cmdProc = conn.CreateCommand();
+                SqlTransaction trProc = null;
+                cmdProc.CommandText = "create or alter PROCEDURE [dbo].[SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR] @PROD VARCHAR(MAX) AS BEGIN IF NOT EXISTS(SELECT * FROM D_Produtos WHERE Pro_ID = @PROD)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
+                trProc = conn.BeginTransaction();
+                cmdProc.Transaction = trProc;
+                cmdProc.ExecuteNonQuery();
+                trProc.Commit();
+
+                for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+                {
+                    pendencia = false;
+                    conteudo.Clear();
+                    for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                    {
+
+                        if ((j == 1 || j == 2 || j == 3) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                        {
+                            pendencia = true;
+                            numPendencias++;
+                            lblPendencia.Text = numPendencias.ToString();
+                            lblPendencia.Refresh();
+                            ProdutosPenLayout(i);
+                            conteudo.Clear();
+                        }
+                        else if ((j == 1))
+                        {
+                            SqlCommand cmdeProc = conn.CreateCommand();
+                            cmdeProc.CommandType = CommandType.StoredProcedure;
+                            cmdeProc.CommandText = "[SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR]";
+                            cmdeProc.Parameters.Add("@PROD", SqlDbType.Int);
+                            cmdeProc.Parameters["@PROD"].Direction = ParameterDirection.ReturnValue;
+                            cmdeProc.Parameters.AddWithValue("@PROD", workSheet.Cells[i, j].Value);
+
+                            if (conn.State.ToString() == "Closed")
+                                conn.Open();
+
+                            cmdeProc.ExecuteNonQuery();
+                            int ret = Convert.ToInt32(cmdeProc.Parameters["@PROD"].Value);
+                            conn.Close();
+
+                            if (ret == 1 && pendencia == false)
+                            {
+                                numRepetidos++;
+                                lblRepetido.Text = numRepetidos.ToString();
+                                lblRepetido.Refresh();
+                            }
+                            else if ((workSheet.Cells[i, 2].Value == null || workSheet.Cells[i, 2].Value == "") ||
+                                (workSheet.Cells[i, 3].Value == null || workSheet.Cells[i, 3].Value == "")
+                                && pendencia == false)
+                            {
+                                conteudo.Clear();
+                            }
+                            else if(pendencia == false)
+                            {
+                                numCarregados++;
+                                lblCarregada.Text = numCarregados.ToString();
+                                lblCarregada.Refresh();
+                            }
+                   
+
+                            conteudo.Append(" declare @pro_id varchar(max) = '" + workSheet.Cells[i, j].Value + "';");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append(" if  (select max(pro_id) from D_Produtos where pro_id = @pro_id) = (select (pro_id) from D_Produtos where pro_id = (@pro_id)) ");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append(" print 'OK' ");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append(" else ");
+                            conteudo.Append(" INSERT INTO D_PRODUTOS " +
+                                            " (PRO_ID, " +
+                                            " PRO_DESCRICAO, " +
+                                            " PRO_UND_ID, " +
+                                            " PRO_NCM, " +
+                                            " PRO_MARGEM, " +
+                                            " Lin_Origem_ID, " +
+                                            " [Arq_Origem_ID]) " +
+                                            " VALUES ( ");
+                            conteudo.Append("'" + workSheet.Cells[i, j].Value + "', ");
+                        }
+                        else if ((j == 3) && workSheet.Cells[i, j].Value != null)
+                        {
+                            Unidades unidade = (Unidades)System.Enum.Parse(typeof(Unidades), workSheet.Cells[i, j].Value.ToString());
+                            conteudo.Append("'" + ((int)unidade).ToString() + "', ");
+                        }
+                        else if (j == workSheet.Dimension.End.Column)
+                        {
+                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '', '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace('\'', ' ') + "', '" + linha + "', ");
+                            conteudo.Append(" " + pegarID("D_Produtos") + "  ");
+                        }
+                        else
+                        {
+                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL " : "'" + workSheet.Cells[i, j].Value.ToString().Replace('\'', ' ') + "', ");
+                        }
+                    }
+                    if (i == workSheet.Dimension.End.Row)
+                    {
+                        conteudo.Append(" ) ");
+                    }
+                    else
+                    {
+                        conteudo.Append(")");
+                        conteudo.Append(Environment.NewLine);
+                    }
+                    if (conn.State.ToString() == "Closed")
+                    {
+                        conn.Open();
+                    }
+                    if (pendencia == false)
+                    {
+                    //    Clipboard.SetText(conteudo.ToString());
+                        cmd.CommandText = conteudo.ToString();
+                        //SqlTransaction trE = null;
+                        //trE = conn.BeginTransaction();
+                        //cmd.Transaction = trE;
+                        //cmd.ExecuteNonQuery();
+                        //trE.Commit();
+                        fazTransacao(conn, cmd);
+                    }
+                    conteudo.Clear();
+                    //        }
+                }
+                package.Dispose();
+                if (numCarregados == 0)
+                {
+                    MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de produtos carregado");
+                }
+                else
+                {
+                    MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + numCarregados.ToString() + " registros de produtos realizados com sucesso");
+                    SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+                    cmdArquivoCarregado.CommandText = gravaId(caminho, numCarregados, "D_Produtos");
+                    fazTransacao(conn, cmdArquivoCarregado);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro no carregamento de produtos " + ex.Message);
+            }
+        }
+
+        //METODOS PENDENCIAS
+        public void ComprasPenLayout(int linha)
+        {
             string filePath = caminho;
-            //try
-            //{
+            try
+            {
+                /////temporario
+                /////filePath = @"C:\Base\Compras_Doosan_Jan_Jun_2019.xlsx";
+
+                FileInfo existingFile = new FileInfo(filePath);
+                ExcelPackage package = new ExcelPackage(existingFile);
+                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                StringBuilder conteudo = new StringBuilder();
+
+                for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                {
+                    if (j == 1)
+                    {
+                        conteudo.Append(" INSERT INTO[dbo].[A_PendenciaLayout] " +
+                                            " ([pen_Linha], " +
+                                            " [pen_Tabela]," +
+                                            " [pen_Campo]," +
+                                            " [pen_Posi]," +
+                                            " [pen_Tam]," +
+                                            " [pen_Erro]," +
+                                            " [pen_Registro]," +
+                                            " [pen_Arq_Origem])" +
+                                            " VALUES ( ");
+                        if (workSheet.Cells[linha, j].Value == null)
+                        {
+                            int registro = linha - 1;
+                            conteudo.Append(" " + registro + ", 'D_Compras', 'Cmp_Pro_id', 0, 0, 'Campo [Código do Produto] é obrigatório', '");
+                        }
+                        else
+                        {
+                            int registro = linha - 1;
+                            conteudo.Append(" " + registro + ", 'D_Compras', 'Cmp_Pro_id', 0, 0, 'Campo [Código do Produto] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
+                        }
+                    }
+                    else if (j == 12 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código do Produto]", "[C.F.O.P. N.F. Entrada]");
+                        conteudo.Replace("Cmp_Pro_id", "Cmp_CFOP");
+                    }
+                    else if (j == 9 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código do Produto]", "[Número da N.F.]");
+                        conteudo.Replace("Cmp_Pro_id", "Cmp_NF_Entrada");
+                    }
+                    else if (j == 3 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código do Produto]", "[Código do Fornecedor]");
+                        conteudo.Replace("Cmp_Pro_id", "Cmp_For_ID");
+                    }
+                    else if (j == 11 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código do Produto]", "[Data de Emissão NF]");
+                        conteudo.Replace("Cmp_Pro_id", "Cmp_NF_DT");
+                    }
+                    else if (j == workSheet.Dimension.End.Column)
+                    {
+
+                        if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                        {
+                            conteudo.Append(" ', " + pegarID("D_Compras") + ") ");
+                        }
+                        else
+                        {
+                            conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Compras") + ") ");
+                        }
+                    }
+                    else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                    {
+
+                        conteudo.Append(" ");
+                    }
+                    else
+                    {
+                        conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
+                    }
+                }
+                //  conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+                SqlCommand cmda = conn.CreateCommand();
+                cmda.CommandText = conteudo.ToString();
+                SqlTransaction trEa = null;
+                trEa = conn.BeginTransaction();
+                cmda.Transaction = trEa;
+                cmda.ExecuteNonQuery();
+                trEa.Commit();
+                conn.Close();
+                conteudo.Clear();
+                package.Dispose();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro na ComprasPenLayout" + ex.Message);
+            }
+        }
+
+        public void VendasPenLayout(int linha)
+        {
+            string filePath = caminho;
+            try
+            {
 
                 ///// temporario
                 //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
@@ -2227,7 +2171,105 @@ namespace JACA
                 ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
-            
+
+                for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                {
+                    if (j == 1)
+                    {
+                        conteudo.Append(" INSERT INTO[dbo].[A_PendenciaLayout] " +
+                                            " ([pen_Linha], " +
+                                            " [pen_Tabela]," +
+                                            " [pen_Campo]," +
+                                            " [pen_Posi]," +
+                                            " [pen_Tam]," +
+                                            " [pen_Erro]," +
+                                            " [pen_Registro]," +
+                                            " [pen_Arq_Origem])" +
+                                            " VALUES ( ");
+                        if (workSheet.Cells[linha, j].Value == null)
+                        {
+                            int registro = linha - 1;
+                            conteudo.Append(" " + registro + ", 'D_Vendas_Itens', 'Vnd_Pro_id', 0, 0, 'Campo [Código Cliente] é obrigatório', '");
+                        }
+                        else
+                        {
+                            int registro = linha - 1;
+                            conteudo.Append(" " + registro + ", 'D_Vendas_Itens', 'Vnd_Pro_id', 0, 0, 'Campo [Código Cliente] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
+                        }
+                    }
+                    else if (j == 5 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código Cliente]", "[CFOP]");
+                    }
+                    else if (j == 2 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código Cliente]", "[Número NF]");
+                    }
+                    else if (j == 10 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código Cliente]", "[Código Produto]");
+                    }
+                    else if (j == 6 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    {
+                        conteudo.Replace("[Código Cliente]", "[Data de Emissão NF]");
+                    }
+                    else if (j == workSheet.Dimension.End.Column)
+                    {
+                        if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                        {
+                            conteudo.Append(" ', " + pegarID("D_Vendas_Itens") + ") ");
+                        }
+                        else
+                        {
+                            conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Vendas_Itens") + ") ");
+                        }
+                    }
+                    else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                    {
+
+                        conteudo.Append(" ");
+                    }
+                    else
+                    {
+                        conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
+                    }
+                }
+
+                //Clipboard.SetText(conteudo.ToString());
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+
+                cmd.CommandText = conteudo.ToString();
+                SqlTransaction trE = null;
+                trE = conn.BeginTransaction();
+                cmd.Transaction = trE;
+                cmd.ExecuteNonQuery();
+                trE.Commit();
+                conn.Close();
+                conteudo.Clear();
+                package.Dispose();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro na VendasPenLayout: " + ex.Message);
+            }
+        }
+
+        private void CustosPenLayout(int linha)
+        {
+            string filePath = caminho;
+            //try
+            //{
+                ///// temporario
+                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
+                //filePath = @"C:\Base\Vendas_Doosan_Jan_Jun_2019.xlsx";
+                FileInfo existingFile = new FileInfo(filePath);
+                ExcelPackage package = new ExcelPackage(existingFile);
+                ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+                StringBuilder conteudo = new StringBuilder();
+                SqlCommand cmd = conn.CreateCommand();
                 for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                 {
                     if (j == 1)
@@ -2286,14 +2328,11 @@ namespace JACA
                         conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
                     }
                 }
-
                 Clipboard.SetText(conteudo.ToString());
-
                 if (conn.State.ToString() == "Closed")
                 {
                     conn.Open();
                 }
-
             cmd.CommandText = conteudo.ToString();
             SqlTransaction trE = null;
             trE = conn.BeginTransaction();
@@ -2316,7 +2355,6 @@ namespace JACA
             string filePath = caminho;
         //try
         //{
-
         ///// temporario
         //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
         //filePath = @"C:\Base\Vendas_Doosan_Jan_Jun_2019.xlsx";
@@ -2343,12 +2381,12 @@ namespace JACA
                         if (workSheet.Cells[linha, j].Value == null)
                         {
                             int registro = linha - 1;
-        conteudo.Append(" " + registro + ", 'D_Forcedores', 'For_id', 0, 0, 'Campo [Código do Fornecedor] é obrigatório', '");
+                        conteudo.Append(" " + registro + ", 'D_Fornecedores', 'For_id', 0, 0, 'Campo [Código do Fornecedor] é obrigatório', '");
                         }
                         else
                         {
                             int registro = linha - 1;
-    conteudo.Append(" " + registro + ", 'D_Forcedores', 'For_id', 0, 0, 'Campo [Código do Fornecedor] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
+                        conteudo.Append(" " + registro + ", 'D_Fornecedores', 'For_id', 0, 0, 'Campo [Código do Fornecedor] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
                         }
                     }
                     else if (j == 2 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
@@ -2385,7 +2423,7 @@ namespace JACA
                     }
                 }
 
-                Clipboard.SetText(conteudo.ToString());
+               Clipboard.SetText(conteudo.ToString());
 
                 if (conn.State.ToString() == "Closed")
                 {
@@ -2394,7 +2432,7 @@ namespace JACA
 
             cmd.CommandText = conteudo.ToString();
             SqlTransaction trE = null;
-trE = conn.BeginTransaction();
+            trE = conn.BeginTransaction();
             cmd.Transaction = trE;
             cmd.ExecuteNonQuery();
             trE.Commit();
@@ -2408,252 +2446,499 @@ trE = conn.BeginTransaction();
             //}
         }
 
-        public void Produtos()
+        void ClientesPenLayout(int linha)
         {
-            try
+            string filePath = caminho;
+            ///// temporario
+            FileInfo existingFile = new FileInfo(filePath);
+            ExcelPackage package = new ExcelPackage(existingFile);
+            ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            StringBuilder conteudo = new StringBuilder();
+            SqlCommand cmd = conn.CreateCommand();
+
+            for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
             {
-
-                string filePath = null;
-                //  string caminho = null;
-
-                int linha = 1;
-                int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
-
-                //            SqlConnection conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\MSSQLSERVER01; Integrated Security=True; Initial Catalog=LAMPADA");
-
-                //          filePath = @"C:\Base\info\produtos\produto.xlsx";
-
-                filePath = caminho;
-
-                FileInfo existingFile = new FileInfo(filePath);
-                ExcelPackage package = new ExcelPackage(existingFile);
-                ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-                StringBuilder conteudo = new StringBuilder();
-                var lista = new List<String>();
-                SqlCommand cmd = conn.CreateCommand();
-                ArrayList Excel = new ArrayList();
-                ArrayList SQL = new ArrayList();
-                ArrayList repetido = new ArrayList();
-                ArrayList carregado = new ArrayList();
-                bool pendencia = false;
-
-                // for (int o = workSheet.Dimension.Start.Row + 1; o <= workSheet.Dimension.End.Row; o++)
-                //  {
-                //    Excel.Add(workSheet.Cells[o, 1].Value.ToString());
-                //    }
-
-                if (conn.State.ToString() == "Closed")
+                if (j == 1)
                 {
-                    conn.Open();
-                }
-                 
-                SqlCommand cmdProc = conn.CreateCommand();
-                SqlTransaction trProc = null;
-                cmdProc.CommandText = "create or alter PROCEDURE [dbo].[SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR] @PROD VARCHAR(MAX) AS BEGIN IF NOT EXISTS(SELECT * FROM D_Produtos WHERE Pro_ID = @PROD)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
-                trProc = conn.BeginTransaction();
-                cmdProc.Transaction = trProc;
-                cmdProc.ExecuteNonQuery();
-                trProc.Commit();
-
-                for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
-                {
-                    pendencia = false;
-
-                    for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                    conteudo.Append(" INSERT INTO[dbo].[A_PendenciaLayout] " +
+                                        " ([pen_Linha], " +
+                                        " [pen_Tabela]," +
+                                        " [pen_Campo]," +
+                                        " [pen_Posi]," +
+                                        " [pen_Tam]," +
+                                        " [pen_Erro]," +
+                                        " [pen_Registro]," +
+                                        " [pen_Arq_Origem])" +
+                                        " VALUES ( ");
+                    if (workSheet.Cells[linha, j].Value == null)
                     {
-
-                        //if ((j == 1) && (workSheet.Cells[i, 1].Value == null))
-                        //{
-                        //    MessageBox.Show("Test");
-                        //    numPendencias++;
-                        //    lblPendencia.Text = numPendencias.ToString();
-                        //    lblPendencia.Refresh();
-                        //}
-                        //else
-                        //{
-                        if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
-                        {
-
-
-                            pendencia = true;
-                            numPendencias++;
-                            lblPendencia.Text = numPendencias.ToString();
-
-                        }
-                        else if ((j == 1))
-                        {
-
-                            SqlCommand cmdeProc = conn.CreateCommand();
-                            cmdeProc.CommandType = CommandType.StoredProcedure;
-                            cmdeProc.CommandText = "[SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR]";
-                            cmdeProc.Parameters.Add("@PROD", SqlDbType.Int);
-                            cmdeProc.Parameters["@PROD"].Direction = ParameterDirection.ReturnValue;
-                            cmdeProc.Parameters.AddWithValue("@PROD", workSheet.Cells[i, j].Value);
-
-                            if (conn.State.ToString() == "Closed")
-                                conn.Open();
-
-                            cmdeProc.ExecuteNonQuery();
-                            int ret = Convert.ToInt32(cmdeProc.Parameters["@PROD"].Value);
-                            conn.Close();
-
-                            if (ret == 1)
-                            {
-                                numRepetidos++;
-                                lblRepetido.Text = numRepetidos.ToString();
-                                lblRepetido.Refresh();
-                            }
-                            else
-                            {
-                                numCarregados++;
-                                lblCarregada.Text = numCarregados.ToString();
-                                lblCarregada.Refresh();
-                            }
-
-                            conteudo.Append(" declare @pro_id varchar(max) = '" + workSheet.Cells[i, j].Value + "';");
-                            conteudo.Append(Environment.NewLine);
-                            conteudo.Append(" if  (select max(pro_id) from D_Produtos where pro_id = @pro_id) = (select (pro_id) from D_Produtos where pro_id = (@pro_id)) ");
-                            conteudo.Append(Environment.NewLine);
-                            conteudo.Append(" print 'OK' ");
-                            conteudo.Append(Environment.NewLine);
-                            conteudo.Append(" else ");
-                            conteudo.Append(" INSERT INTO D_PRODUTOS " +
-                                            " (PRO_ID, " +
-                                            " PRO_DESCRICAO, " +
-                                            " PRO_UND_ID, " +
-                                            " PRO_NCM, " +
-                                            " PRO_MARGEM, " +
-                                            " Lin_Origem_ID, " +
-                                            " [Arq_Origem_ID]) " +
-                                            " VALUES ( ");
-                            conteudo.Append("'" + workSheet.Cells[i, j].Value + "', ");
-                        }
-                        else if ((j == 3) && workSheet.Cells[i, j].Value != null)
-                        {
-                            Unidades unidade = (Unidades)System.Enum.Parse(typeof(Unidades), workSheet.Cells[i, j].Value.ToString());
-                            conteudo.Append("'" + ((int)unidade).ToString() + "', ");
-                        }
-                        else if (j == workSheet.Dimension.End.Column)
-                        {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '', '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace('\'', ' ') + "', '" + linha + "', ");
-                            conteudo.Append(" " + pegarID("D_Produtos") + "  ");
-                        }
-                        else
-                        {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL " : "'" + workSheet.Cells[i, j].Value.ToString().Replace('\'', ' ') + "', ");
-                        }
-
-                    }
-
-                    if (i == workSheet.Dimension.End.Row)
-                    {
-                        conteudo.Append(" ) ");
+                        int registro = linha - 1;
+                        conteudo.Append(" " + registro + ", 'D_Clientes', 'For_id', 0, 0, 'Campo [Código do Cliente] é obrigatório', '");
                     }
                     else
                     {
-                        conteudo.Append(")");
-                        conteudo.Append(Environment.NewLine);
+                        int registro = linha - 1;
+                        conteudo.Append(" " + registro + ", 'D_Clientes', 'For_id', 0, 0, 'Campo [Código do Cliente] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
                     }
+                }
+                else if (j == 2 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                {
+                    conteudo.Replace("[Código do Cliente]", "[Descrição do Cliente]");
+                }
+                else if (j == 3 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                {
+                    conteudo.Replace("[Código do Cliente]", "[País do Cliente]");
+                }
+                else if (j == 4 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                {
+                    conteudo.Replace("[Código do Cliente]", "[Vinculo do Cliente]");
+                }
+                else if (j == workSheet.Dimension.End.Column)
+                {
+                    if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                    {
+                        conteudo.Append(" ', " + pegarID("D_Clientes") + ") ");
+                    }
+                    else
+                    {
+                        conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Clientes") + ") ");
+                    }
+                }
+                else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                {
 
+                    conteudo.Append(" ");
+                }
+                else
+                {
+                    conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
+                }
+            }
+
+           // Clipboard.SetText(conteudo.ToString());
+
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
+
+            cmd.CommandText = conteudo.ToString();
+            SqlTransaction trE = null;
+            trE = conn.BeginTransaction();
+            cmd.Transaction = trE;
+            cmd.ExecuteNonQuery();
+            trE.Commit();
+            conn.Close();
+            conteudo.Clear();
+            package.Dispose();
+        }
+         
+        void ProdutosPenLayout(int linha)
+        {
+            string filePath = caminho;
+            ///// temporario
+            FileInfo existingFile = new FileInfo(filePath);
+            ExcelPackage package = new ExcelPackage(existingFile);
+            ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            StringBuilder conteudo = new StringBuilder();
+            SqlCommand cmd = conn.CreateCommand();
+
+            for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+            {
+                if (j == 1)
+                {
+                    conteudo.Append(" INSERT INTO[dbo].[A_PendenciaLayout] " +
+                                        " ([pen_Linha], " +
+                                        " [pen_Tabela]," +
+                                        " [pen_Campo]," +
+                                        " [pen_Posi]," +
+                                        " [pen_Tam]," +
+                                        " [pen_Erro]," +
+                                        " [pen_Registro]," +
+                                        " [pen_Arq_Origem])" +
+                                        " VALUES ( ");
+                    if (workSheet.Cells[linha, j].Value == null)
+                    {
+                        int registro = linha - 1;
+                        conteudo.Append(" " + registro + ", 'D_Produtos', 'Pro_id', 0, 0, 'Campo [Código do Produto] é obrigatório', '");
+                    }
+                    else
+                    {
+                        int registro = linha - 1;
+                        conteudo.Append(" " + registro + ", 'D_Produtos', 'Pro_id', 0, 0, 'Campo [Código do Produto] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
+                    }
+                }
+                else if (j == 2 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                {
+                    conteudo.Replace("[Código do Produto]", "[Descrição do Produto]");
+                }
+                else if (j == 3 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                {
+                    conteudo.Replace("[Código do Produto]", "[Unidade de Medida]");
+                }
+                else if (j == workSheet.Dimension.End.Column)
+                {
+                    if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                    {
+                        conteudo.Append(" ', " + pegarID("D_Produtos") + ") ");
+                    }
+                    else
+                    {
+                        conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Produtos") + ") ");
+                    }
+                }
+                else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                {
+
+                    conteudo.Append(" ");
+                }
+                else
+                {
+                    conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
+                }
+            }
+
+             Clipboard.SetText(conteudo.ToString());
+
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
+
+            cmd.CommandText = conteudo.ToString();
+            SqlTransaction trE = null;
+            trE = conn.BeginTransaction();
+            cmd.Transaction = trE;
+            cmd.ExecuteNonQuery();
+            trE.Commit();
+            conn.Close();
+            conteudo.Clear();
+            package.Dispose();
+        }
+         
+        //COMBOBOX
+        private void comboBoxServidor_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            try
+            {
+                conexao = comboBoxServidor.Text;
+                conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True;");
+
+          
                     if (conn.State.ToString() == "Closed")
                     {
                         conn.Open();
                     }
+                    System.Data.DataTable databases = conn.GetSchema("Databases");
 
-                    if (pendencia == false)
+                    comboBoxBase.Items.Clear();
+            
+                    foreach (DataRow database in databases.Rows)
+                {
+
+                    databaseName = database.Field<String>("database_name");
+
+                    if(databaseName != "master" && databaseName != "tempdb" && databaseName != "model" && databaseName != "msdb")
                     {
-                        // Clipboard.SetText(conteudo.ToString());
-                        cmd.CommandText = conteudo.ToString();
-                        //SqlTransaction trE = null;
-                        //trE = conn.BeginTransaction();
-                        //cmd.Transaction = trE;
-                        //cmd.ExecuteNonQuery();
-                        //trE.Commit();
-                        fazTransacao(conn, cmd);
+                       
+                        comboBoxBase.Items.Add(databaseName);
+                        conn.Close();
+                        comboBoxBase.Enabled = true;
+
                     }
 
-                    conteudo.Clear();
-                    //        }
                 }
 
-                package.Dispose();
 
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+     
 
-                if (numCarregados == 0)
+ 
+        }
+
+        private void comboBoxServidor_Enter(object sender, EventArgs e)
+        {
+            comboBoxServidor.Items.Clear();
+            string myServer = Environment.MachineName;
+
+            //System.Data.DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
+
+            //if (servers.Rows.Count > 0)
+            //{
+            //    comboBoxServidor.Items.Add(servers.Rows[0]["ServerName"]);
+
+            //    for (int i = 0; i < servers.Rows.Count; i++)
+            //    {
+
+            //        if (myServer == servers.Rows[i]["ServerName"].ToString())
+            //        {
+            //            if ((servers.Rows[i]["InstanceName"] as string) != null)
+            //            {
+            //                comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
+            //            }
+            //            else
+            //            {
+            //                comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"]);
+            //            }
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    comboBoxServidor.Items.Add(myServer);
+            //}
+            comboBoxServidor.Items.Add(myServer);
+            string ServerName = Environment.MachineName;
+            RegistryView registryView = Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Registry32;
+            using (RegistryKey hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView))
+            {
+                RegistryKey instanceKey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\Instance Names\SQL", false);
+                if (instanceKey != null)
                 {
-                    MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de produtos carregado");
+                    foreach (var instanceName in instanceKey.GetValueNames())
+                    {
+                        comboBoxServidor.Items.Add(ServerName + "\\" + instanceName);
+                    }
                 }
-                else
+            }
+        }
+
+        private void comboBoxBase_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            baseDeDados = comboBoxBase.Text;
+            conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
+            conn1 = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
+
+        }
+
+        private void cmbPlanilha_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string filePath = caminho;
+            FileInfo existingFile = new FileInfo(filePath);
+            ExcelPackage package = new ExcelPackage(existingFile);
+            ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
+            StringBuilder conteudo = new StringBuilder();
+            var lista = new List<String>();
+            SqlCommand cmd = conn.CreateCommand();
+         //   int linha = 1;
+
+            lblTotal.Text = (workSheet.Dimension.End.Row - 1).ToString();
+            lblTotal.Refresh();
+
+            cmbTabela.Enabled = true;
+
+        }
+
+        private void cmbTabela_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            lblRepetido.Text = "0";
+            lblPendencia.Text = "0";
+            lblCarregada.Text = "0";
+            cmbSelecionado = true;
+            btnCarregar.Enabled = true;
+        }
+
+
+        //BOTÕES
+        private void btnGerarModelo_Click(object sender, EventArgs e)
+        {
+
+
+            using (ExcelPackage excel = new ExcelPackage())
+            {
+                excel.Workbook.Worksheets.Add("Compras");
+                excel.Workbook.Worksheets.Add("Vendas");
+                excel.Workbook.Worksheets.Add("Ordem");
+                excel.Workbook.Worksheets.Add("Inventario");
+                excel.Workbook.Worksheets.Add("Relacao");
+                excel.Workbook.Worksheets.Add("Custo");
+                excel.Workbook.Worksheets.Add("Clientes");
+                excel.Workbook.Worksheets.Add("Produtos");
+                excel.Workbook.Worksheets.Add("Fornecedores");
+                excel.Workbook.Worksheets.Add("PIC");
+
+                var comprasWorksheet = excel.Workbook.Worksheets["Compras"];
+                var vendasWorksheet = excel.Workbook.Worksheets["Vendas"];
+                var ordemWorksheet = excel.Workbook.Worksheets["Ordem"];
+                var custoWorksheet = excel.Workbook.Worksheets["Custo"];
+                var inventarioWorksheet = excel.Workbook.Worksheets["Inventario"];
+                var relacaoWorksheet = excel.Workbook.Worksheets["Relacao"];
+                var clientesWorksheet = excel.Workbook.Worksheets["Clientes"];
+                var produtosWorksheet = excel.Workbook.Worksheets["Produtos"];
+                var fornecedoresWorksheet = excel.Workbook.Worksheets["Fornecedores"];
+                var picWorksheet = excel.Workbook.Worksheets["PIC"];
+
+                List<string[]> headerRowCompras = new List<string[]>()
+                    {
+                        new string[] { "Código do Produto",   "Código Divisão",   "Código do Fornecedor", "Lançamento",   "Fatura",   "BL Data",  "Número da DI",    "Data da Importação",   "N da NF de Entrada",  "Serie",    "Data Entrada NF",  "CFOP NF Entrada",  "Data de Vencimento Média", "Dias", "Quantidade",   "Valor FOB (Moeda Estrangeira)",    "Código da Moeda Estrangeira",  "Frete",    "Seguro",   "Código Moeda Frete",   "Código Moeda Seguro",  "Imposto de Importação (Reais)",    "Icms", "Pis",  "Cofins", "Unidade", "CNPJ", "Incoterm",  "Id Fornecedor Seguro", "Id Fornecedor Frete" }
+                    };
+
+                List<string[]> headerRowVendas = new List<string[]>()
+                    {
+                      new string[] {"Código do Cliente",    "Número NF",    "Série NF", "Código da Divisão", "CFOP", "Data Emissão", "Data Vencimento",  "Prazo de Vencimento", "Item Nota Fiscal", "Código do Produto",    "Quantidade",   "Valor Venda sem o IPI (Reais)",  "Descontos Incondicionais", "ICMS", "PIS",  "COFINS",   "ISS",  "Comissão", "Frete",  "Seguro",   "Data de Embarque", "Código Moeda Estrangeira", "Valor em Moeda Estrangeira",   "Custo da Venda (CPV)" ,"RE", "CNPJ" }
+                    };
+
+                List<string[]> headerRowOrdem = new List<string[]>()
+                    {
+                      new string[] { "Código do Produto Acabado",   "Quantidade Produzida", "Unidade de Medida Produto Acabado",    "Código Matéria-Prima", "Quantidade Requisitada",   "Unidade de Medida Matéria-Prima",  "N da Ordem de Produção",  "Data Inínio",  "Data Fim", "CNPJ" }
+                    };
+
+                List<string[]> headerRowInventario = new List<string[]>()
+                    {
+                      new string[] { "Código do Produto",   "Data Inventário",  "Quantidade em Estoque", "Valor",   "Unidade de Medida", "CNPJ" }
+                    };
+
+                List<string[]> headerRowRelacao = new List<string[]>()
+                    {
+                      new string[] { "Produto Acabado", "Matéria Prima", "Quantidade Produzida", "Quantidade Requisitada", "Relacao", "Tipo Relação" }
+                    };
+
+                List<string[]> headerRowClientes = new List<string[]>()
+                    {
+                      new string[] { "Código do Cliente", "Nome", "Código do País","Vínculo",  "Data Inicio",  "Data Fim", "CNPJ"}
+                    };
+
+                List<string[]> headerRowProdutos = new List<string[]>()
+                    {
+                      new string[] {"Código do Produto",    "Descrição",    "Unidade de Medida",    "Classificação Fiscal (NCM)", "Margem"}
+                    };
+
+                List<string[]> headerRowFornecedores = new List<string[]>()
+                    {
+                      new string[] { "Código do Fornecedor", "Nome", "Código do País","Vínculo", "Data Inicio",  "Data Fim", "CNPJ"}
+                    };
+
+                List<string[]> headerRowCusto = new List<string[]>()
+                    {
+                      new string[] {"Código do Produto", "Mês", "Ano", "Custo Médio Unitário", "CNPJ" }
+                    };
+
+                List<string[]> headerRowPIC = new List<string[]>()
+                    {
+                      new string[] {"Fornecedor Código",   "Fornecedor Pais", "Pro Código",   "Qtde", "Vl Moeda Bruto",   "Cod Moeda",    "Data Emissao",   "Data Venc",  "Cli Código",   "Cli Pais", "Doc Oper", "Dias", "CFOP", "Imposto Intern",   "FOB Moeda",    "IPI",  "ICMS", "Pis",  "Cofins",   "Frete",    "Seguro"}
+                    };
+
+                string headerRangeFornecedores = "A1:" + Char.ConvertFromUtf32(headerRowFornecedores[0].Length + 64) + "1";
+                fornecedoresWorksheet.Cells[headerRangeFornecedores].LoadFromArrays(headerRowFornecedores);
+                fornecedoresWorksheet.Cells[headerRangeFornecedores].Style.Font.Bold = true;
+                fornecedoresWorksheet.Column(1).AutoFit();
+
+                string headerRangeCompras = "A1:AB1";
+                comprasWorksheet.Cells[headerRangeCompras].LoadFromArrays(headerRowCompras);
+                comprasWorksheet.Cells[headerRangeCompras].Style.Font.Bold = true;
+                comprasWorksheet.Column(1).AutoFit();
+
+                string headerRangeInventario = "A1:" + Char.ConvertFromUtf32(headerRowInventario[0].Length + 64) + "1";
+                inventarioWorksheet.Cells[headerRangeInventario].LoadFromArrays(headerRowInventario);
+                inventarioWorksheet.Cells[headerRangeInventario].Style.Font.Bold = true;
+                inventarioWorksheet.Column(1).AutoFit();
+
+                string headerRangeVendas = "A1:" + Char.ConvertFromUtf32(headerRowVendas[0].Length + 64) + "1";
+                vendasWorksheet.Cells[headerRangeVendas].LoadFromArrays(headerRowVendas);
+                vendasWorksheet.Cells[headerRangeVendas].Style.Font.Bold = true;
+                vendasWorksheet.Column(1).AutoFit();
+
+                string headerRangeOrdem = "A1:" + Char.ConvertFromUtf32(headerRowOrdem[0].Length + 64) + "1";
+                ordemWorksheet.Cells[headerRangeOrdem].LoadFromArrays(headerRowOrdem);
+                ordemWorksheet.Cells[headerRangeOrdem].Style.Font.Bold = true;
+                ordemWorksheet.Column(1).AutoFit();
+
+                string headerRangeClientes = "A1:" + Char.ConvertFromUtf32(headerRowClientes[0].Length + 64) + "1";
+                clientesWorksheet.Cells[headerRangeClientes].LoadFromArrays(headerRowClientes);
+                clientesWorksheet.Cells[headerRangeClientes].Style.Font.Bold = true;
+                clientesWorksheet.Column(1).AutoFit();
+
+                string headerRangeProdutos = "A1:" + Char.ConvertFromUtf32(headerRowProdutos[0].Length + 64) + "1";
+                produtosWorksheet.Cells[headerRangeProdutos].LoadFromArrays(headerRowProdutos);
+                produtosWorksheet.Cells[headerRangeProdutos].Style.Font.Bold = true;
+                produtosWorksheet.Column(1).AutoFit();
+
+                string headerRangeRelacao = "A1:" + Char.ConvertFromUtf32(headerRowRelacao[0].Length + 64) + "1";
+                relacaoWorksheet.Cells[headerRangeRelacao].LoadFromArrays(headerRowRelacao);
+                relacaoWorksheet.Cells[headerRangeRelacao].Style.Font.Bold = true;
+                relacaoWorksheet.Column(1).AutoFit();
+
+                string headerRangeCusto = "A1:" + Char.ConvertFromUtf32(headerRowCusto[0].Length + 64) + "1";
+                custoWorksheet.Cells[headerRangeCusto].LoadFromArrays(headerRowCusto);
+                custoWorksheet.Cells[headerRangeCusto].Style.Font.Bold = true;
+                custoWorksheet.Column(1).AutoFit();
+
+                string headerRangePIC = "A1:" + Char.ConvertFromUtf32(headerRowPIC[0].Length + 64) + "1";
+                picWorksheet.Cells[headerRangePIC].LoadFromArrays(headerRowPIC);
+                picWorksheet.Cells[headerRangePIC].Style.Font.Bold = true;
+                picWorksheet.Column(1).AutoFit();
+
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.Filter = "Excel|*.xlsx";
+                saveFileDialog1.Title = "Salvar Excel";
+                saveFileDialog1.RestoreDirectory = true;
+                saveFileDialog1.FileName = "Modelo Carregamento Dados TPS.xlsx";
+                saveFileDialog1.ShowDialog();
+
+                // If the file name is not an empty string open it for saving.  
+                if (saveFileDialog1.FileName != "")
                 {
-                    MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + numCarregados.ToString() + " registros de produtos realizados com sucesso");
-                    SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-                    cmdArquivoCarregado.CommandText = gravaId(caminho, numCarregados, "D_Produtos");
-                    fazTransacao(conn, cmdArquivoCarregado);
+                    // Saves the Image via a FileStream created by the OpenFile method.  
+                    System.IO.FileStream fs = (System.IO.FileStream)saveFileDialog1.OpenFile();
+                    excel.SaveAs(fs);
+                }
+                excel.Dispose();
+            }
+        }
+
+        private void buttonAbrir_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            //openFileDialog1.InitialDirectory = "C:\\";
+            openFileDialog1.Filter = "Excel files (*.xlsx)|*.xlsx";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.RestoreDirectory = true;
+            openFileDialog1.Multiselect = true;
+            cmbPlanilha.Text = "";
+            lblTotal.Text = "0";
+            lblCarregada.Text = "0";
+            lblPendencia.Text = "0";
+            lblRepetido.Text = "0";
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    if ((myStream = openFileDialog1.OpenFile()) != null)
+                    {
+                        using (myStream)
+                        {
+                            caminho = openFileDialog1.FileName;
+                            directoryPath = Path.GetDirectoryName(openFileDialog1.FileName);
+                            files = (openFileDialog1.SafeFileNames);
+                            carregaLinhas();
+                        }
+                    }
+                    cmbPlanilha.Enabled = true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Erro no carregamento do arquivo " + ex.Message);
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro no carregamento de produtos " + ex.Message);
-            }
         }
 
-
-        public void fazTransacao(SqlConnection conn, SqlCommand command)
+        private void btnCarregar_Click(object sender, EventArgs e)
         {
-
-            try
-            {
-                if (conn.State.ToString() == "Closed")
-                    conn.Open();
-
-                SqlTransaction trA = null;
-                trA = conn.BeginTransaction();
-                command.Transaction = trA;
-                command.ExecuteNonQuery();
-                trA.Commit();
-                conn.Close();
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro código 111 : " + ex.Message);
-             
-            }
-   
-        }
-
-        public string gravaId(string caminho, int numCarregados, string tabela)
-        {
-            try
-            {
-
-            return " declare @tabela varchar(max) = '" + tabela + "';" +
-                " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
-                " insert into S_ArquivoCarregado" +
-                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                " GETDATE(), ' " + numCarregados.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
-                " else" +
-                " insert into S_ArquivoCarregado" +
-                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                " values( '" + pegarID(tabela) + "',  '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                " GETDATE(), " + numCarregados.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
-                "IF (OBJECT_ID('SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR') IS NOT NULL)  DROP PROCEDURE SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR  ";
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro no método gravaID: " + ex.Message);
-                return null;
-            }
-        }
-
-        private void button1_Click_2(object sender, EventArgs e)
-        {
+            lblPendencia.Text = "0";
+            lblPendencia.Refresh();
+            lblCarregada.Text = "0";
+            lblCarregada.Refresh();
+            lblRepetido.Text = "0";
+            lblRepetido.Refresh();
             //try
             //{
-           if (comboBoxServidor.SelectedIndex == -1)
+            if (comboBoxServidor.SelectedIndex == -1)
             {
                 MessageBox.Show("Escolha o servidor do SQL para carregamento ");
             }
@@ -2673,7 +2958,7 @@ trE = conn.BeginTransaction();
                 MessageBox.Show("Escolha a tabela do SQL para carregamento ");
             }
 
-             
+
             else if (cmbSelecionado == true)
             {
                 if (cmbTabela.SelectedItem.Equals("D_Custo_Medio"))
@@ -2717,12 +3002,131 @@ trE = conn.BeginTransaction();
                     PIC();
                 }
             }
-    //        }
+            //        }
             //catch (Exception ex)
             //{
             //    MessageBox.Show("Erro no botão carregar nas escolha da tabela: " + ex.Message);
             //}
 
+        }
+
+        //METODOS AUXILIARES
+        public void carregaLinhas()
+        {
+            try
+            {
+
+                cmbPlanilha.Items.Clear();
+                lblEndereço.Text = caminho;
+                MyApp = new Excel.Application();
+                excelConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + caminho + ";Extended Properties=Excel 12.0;";
+                MyApp.Workbooks.Add("");
+                MyApp.Workbooks.Add(caminho);
+
+                for (int i = 1; i <= MyApp.Workbooks[2].Worksheets.Count; i++)
+                {
+                    cmbPlanilha.Items.Add(MyApp.Workbooks[2].Worksheets[i].Name);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro no carregalinha " + ex.Message);
+            }
+        }
+
+        public void fazTransacao(SqlConnection conn, SqlCommand command)
+        {
+
+            try
+            {
+                if (conn.State.ToString() == "Closed")
+                    conn.Open();
+
+                SqlTransaction trA = null;
+                trA = conn.BeginTransaction();
+                command.Transaction = trA;
+                command.ExecuteNonQuery();
+                trA.Commit();
+                conn.Close();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro código 111 : " + ex.Message);
+
+            }
+
+        }
+
+        public string gravaId(string caminho, int numCarregados, string tabela)
+        {
+            try
+            {
+
+                return " declare @tabela varchar(max) = '" + tabela + "';" +
+                    " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
+                    " insert into S_ArquivoCarregado" +
+                    " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                    " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                    " GETDATE(), ' " + numCarregados.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
+                    " else" +
+                    " insert into S_ArquivoCarregado" +
+                    " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
+                    " values( '" + pegarID(tabela) + "',  '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
+                    " GETDATE(), " + numCarregados.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
+                    "IF (OBJECT_ID('SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR') IS NOT NULL)  DROP PROCEDURE SP_VERIFICA_PRODUTOS_REPETIDOS_CARREGADOR  ";
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro no método gravaID: " + ex.Message);
+                return null;
+            }
+        }
+
+        public int pegarID(string tabela)
+        {
+            try
+            {
+                int arqId = 0;
+                string oString = "select max(Arq_ID) from S_ArquivoCarregado where Arq_Tabela = @tabela";
+                SqlCommand oCmd = new SqlCommand(oString, conn);
+                oCmd.Parameters.AddWithValue("@tabela", tabela);
+
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
+                using (SqlDataReader oReader = oCmd.ExecuteReader())
+                {
+
+                    while (oReader.Read())
+                    {
+
+                        if (oReader[0].ToString() == "")
+                        {
+                            arqId = 1;
+                        }
+                        else
+                        {
+                            arqId = Int16.Parse(oReader[0].ToString());
+                            arqId = arqId + 1;
+                        }
+                    }
+
+                }
+                return arqId;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro na pegarID " + ex.Message);
+                return 0;
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
 
         enum Moedas
@@ -2934,7 +3338,7 @@ trE = conn.BeginTransaction();
             FUA = 996,
             XAU = 998
         }
-         
+
         enum Unidades
         {
             NULL = 11,
@@ -3099,300 +3503,6 @@ trE = conn.BeginTransaction();
             Volum = 11
         }
 
-        private void Form1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-
-        }
-
-        private void textBox1_KeyDown(object sender, KeyEventArgs e)
-        {
-
-        }
-
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
-        {
-
-        }
-
-        private void comboBoxServidor_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-            try
-            {
-                conexao = comboBoxServidor.Text;
-                conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True;");
-
-          
-                    if (conn.State.ToString() == "Closed")
-                    {
-                        conn.Open();
-                    }
-                    System.Data.DataTable databases = conn.GetSchema("Databases");
-
-                    comboBoxBase.Items.Clear();
-            
-                    foreach (DataRow database in databases.Rows)
-                {
-
-                    databaseName = database.Field<String>("database_name");
-
-                    if(databaseName != "master" && databaseName != "tempdb" && databaseName != "model" && databaseName != "msdb")
-                    {
-                       
-                        comboBoxBase.Items.Add(databaseName);
-                        conn.Close();
-                        comboBoxBase.Enabled = true;
-
-                    }
-
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-     
-
- 
-        }
-
-
-        private void comboBoxServidor_Enter(object sender, EventArgs e)
-        {
-            comboBoxServidor.Items.Clear();
-            string myServer = Environment.MachineName;
-
-            //System.Data.DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
-
-            //if (servers.Rows.Count > 0)
-            //{
-            //    comboBoxServidor.Items.Add(servers.Rows[0]["ServerName"]);
-
-            //    for (int i = 0; i < servers.Rows.Count; i++)
-            //    {
-
-            //        if (myServer == servers.Rows[i]["ServerName"].ToString())
-            //        {
-            //            if ((servers.Rows[i]["InstanceName"] as string) != null)
-            //            {
-            //                comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
-            //            }
-            //            else
-            //            {
-            //                comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"]);
-            //            }
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    comboBoxServidor.Items.Add(myServer);
-            //}
-            comboBoxServidor.Items.Add(myServer);
-            string ServerName = Environment.MachineName;
-            RegistryView registryView = Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Registry32;
-            using (RegistryKey hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView))
-            {
-                RegistryKey instanceKey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\Instance Names\SQL", false);
-                if (instanceKey != null)
-                {
-                    foreach (var instanceName in instanceKey.GetValueNames())
-                    {
-                        comboBoxServidor.Items.Add(ServerName + "\\" + instanceName);
-                    }
-                }
-            }
-        }
-
-        private void comboBoxBase_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            baseDeDados = comboBoxBase.Text;
-            conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
-            conn1 = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
-
-        }
-
-        private void button1_Click_3(object sender, EventArgs e)
-        {
-
-        }
-        private void button1_Click_4(object sender, EventArgs e)
-        { }
-
-        private void button1_Click_5(object sender, EventArgs e)
-        {
-
-
-            using (ExcelPackage excel = new ExcelPackage())
-            {
-                excel.Workbook.Worksheets.Add("Compras");
-                excel.Workbook.Worksheets.Add("Vendas");
-                excel.Workbook.Worksheets.Add("Ordem");
-                excel.Workbook.Worksheets.Add("Inventario");
-                excel.Workbook.Worksheets.Add("Relacao");
-                excel.Workbook.Worksheets.Add("Custo");
-                excel.Workbook.Worksheets.Add("Clientes");
-                excel.Workbook.Worksheets.Add("Produtos");
-                excel.Workbook.Worksheets.Add("Fornecedores");
-                excel.Workbook.Worksheets.Add("PIC");
-
-                var comprasWorksheet = excel.Workbook.Worksheets["Compras"];
-                var vendasWorksheet = excel.Workbook.Worksheets["Vendas"];
-                var ordemWorksheet = excel.Workbook.Worksheets["Ordem"];
-                var custoWorksheet = excel.Workbook.Worksheets["Custo"];
-                var inventarioWorksheet = excel.Workbook.Worksheets["Inventario"];
-                var relacaoWorksheet = excel.Workbook.Worksheets["Relacao"];
-                var clientesWorksheet = excel.Workbook.Worksheets["Clientes"];
-                var produtosWorksheet = excel.Workbook.Worksheets["Produtos"];
-                var fornecedoresWorksheet = excel.Workbook.Worksheets["Fornecedores"];
-                var picWorksheet = excel.Workbook.Worksheets["PIC"];
-
-                List<string[]> headerRowCompras = new List<string[]>()
-                    {
-                        new string[] { "Código do Produto",   "Código Divisão",   "Código do Fornecedor", "Lançamento",   "Fatura",   "BL Data",  "Número da DI",    "Data da Importação",   "N da NF de Entrada",  "Serie",    "Data Entrada NF",  "CFOP NF Entrada",  "Data de Vencimento Média", "Dias", "Quantidade",   "Valor FOB (Moeda Estrangeira)",    "Código da Moeda Estrangeira",  "Frete",    "Seguro",   "Código Moeda Frete",   "Código Moeda Seguro",  "Imposto de Importação (Reais)",    "Icms", "Pis",  "Cofins", "Unidade", "CNPJ", "Incoterm",  "Id Fornecedor Seguro", "Id Fornecedor Frete" }
-                    };
-
-                List<string[]> headerRowVendas = new List<string[]>()
-                    {
-                      new string[] {"Código do Cliente",    "Número NF",    "Série NF", "Código da Divisão", "CFOP", "Data Emissão", "Data Vencimento",  "Prazo de Vencimento", "Item Nota Fiscal", "Código do Produto",    "Quantidade",   "Valor Venda sem o IPI (Reais)",  "Descontos Incondicionais", "ICMS", "PIS",  "COFINS",   "ISS",  "Comissão", "Frete",  "Seguro",   "Data de Embarque", "Código Moeda Estrangeira", "Valor em Moeda Estrangeira",   "Custo da Venda (CPV)" ,"RE", "CNPJ" }
-                    };
-
-                List<string[]> headerRowOrdem = new List<string[]>()
-                    {
-                      new string[] { "Código do Produto Acabado",   "Quantidade Produzida", "Unidade de Medida Produto Acabado",    "Código Matéria-Prima", "Quantidade Requisitada",   "Unidade de Medida Matéria-Prima",  "N da Ordem de Produção",  "Data Inínio",  "Data Fim", "CNPJ" }
-                    };
-
-                List<string[]> headerRowInventario = new List<string[]>()
-                    {
-                      new string[] { "Código do Produto",   "Data Inventário",  "Quantidade em Estoque", "Valor",   "Unidade de Medida", "CNPJ" }
-                    };
-
-                List<string[]> headerRowRelacao = new List<string[]>()
-                    {
-                      new string[] { "Produto Acabado", "Matéria Prima", "Quantidade Produzida", "Quantidade Requisitada", "Relacao", "Tipo Relação" }
-                    };
-
-                List<string[]> headerRowClientes = new List<string[]>()
-                    {
-                      new string[] { "Código do Cliente", "Nome", "Código do País","Vínculo",  "Data Inicio",  "Data Fim", "CNPJ"}
-                    };
-
-                List<string[]> headerRowProdutos = new List<string[]>()
-                    {
-                      new string[] {"Código do Produto",    "Descrição",    "Unidade de Medida",    "Classificação Fiscal (NCM)", "Margem"}
-                    };
-
-                List<string[]> headerRowFornecedores = new List<string[]>()
-                    {
-                      new string[] { "Código do Fornecedor", "Nome", "Código do País","Vínculo", "Data Inicio",  "Data Fim", "CNPJ"}
-                    };
-
-                List<string[]> headerRowCusto = new List<string[]>()
-                    {
-                      new string[] {"Código do Produto", "Mês", "Ano", "Custo Médio Unitário", "CNPJ" }
-                    };
-
-                List<string[]> headerRowPIC = new List<string[]>()
-                    {
-                      new string[] {"Fornecedor Código",   "Fornecedor Pais", "Pro Código",   "Qtde", "Vl Moeda Bruto",   "Cod Moeda",    "Data Emissao",   "Data Venc",  "Cli Código",   "Cli Pais", "Doc Oper", "Dias", "CFOP", "Imposto Intern",   "FOB Moeda",    "IPI",  "ICMS", "Pis",  "Cofins",   "Frete",    "Seguro"}
-                    };
-
-                string headerRangeFornecedores = "A1:" + Char.ConvertFromUtf32(headerRowFornecedores[0].Length + 64) + "1";
-                fornecedoresWorksheet.Cells[headerRangeFornecedores].LoadFromArrays(headerRowFornecedores);
-                fornecedoresWorksheet.Cells[headerRangeFornecedores].Style.Font.Bold = true;
-                fornecedoresWorksheet.Column(1).AutoFit();
-
-                string headerRangeCompras = "A1:AB1";
-                comprasWorksheet.Cells[headerRangeCompras].LoadFromArrays(headerRowCompras);
-                comprasWorksheet.Cells[headerRangeCompras].Style.Font.Bold = true;
-                comprasWorksheet.Column(1).AutoFit();
-
-                string headerRangeInventario = "A1:" + Char.ConvertFromUtf32(headerRowInventario[0].Length + 64) + "1";
-                inventarioWorksheet.Cells[headerRangeInventario].LoadFromArrays(headerRowInventario);
-                inventarioWorksheet.Cells[headerRangeInventario].Style.Font.Bold = true;
-                inventarioWorksheet.Column(1).AutoFit();
-
-                string headerRangeVendas = "A1:" + Char.ConvertFromUtf32(headerRowVendas[0].Length + 64) + "1";
-                vendasWorksheet.Cells[headerRangeVendas].LoadFromArrays(headerRowVendas);
-                vendasWorksheet.Cells[headerRangeVendas].Style.Font.Bold = true;
-                vendasWorksheet.Column(1).AutoFit();
-
-                string headerRangeOrdem = "A1:" + Char.ConvertFromUtf32(headerRowOrdem[0].Length + 64) + "1";
-                ordemWorksheet.Cells[headerRangeOrdem].LoadFromArrays(headerRowOrdem);
-                ordemWorksheet.Cells[headerRangeOrdem].Style.Font.Bold = true;
-                ordemWorksheet.Column(1).AutoFit();
-
-                string headerRangeClientes = "A1:" + Char.ConvertFromUtf32(headerRowClientes[0].Length + 64) + "1";
-                clientesWorksheet.Cells[headerRangeClientes].LoadFromArrays(headerRowClientes);
-                clientesWorksheet.Cells[headerRangeClientes].Style.Font.Bold = true;
-                clientesWorksheet.Column(1).AutoFit();
-
-                string headerRangeProdutos = "A1:" + Char.ConvertFromUtf32(headerRowProdutos[0].Length + 64) + "1";
-                produtosWorksheet.Cells[headerRangeProdutos].LoadFromArrays(headerRowProdutos);
-                produtosWorksheet.Cells[headerRangeProdutos].Style.Font.Bold = true;
-                produtosWorksheet.Column(1).AutoFit();
-
-                string headerRangeRelacao = "A1:" + Char.ConvertFromUtf32(headerRowRelacao[0].Length + 64) + "1";
-                relacaoWorksheet.Cells[headerRangeRelacao].LoadFromArrays(headerRowRelacao);
-                relacaoWorksheet.Cells[headerRangeRelacao].Style.Font.Bold = true;
-                relacaoWorksheet.Column(1).AutoFit();
-
-                string headerRangeCusto = "A1:" + Char.ConvertFromUtf32(headerRowCusto[0].Length + 64) + "1";
-                custoWorksheet.Cells[headerRangeCusto].LoadFromArrays(headerRowCusto);
-                custoWorksheet.Cells[headerRangeCusto].Style.Font.Bold = true;
-                custoWorksheet.Column(1).AutoFit();
-
-                string headerRangePIC = "A1:" + Char.ConvertFromUtf32(headerRowPIC[0].Length + 64) + "1";
-                picWorksheet.Cells[headerRangePIC].LoadFromArrays(headerRowPIC);
-                picWorksheet.Cells[headerRangePIC].Style.Font.Bold = true;
-                picWorksheet.Column(1).AutoFit();
-
-                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-                saveFileDialog1.Filter = "Excel|*.xlsx";
-                saveFileDialog1.Title = "Salvar Excel";
-                saveFileDialog1.RestoreDirectory = true;
-                saveFileDialog1.FileName = "Modelo Carregamento Dados TPS.xlsx";
-                saveFileDialog1.ShowDialog();
-
-                // If the file name is not an empty string open it for saving.  
-                if (saveFileDialog1.FileName != "")
-                {
-                    // Saves the Image via a FileStream created by the OpenFile method.  
-                    System.IO.FileStream fs = (System.IO.FileStream)saveFileDialog1.OpenFile();
-                    excel.SaveAs(fs);
-                }
-                excel.Dispose();
-            }
-
-        }
-
-        private void cmbPlanilha_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string filePath = caminho;
-            FileInfo existingFile = new FileInfo(filePath);
-            ExcelPackage package = new ExcelPackage(existingFile);
-            ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-            StringBuilder conteudo = new StringBuilder();
-            var lista = new List<String>();
-            SqlCommand cmd = conn.CreateCommand();
-         //   int linha = 1;
-
-            lblTotal.Text = (workSheet.Dimension.End.Row - 1).ToString();
-            lblTotal.Refresh();
-
-            cmbTabela.Enabled = true;
-
-        }
-
-        private void cmbTabela_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            lblRepetido.Text = "0";
-            lblPendencia.Text = "0";
-            lblCarregada.Text = "0";
-            cmbSelecionado = true;
-            btnCarregar.Enabled = true;
-        }
     }
+
 }
