@@ -914,21 +914,15 @@ namespace JACA
 
         public void Inventario()
         {
-            try
-            {
+            //try
+            //{
                 int linha = 1;
                 string filePath = caminho;
                 int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
-                //try
-                //{
-                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                //string filePath = @"C:\Base\saldos_maio_evonik_2019.xlsx";
-                // ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
                 StringBuilder conteudo = new StringBuilder();
-                var lista = new List<String>();
                 SqlCommand cmd = conn.CreateCommand();
                 string produto = "", cnpj = "";
                 bool pendencia = false;
@@ -948,75 +942,94 @@ namespace JACA
              
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                pendencia = false;
-                cnpj = null;
-                produto = null;
-                for (int k = workSheet.Dimension.End.Column; k <= workSheet.Dimension.End.Column; k++)
-                {
-                    cnpj = (workSheet.Cells[i, k].Value == null ? " " : workSheet.Cells[i, k].Value.ToString());
+                    pendencia = false;
+                    conteudo.Clear();
 
-                }
-
-                for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                    for (int j = 1; j <= 6; j++)
                     {
+                        cnpj = null;
+                        produto = null;
 
-                    if (j == workSheet.Dimension.End.Column)
+                    for (int k = 6; k <= 6; k++)
                     {
-                        conteudo.Append(workSheet.Cells[i, j].Value == null ? " '' , '" + linha + "', " : " '" + cnpj + "' , '" + linha + "', ");
-                        conteudo.Append(" " + pegarID("D_INVENTARIO_CARGA") + "  ");
-
-                    }
-
-                    else if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                        if ((workSheet.Cells[i, 6].Value == null || workSheet.Cells[i, 6].Value.ToString() == ""))
                         {
-                        pendencia = true;
-                        numPendencias++;
-                        lblPendencia.Text = numPendencias.ToString();
+                            cnpj = "";
                         }
-                                         
-                        else if ((j == 1) && workSheet.Cells[i, j].Value != null)
+                        else if ((workSheet.Cells[i, 6].Value != null || workSheet.Cells[i, 6].Value.ToString() != ""))
                         {
-
-                        produto = workSheet.Cells[i, j].Value.ToString();
-
-                        SqlCommand cmdeProc = conn.CreateCommand();
-                        cmdeProc.CommandType = CommandType.StoredProcedure;
-                        cmdeProc.CommandText = "[SP_VERF_INV_REPETIDOS]";
-                        cmdeProc.Parameters.Add("@PRO_ID", SqlDbType.VarChar);
-                        cmdeProc.Parameters["@PRO_ID"].Direction = ParameterDirection.ReturnValue;
-                        cmdeProc.Parameters.AddWithValue("@PRO_ID", produto);
-                        cmdeProc.Parameters.Add("@CNPJ", SqlDbType.VarChar);
-                        cmdeProc.Parameters["@CNPJ"].Direction = ParameterDirection.ReturnValue;
-                        cmdeProc.Parameters.AddWithValue("@CNPJ", cnpj);
-
-                        if (conn.State.ToString() == "Closed")
-                        {
-                        conn.Open();
+                            cnpj = workSheet.Cells[i, 6].Value.ToString();
                         }
-
-                        cmdeProc.ExecuteNonQuery();
-                        int ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
-
-                        conn.Close();
-
-                        if (ret == 1)
-                        {
-                            numRepetidos++;
-                            lblRepetido.Text = numRepetidos.ToString();
-                            lblRepetido.Refresh();
-                        }
+                     
                         else
                         {
-                            numCarregados++;
-                            lblCarregada.Text = numCarregados.ToString();
-                            lblCarregada.Refresh();
+                            cnpj = "";
                         }
+                    }
+
+
+                    if ((j == 1) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                        {
+                        MessageBox.Show(pendencia.ToString());
+                         pendencia = true;
+                        MessageBox.Show(pendencia.ToString());
+                        numPendencias++;
+                          lblPendencia.Text = numPendencias.ToString();
+                          lblPendencia.Refresh();
+                         InventarioPenLayout(i);
+                        //  conteudo.Clear();
+                        //  break;
+                        MessageBox.Show("Test");                    }
+                        if ((j == 2) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                        {
+                            pendencia = true;
+                            numPendencias++;
+                            lblPendencia.Text = numPendencias.ToString();
+                            lblPendencia.Refresh();
+                            InventarioPenLayout(i);
+                            conteudo.Clear();
+                            break;
+                        }
+
+                    else if ((j == 1) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value != "") && pendencia == false)
+                        {
+                            produto = workSheet.Cells[i, j].Value.ToString();
+                            SqlCommand cmdeProc = conn.CreateCommand();
+                            cmdeProc.CommandType = CommandType.StoredProcedure;
+                            cmdeProc.CommandText = "[SP_VERF_INV_REPETIDOS]";
+                            cmdeProc.Parameters.Add("@PRO_ID", SqlDbType.VarChar);
+                            cmdeProc.Parameters["@PRO_ID"].Direction = ParameterDirection.ReturnValue;
+                            cmdeProc.Parameters.AddWithValue("@PRO_ID", produto);
+                            cmdeProc.Parameters.Add("@CNPJ", SqlDbType.VarChar);
+                            cmdeProc.Parameters["@CNPJ"].Direction = ParameterDirection.ReturnValue;
+                            cmdeProc.Parameters.AddWithValue("@CNPJ", cnpj);
+
+                            if (conn.State.ToString() == "Closed")
+                            {
+                                conn.Open();
+                            }
+
+                            cmdeProc.ExecuteNonQuery();
+                            int ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
+                            conn.Close();
+
+                            if (ret == 1 && pendencia == false)
+                            {
+                                numRepetidos++;
+                                lblRepetido.Text = numRepetidos.ToString();
+                                lblRepetido.Refresh();
+                            }
+                            else if (pendencia == false)
+                            {
+                                numCarregados++;
+                                lblCarregada.Text = numCarregados.ToString();
+                                lblCarregada.Refresh();
+                            }
 
 
                             conteudo.Append(" declare @inv_pro_id varchar(max)  = '" + produto + "';");
                             conteudo.Append(Environment.NewLine);
                             conteudo.Append(" declare @cnpj varchar(max) = '" + cnpj + "';");
-                           // MessageBox.Show("Test " + cnpj);
                             conteudo.Append(Environment.NewLine);
                             conteudo.Append("  if  (select max(inv_pro_id) from D_Inventario_Carga where inv_pro_id = @inv_pro_id and  Inv_CNPJ = @cnpj) > '' ");
                             conteudo.Append(Environment.NewLine);
@@ -1035,34 +1048,84 @@ namespace JACA
                                             " VALUES ( ");
                             conteudo.Append(" '" + workSheet.Cells[i, j].Value.ToString() + "', ");
                         }
-  
-                        else
+
+                        else if ((j == 2) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != "") && workSheet.Cells[i, j].Value.GetType().Name.ToString() != "DateTime")
                         {
-                         
                             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
                             {
                                 DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
                             };
-                            if ((j == 2) && workSheet.Cells[i, j].Value != null && workSheet.Cells[i, j].Value.GetType().Name.ToString() != "DateTime")
                             {
                                 DateTime oDate = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                                 conteudo.Append("'" + oDate + "', ");
                             }
-                            else
+                        }
+                        else if ((j == 2) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != "") && workSheet.Cells[i, j].Value.GetType().Name.ToString() == "DateTime")
+                        {
+                            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
                             {
-                                if ((workSheet.Cells[i, j].Value == null ? " NULL " : workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
-                                {
-                                    //DateTime oDate = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                                    //conteudo.Append("'" + oDate + "', ");
-                                    conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString() + "', ");
-                                }
-                                else
-                                {
-                                    conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
-                                }
+                                DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
+                            };
+                            {
+                                
+                                conteudo.Append(" '" + workSheet.Cells[i, j].Value.ToString() + "', ");
                             }
                         }
-                    }
+                        else if ((j == 2) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != ""))
+                        {
+                            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
+                            {
+                                DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
+                            };
+                            {
+                                DateTime oDate = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                conteudo.Append("'" + oDate + "', ");
+                            }
+                        }
+                        else if ((j == 2) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                        {
+                                conteudo.Append(" '', ");
+                        }
+                         else if ((j == 3) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != ""))
+                        {
+                            conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString() + "', ");
+                        }
+                        else if ((j == 3) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                        {
+                            conteudo.Append(" 0, ");
+                        }
+                        else if ((j == 4) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                        {
+                            conteudo.Append(" 0, ");
+                        }
+                        else if ((j == 4) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != ""))
+                        {
+                        conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString() + "', ");
+                        }
+                        else if ((j == 5) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                        {
+                        conteudo.Append(" '' , ");
+                        }
+                        else if ((j == 5) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != ""))
+                        {
+                        conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString() + "', ");
+                        }
+                        else if (j == workSheet.Dimension.End.Column && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                        {
+                        conteudo.Append(" '' ,  '" + linha + "', ");
+                        conteudo.Append(" " + pegarID("D_INVENTARIO_CARGA") + "  ");
+                        }
+                        else if (j == workSheet.Dimension.End.Column && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != ""))
+                        {
+                            conteudo.Append(" '" + cnpj + "' , '" + linha + "', ");
+                            conteudo.Append(" " + pegarID("D_INVENTARIO_CARGA") + "  ");
+                        }
+                        else if ((workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                        {
+                            conteudo.Append(" 0, ");
+                        }
+                }
+
                     if (i == workSheet.Dimension.End.Row)
                     {
                         conteudo.Append(" ) ");
@@ -1072,53 +1135,38 @@ namespace JACA
                         conteudo.Append(")");
                         conteudo.Append(Environment.NewLine);
                     }
-                    if(conn.State.ToString() == "Closed")
-                        {
-                            conn.Open();
 
-                        }
+                    if (conn.State.ToString() == "Closed")
+                    {
+                        conn.Open();
+                    }
 
-              //  Clipboard.SetText(conteudo.ToString());
                     linha = linha + 1;
-                    cmd.CommandText = conteudo.ToString();
-                    SqlTransaction trE = null;
-                    trE = conn.BeginTransaction();
-                    cmd.Transaction = trE;
-                    cmd.ExecuteNonQuery();
-                    trE.Commit();
-                    conteudo.Clear();
+                    if (pendencia == false)
+                    {
+                        Clipboard.SetText(conteudo.ToString());
+                        cmd.CommandText = conteudo.ToString();
+                        fazTransacao(conn, cmd);
+                    }
+
                 }
                 package.Dispose();
+ 
+                if (numCarregados == 0)
+                {
+                    MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de imvdmtario carregado");
+                }
+                else
+                {
+                    MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + numCarregados.ToString() + " registros de inventario realizados com sucesso");
 
-         //       SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-                //cmdArquivoCarregado.CommandText =
-                //" declare @tabela varchar(max) = 'D_Inventario_Carga';" +
-                //" if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
-                //" insert into S_ArquivoCarregado" +
-                //" (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                //" values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                //" GETDATE(), ' " + lblCarregada.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
-                //" else" +
-                //" insert into S_ArquivoCarregado" +
-                //" (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                //" values(" + pegarID("D_Inventario_Carga") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                //" GETDATE(), " + lblCarregada.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
-             
-            if (numCarregados == 0)
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de imvdmtario carregado");
-            }
-            else
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + numCarregados.ToString() + " registros de inventario realizados com sucesso");
+                    SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+                    cmdArquivoCarregado.CommandText = gravaId(caminho, numCarregados, "D_Inventario_Carga");
+                    fazTransacao(conn, cmdArquivoCarregado);
+                    gravaId(caminho, numCarregados, "D_Inventario_Carga");
+                }
 
-                SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-                cmdArquivoCarregado.CommandText = gravaId(caminho, numCarregados, "D_Inventario_Carga");
-                fazTransacao(conn, cmdArquivoCarregado);
-                gravaId(caminho, numCarregados, "D_Inventario_Carga");
-            }
-
-            conteudo.Clear();
+                conteudo.Clear();
 
                 //}
                 //catch (Exception ex)
@@ -1131,11 +1179,11 @@ namespace JACA
                 //}
 
 
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro ao carregar inventario " + ex.Message);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Erro ao carregar inventario " + ex.Message);
+            //}
         }
 
         public void Insumo_Produto()
@@ -2615,7 +2663,87 @@ namespace JACA
             conteudo.Clear();
             package.Dispose();
         }
-         
+
+        void InventarioPenLayout(int linha)
+        {
+            string filePath = caminho;
+            ///// temporario
+            FileInfo existingFile = new FileInfo(filePath);
+            ExcelPackage package = new ExcelPackage(existingFile);
+            ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            StringBuilder conteudo = new StringBuilder();
+            SqlCommand cmd = conn.CreateCommand();
+
+            for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+            {
+                if (j == 1)
+                {
+                    conteudo.Append(" INSERT INTO[dbo].[A_PendenciaLayout] " +
+                                        " ([pen_Linha], " +
+                                        " [pen_Tabela]," +
+                                        " [pen_Campo]," +
+                                        " [pen_Posi]," +
+                                        " [pen_Tam]," +
+                                        " [pen_Erro]," +
+                                        " [pen_Registro]," +
+                                        " [pen_Arq_Origem])" +
+                                        " VALUES ( ");
+                    if (workSheet.Cells[linha, j].Value == null)
+                    {
+                        int registro = linha - 1;
+                        conteudo.Append(" " + registro + ", 'D_Inventario_Carga', 'Inv_pro_id', 0, 0, 'Campo [Código do Produto] é obrigatório', '");
+                    }
+                    else
+                    {
+                        int registro = linha - 1;
+                        conteudo.Append(" " + registro + ", 'D_Inventario_Carga', 'Inv_pro_id', 0, 0, 'Campo [Código do Produto] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
+                    }
+                }
+                else if (j == 2 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                {
+                    conteudo.Replace("[Código do Produto]", "[Data do Inventário]");
+                }
+                else if (j == workSheet.Dimension.End.Column)
+                {
+                    if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                    {
+                        conteudo.Append(" ', " + pegarID("D_Inventario_Carga") + ") ");
+                    }
+                    else
+                    {
+                        conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Inventario_Carga") + ") ");
+                    }
+                }
+                else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                {
+
+                    conteudo.Append(" ");
+                }
+                else
+                {
+                    conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
+                }
+            }
+
+             Clipboard.SetText(conteudo.ToString());
+
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
+
+            cmd.CommandText = conteudo.ToString();
+            SqlTransaction trE = null;
+            trE = conn.BeginTransaction();
+            cmd.Transaction = trE;
+            cmd.ExecuteNonQuery();
+            trE.Commit();
+            conn.Close();
+            conteudo.Clear();
+            //  package.Dispose();
+            MessageBox.Show("asda");
+        }
+
         //COMBOBOX
         private void comboBoxServidor_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -3503,6 +3631,10 @@ namespace JACA
             Volum = 11
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }
