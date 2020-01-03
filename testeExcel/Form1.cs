@@ -918,7 +918,7 @@ namespace JACA
             //{
                 int linha = 1;
                 string filePath = caminho;
-                int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
+                
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
@@ -926,7 +926,7 @@ namespace JACA
                 SqlCommand cmd = conn.CreateCommand();
                 string produto = "", cnpj = "";
                 bool pendencia = false;
-             
+                 int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
                 if (conn.State.ToString() == "Closed")
                 {
                     conn.Open();
@@ -966,30 +966,25 @@ namespace JACA
                             cnpj = "";
                         }
                     }
-
-
+                     
                     if ((j == 1) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
-                        {
-                        MessageBox.Show(pendencia.ToString());
-                         pendencia = true;
-                        MessageBox.Show(pendencia.ToString());
+                    {
+                        pendencia = true;
                         numPendencias++;
-                          lblPendencia.Text = numPendencias.ToString();
-                          lblPendencia.Refresh();
-                         InventarioPenLayout(i);
-                        //  conteudo.Clear();
-                        //  break;
-                        MessageBox.Show("Test");                    }
-                        if ((j == 2) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
-                        {
-                            pendencia = true;
-                            numPendencias++;
-                            lblPendencia.Text = numPendencias.ToString();
-                            lblPendencia.Refresh();
-                            InventarioPenLayout(i);
-                            conteudo.Clear();
-                            break;
-                        }
+                        lblPendencia.Text = numPendencias.ToString();
+                        lblPendencia.Refresh();
+                        InventarioPenLayout(i);
+                        conteudo.Clear();
+                    }
+                    if ((j == 2) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                    {
+                        pendencia = true;
+                        numPendencias++;
+                        lblPendencia.Text = numPendencias.ToString();
+                        lblPendencia.Refresh();
+                        InventarioPenLayout(i);
+                        conteudo.Clear();
+                    }
 
                     else if ((j == 1) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value != "") && pendencia == false)
                         {
@@ -1048,8 +1043,12 @@ namespace JACA
                                             " VALUES ( ");
                             conteudo.Append(" '" + workSheet.Cells[i, j].Value.ToString() + "', ");
                         }
-
-                        else if ((j == 2) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != "") && workSheet.Cells[i, j].Value.GetType().Name.ToString() != "DateTime")
+                    else if ((j == 2) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != "") && workSheet.Cells[i, j].Value.GetType().Name.ToString() == "Double")
+                    {
+                        DateTime myDate = DateTime.FromOADate(Double.Parse(workSheet.Cells[i, j].Value.ToString()));
+                        conteudo.Append("'" + myDate + "', ");
+                    }
+                    else if ((j == 2) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != "") && workSheet.Cells[i, j].Value.GetType().Name.ToString() != "DateTime")
                         {
                             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
                             {
@@ -1154,7 +1153,7 @@ namespace JACA
  
                 if (numCarregados == 0)
                 {
-                    MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de imvdmtario carregado");
+                    MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de saldos de inventário carregado");
                 }
                 else
                 {
@@ -1168,16 +1167,6 @@ namespace JACA
 
                 conteudo.Clear();
 
-                //}
-                //catch (Exception ex)
-                //{
-                //    MessageBox.Show(ex.Message);
-                //}
-                //finally
-                //{
-                //    MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + linha + " registros de inventario realizados com sucesso");
-                //}
-
 
             //}
             //catch (Exception ex)
@@ -1188,13 +1177,12 @@ namespace JACA
 
         public void Insumo_Produto()
         {
-            try
-            {
+            //try
+            //{
             string filePath = caminho;
             //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
             //string filePath = @"C:\Base\ordens_de_producao_evonik_2019.xlsx";
             //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-
             FileInfo existingFile = new FileInfo(filePath);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
@@ -1202,49 +1190,62 @@ namespace JACA
             var lista = new List<String>();
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
-            if(conn.State.ToString() =="Closed")
-            conn.Open();
+            bool pendencia = false;
+            int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
 
-            //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-            //lblTotal.Refresh();
-
-            try
-            {
-
+                 if (conn.State.ToString() == "Closed")
+                    conn.Open();
+ 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    lblCarregada.Text = i.ToString();
-                    lblCarregada.Refresh();
-
+          
+                    pendencia = false;
+                    conteudo.Clear();
+ 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
-                        if (j == workSheet.Dimension.End.Column)
-                        {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? "0, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
-                            conteudo.Append(" " + pegarID("D_Insumo_Produto") + " ");
-                        }
-                        else
-                        {
-                            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
-                            {
-                                DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
-                            };
 
-                            if (j == 1)
+                            if ((j == 1) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
                             {
+                                pendencia = true;
+                                numPendencias++;
+                                lblPendencia.Text = numPendencias.ToString();
+                                lblPendencia.Refresh();
+                                InsumoPenLayout(i);
+                                conteudo.Clear();
+                            }
+                            if ((j == 4) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                            {
+                             
+                                pendencia = true;
+                                numPendencias++;
+                                lblPendencia.Text = numPendencias.ToString();
+                                lblPendencia.Refresh();
+                                InsumoPenLayout(i);
+                                conteudo.Clear();
+                            }
+
+                            else if ((j == 1) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value != "") && pendencia == false)
+                            {
+                        
+                                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
+                                {
+                                    DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
+                                };
+                                     
                                 conteudo.Append(" INSERT INTO D_INSUMO_PRODUTO " +
-                                     "([Ins_PA_Pro_Id] " +
-                                      ",[Ins_Qtd_Produzida] " +
-                                      ",[Ins_PA_Und_Id] " +
-                                      ",[Ins_MP_Pro_Id] " +
-                                      ",[Ins_Qtd_Requisitada] " +
-                                      ",[Ins_MP_Und_Id] " +
-                                      ",[Ins_Ordem_Prod] " +
-                                      ",[Ins_DT_Ini] " +
-                                      ",[Ins_DT_Fim] " +
-                                      ",[Ins_CNPJ] " +
-                                      ",[Lin_Origem_ID] " +
-                                      ",[Arq_Origem_ID]) " +
+                                "([Ins_PA_Pro_Id] " +
+                                ",[Ins_Qtd_Produzida] " +
+                                ",[Ins_PA_Und_Id] " +
+                                ",[Ins_MP_Pro_Id] " +
+                                ",[Ins_Qtd_Requisitada] " +
+                                ",[Ins_MP_Und_Id] " +
+                                ",[Ins_Ordem_Prod] " +
+                                ",[Ins_DT_Ini] " +
+                                ",[Ins_DT_Fim] " +
+                                ",[Ins_CNPJ] " +
+                                ",[Lin_Origem_ID] " +
+                                ",[Arq_Origem_ID]) " +
                                 " VALUES ( ");
                                 conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
                             }
@@ -1258,6 +1259,11 @@ namespace JACA
                                 Unidades unidade = (Unidades)System.Enum.Parse(typeof(Unidades), workSheet.Cells[i, j].Value.ToString());
                                 conteudo.Append("'" + ((int)unidade).ToString() + "', ");
                             }
+                            else if (j == workSheet.Dimension.End.Column)
+                            {
+                                conteudo.Append(workSheet.Cells[i, j].Value == null ? "0, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
+                                conteudo.Append(" " + pegarID("D_Insumo_Produto") + " ");
+                            }
                             else
                             {
                                 if ((workSheet.Cells[i, j].Value == null ? " NULL " : workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
@@ -1270,72 +1276,61 @@ namespace JACA
                                     conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
                                 }
                             }
-                        }
-                    }
-                    if (i == workSheet.Dimension.End.Row)
-                    {
-                        conteudo.Append(" ) ");
-                    }
-                    else
-                    {
-                        conteudo.Append(")");
-                        conteudo.Append(Environment.NewLine);
-                    }
-                    if (conn.State.ToString() == "Closed")
-                    {
-                        conn.Open();
-                    }
-                    //Clipboard.SetText(conteudo.ToString());
-                    linha = linha + 1;
-                    cmd.CommandText = conteudo.ToString();
-                    SqlTransaction trE = null;
-                    trE = conn.BeginTransaction();
-                    cmd.Transaction = trE;
-                    cmd.ExecuteNonQuery();
-                    trE.Commit();
-                    conteudo.Clear();
+        
                 }
 
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                package.Dispose();
-                MessageBox.Show(" Carregamento de " + linha.ToString() + " registros de Insunmo Produto/Ordens de Produção");
-                SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-                cmdArquivoCarregado.CommandText =
-                " declare @tabela varchar(max) = 'D_Insumo_Produto';" +
-                " if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
-                " insert into S_ArquivoCarregado" +
-                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                " values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                " GETDATE(), ' " + linha.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
-                " else" +
-                " insert into S_ArquivoCarregado" +
-                " (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                " values(" + pegarID("D_Insumo_Produto") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                " GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
+
+                if (i == workSheet.Dimension.End.Row)
+                {
+                    conteudo.Append(" ) ");
+                }
+                else
+                {
+                    conteudo.Append(")");
+                    conteudo.Append(Environment.NewLine);
+                }
                 if (conn.State.ToString() == "Closed")
                 {
                     conn.Open();
                 }
 
-                SqlTransaction trA = null;
-                trA = conn.BeginTransaction();
-                cmdArquivoCarregado.Transaction = trA;
-                cmdArquivoCarregado.ExecuteNonQuery();
-                trA.Commit();
-                conn.Close();
+                //Clipboard.SetText(conteudo.ToString());
+                if (pendencia == false)
+                {
+                    numCarregados++;
+                    lblCarregada.Text = numCarregados.ToString();
+                    lblCarregada.Refresh();
+
+                    cmd.CommandText = conteudo.ToString();
+                    fazTransacao(conn, cmd);
+                }
+                linha++;
+            }
+ 
+
+            package.Dispose();
+
+            if (numCarregados == 0)
+            {
+                MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de saldos de Insumo Produto/Ordens de Produção carregado");
+            }
+            else
+            {
+                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + numCarregados.ToString() + " registros de nsumo Produto/Ordens de Produção realizados com sucesso");
+
+                SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+                cmdArquivoCarregado.CommandText = gravaId(caminho, numCarregados, "D_Insumo_Produto");
+                fazTransacao(conn, cmdArquivoCarregado);
+                gravaId(caminho, numCarregados, "D_Insumo_Produto");
             }
 
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro na tabela de Insumo " + ex.Message);
-            }
+            conteudo.Clear();
+             
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Erro na tabela de Insumo Produto " + ex.Message);
+            //}
         }
 
         public void Relacao_Carga()
@@ -1369,10 +1364,8 @@ namespace JACA
                 cmdProc.Transaction = trProc;
                 cmdProc.ExecuteNonQuery();
                 trProc.Commit();
-
                 //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
                 //lblTotal.Refresh();
-
                 //try
                 //{
 
@@ -2741,7 +2734,85 @@ namespace JACA
             conn.Close();
             conteudo.Clear();
             //  package.Dispose();
-            MessageBox.Show("asda");
+        }
+
+        void InsumoPenLayout(int linha)
+        {
+            string filePath = caminho;
+            ///// temporario
+            FileInfo existingFile = new FileInfo(filePath);
+            ExcelPackage package = new ExcelPackage(existingFile);
+            ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            StringBuilder conteudo = new StringBuilder();
+            SqlCommand cmd = conn.CreateCommand();
+
+            for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+            {
+                if (j == 1)
+                {
+                    conteudo.Append(" INSERT INTO[dbo].[A_PendenciaLayout] " +
+                                        " ([pen_Linha], " +
+                                        " [pen_Tabela]," +
+                                        " [pen_Campo]," +
+                                        " [pen_Posi]," +
+                                        " [pen_Tam]," +
+                                        " [pen_Erro]," +
+                                        " [pen_Registro]," +
+                                        " [pen_Arq_Origem])" +
+                                        " VALUES ( ");
+                    if (workSheet.Cells[linha, j].Value == null)
+                    {
+                        int registro = linha - 1;
+                        conteudo.Append(" " + registro + ", 'D_Insumo_Produto', 'Inv_pro_id', 0, 0, 'Campo [Código do Produto Acabado Produto] é obrigatório', '");
+                    }
+                    else
+                    {
+                        int registro = linha - 1;
+                        conteudo.Append(" " + registro + ", 'D_Insumo_Produto', 'Inv_pro_id', 0, 0, 'Campo [Código do Produto Acabado Produto] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
+                    }
+                }
+                else if (j == 4 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                {
+                    conteudo.Replace("[Código do Produto Acabado Produto]", "[Código da Matéria Prima]");
+                }
+                else if (j == workSheet.Dimension.End.Column)
+                {
+                    if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                    {
+                        conteudo.Append(" ', " + pegarID("D_Insumo_Produto") + ") ");
+                    }
+                    else
+                    {
+                        conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Insumo_Produto") + ") ");
+                    }
+                }
+                else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                {
+
+                    conteudo.Append(" ");
+                }
+                else
+                {
+                    conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
+                }
+            }
+
+       //     Clipboard.SetText(conteudo.ToString());
+
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
+
+            cmd.CommandText = conteudo.ToString();
+            SqlTransaction trE = null;
+            trE = conn.BeginTransaction();
+            cmd.Transaction = trE;
+            cmd.ExecuteNonQuery();
+            trE.Commit();
+            conn.Close();
+            conteudo.Clear();
+            //  package.Dispose();
         }
 
         //COMBOBOX
