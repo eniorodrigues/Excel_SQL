@@ -914,8 +914,8 @@ namespace JACA
 
         public void Inventario()
         {
-            //try
-            //{
+            try
+            {
                 int linha = 1;
                 string filePath = caminho;
                 
@@ -1168,21 +1168,18 @@ namespace JACA
                 conteudo.Clear();
 
 
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("Erro ao carregar inventario " + ex.Message);
-            //}
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro ao carregar inventario " + ex.Message);
+            }
         }
 
         public void Insumo_Produto()
         {
-            //try
-            //{
-            string filePath = caminho;
-            //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-            //string filePath = @"C:\Base\ordens_de_producao_evonik_2019.xlsx";
-            //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            try
+            {
+                string filePath = caminho;
             FileInfo existingFile = new FileInfo(filePath);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
@@ -1325,12 +1322,12 @@ namespace JACA
             }
 
             conteudo.Clear();
-             
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("Erro na tabela de Insumo Produto " + ex.Message);
-            //}
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro na tabela de Insumo Produto " + ex.Message);
+            }
         }
 
         public void Relacao_Carga()
@@ -1339,12 +1336,9 @@ namespace JACA
             {
                 string filePath = caminho;
                 int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
-                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                //string filePath = @"C:\Base\ordens_de_producao_evonik_2019.xlsx";
                 FileInfo existingFile = new FileInfo(filePath);
                 ExcelPackage package = new ExcelPackage(existingFile);
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
                 StringBuilder conteudo = new StringBuilder();
                 var lista = new List<String>();
                 SqlCommand cmd = conn.CreateCommand();
@@ -1364,13 +1358,10 @@ namespace JACA
                 cmdProc.Transaction = trProc;
                 cmdProc.ExecuteNonQuery();
                 trProc.Commit();
-                //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-                //lblTotal.Refresh();
-                //try
-                //{
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
+                    conteudo.Clear();
                     pendencia = false;
                     mp = null;
                     pa = null;
@@ -1384,95 +1375,114 @@ namespace JACA
                     {
                         mp = (workSheet.Cells[i, k].Value == null ? " " : workSheet.Cells[i, k].Value.ToString());
                     }
-
-                    //lblCarregada.Text = i.ToString();
-                    //lblCarregada.Refresh();
+                     
 
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
 
-                        if (j == workSheet.Dimension.End.Column)
+
+
+                    if ((j == 1) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                    {
+                        pendencia = true;
+                        numPendencias++;
+                        lblPendencia.Text = numPendencias.ToString();
+                        lblPendencia.Refresh();
+                        RelacaoPenLayout(i);
+                        conteudo.Clear();
+
+                    }
+                    if ((j == 2) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                    {
+                        pendencia = true;
+                        numPendencias++;
+                        lblPendencia.Text = numPendencias.ToString();
+                        lblPendencia.Refresh();
+                        RelacaoPenLayout(i);
+                        conteudo.Clear();
+                    }
+                    else if ((j == 1) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value != "") && pendencia == false)
+                    {
+                        pa = workSheet.Cells[i, j].Value.ToString();
+
+                        SqlCommand cmdeProc = conn.CreateCommand();
+                        cmdeProc.CommandType = CommandType.StoredProcedure;
+                        cmdeProc.CommandText = "[SP_VERF_REL_REPETIDOS]";
+                        cmdeProc.Parameters.Add("@PA_PRO_ID", SqlDbType.VarChar);
+                        cmdeProc.Parameters["@PA_PRO_ID"].Direction = ParameterDirection.ReturnValue;
+                        cmdeProc.Parameters.AddWithValue("@PA_PRO_ID", pa);
+                        cmdeProc.Parameters.Add("@MP_PRO_ID", SqlDbType.VarChar);
+                        cmdeProc.Parameters["@MP_PRO_ID"].Direction = ParameterDirection.ReturnValue;
+                        cmdeProc.Parameters.AddWithValue("@MP_PRO_ID", mp);
+
+                        if (conn.State.ToString() == "Closed")
                         {
-                            conteudo.Append(workSheet.Cells[i, j].Value == null ? " '' , '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString() + "' , '" + linha + "', ");
-                            conteudo.Append(" " + pegarID("D_Relacao_Carga") + " ");
+                            conn.Open();
                         }
 
+                        cmdeProc.ExecuteNonQuery();
+                        int ret = Convert.ToInt32(cmdeProc.Parameters["@PA_PRO_ID"].Value);
 
-                        else if ((j == 1) && workSheet.Cells[i, j].Value != null)
+                        conn.Close();
+                        if (ret == 1)
                         {
+                            numRepetidos++;
+                            lblRepetido.Text = numRepetidos.ToString();
+                            lblRepetido.Refresh();
+                            pendencia = true;
+                        }
+              
 
-                            pa = workSheet.Cells[i, j].Value.ToString();
+                        conteudo.Append(" declare @pa_pro_id varchar(max)  = '" + pa + "';");
+                        conteudo.Append(Environment.NewLine);
+                        conteudo.Append(" declare @mp_pro_id varchar(max) = '" + mp + "';");
+                        conteudo.Append(Environment.NewLine);
+                        conteudo.Append("  if  (select max(rel_pa_pro_id) from D_Relacao_Carga WHERE Rel_PA_Pro_Id = @pa_pro_id and Rel_MP_Pro_Id = @mp_pro_id) > '' ");
+                        conteudo.Append(Environment.NewLine);
+                        conteudo.Append(" print 'OK' ");
+                        conteudo.Append(Environment.NewLine);
+                        conteudo.Append(" else ");
 
-                            SqlCommand cmdeProc = conn.CreateCommand();
-                            cmdeProc.CommandType = CommandType.StoredProcedure;
-                            cmdeProc.CommandText = "[SP_VERF_REL_REPETIDOS]";
-                            cmdeProc.Parameters.Add("@PA_PRO_ID", SqlDbType.VarChar);
-                            cmdeProc.Parameters["@PA_PRO_ID"].Direction = ParameterDirection.ReturnValue;
-                            cmdeProc.Parameters.AddWithValue("@PA_PRO_ID", pa);
-                            cmdeProc.Parameters.Add("@MP_PRO_ID", SqlDbType.VarChar);
-                            cmdeProc.Parameters["@MP_PRO_ID"].Direction = ParameterDirection.ReturnValue;
-                            cmdeProc.Parameters.AddWithValue("@MP_PRO_ID", mp);
-
-                            if (conn.State.ToString() == "Closed")
-                            {
-                                conn.Open();
-                            }
-
-                            cmdeProc.ExecuteNonQuery();
-                            int ret = Convert.ToInt32(cmdeProc.Parameters["@PA_PRO_ID"].Value);
-
-                            conn.Close();
-
-                            if (ret == 1)
-                            {
-                                numRepetidos++;
-                                lblRepetido.Text = numRepetidos.ToString();
-                                lblRepetido.Refresh();
-                            }
-                            else
-                            {
-                                numCarregados++;
-                                lblCarregada.Text = numCarregados.ToString();
-                                lblCarregada.Refresh();
-                            }
-
-                            conteudo.Append(" declare @pa_pro_id varchar(max)  = '" + pa + "';");
-                            conteudo.Append(Environment.NewLine);
-                            conteudo.Append(" declare @mp_pro_id varchar(max) = '" + mp + "';");
-                            conteudo.Append(Environment.NewLine);
-                            conteudo.Append("  if  (select max(rel_pa_pro_id) from D_Relacao_Carga WHERE Rel_PA_Pro_Id = @pa_pro_id and Rel_MP_Pro_Id = @mp_pro_id) > '' ");
-                            conteudo.Append(Environment.NewLine);
-                            conteudo.Append(" print 'OK' ");
-                            conteudo.Append(Environment.NewLine);
-                            conteudo.Append(" else ");
-
-                            if (j == 1)
-                            {
-                                conteudo.Append(" INSERT INTO D_RELACAO_CARGA " +
-                                                " ([REL_PA_PRO_ID] " +
-                                                " ,[REL_MP_PRO_ID] " +
-                                                " ,[REL_PRODUZIDA] " +
-                                                " ,[REL_REQUISITADA] " +
-                                                " ,[REL_RELACAO] " +
-                                                " ,[REL_TIPO] " +
-                                                " ,[Lin_Origem_ID] " +
-                                                " ,[Arq_Origem_ID]) " +
-                                                " VALUES ( ");
-                                conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
-                            }
+                        if (j == 1)
+                        {
+                            conteudo.Append(" INSERT INTO D_RELACAO_CARGA " +
+                                            " ([REL_PA_PRO_ID] " +
+                                            " ,[REL_MP_PRO_ID] " +
+                                            " ,[REL_PRODUZIDA] " +
+                                            " ,[REL_REQUISITADA] " +
+                                            " ,[REL_RELACAO] " +
+                                            " ,[REL_TIPO] " +
+                                            " ,[Lin_Origem_ID] " +
+                                            " ,[Arq_Origem_ID]) " +
+                                            " VALUES ( ");
+                            conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                        }
+                    }
+                    else if ((j == 2) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value == "") && pendencia == false)
+                    {
+                        pendencia = true;
+                      //  numCarregados--;
+                    }
+                    else if ((j == 2) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value != "") && pendencia == false)
+                    {
+                        conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
+                    }
+                    else if (j == workSheet.Dimension.End.Column)
+                    {
+                        conteudo.Append(workSheet.Cells[i, j].Value == null ? " '' , '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString() + "' , '" + linha + "', ");
+                        conteudo.Append(" " + pegarID("D_Relacao_Carga") + " ");
+                    }
+                    else if (pendencia == false)
+                    {
+                        if (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                        {
+                            conteudo.Append(" NULL, ");
                         }
                         else
                         {
-                            
-                            if (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
-                            {
-                                conteudo.Append(" NULL, ");
-                            }
-                            else
-                            {
-                                conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
-                            }
+                            conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
                         }
+                    }
                     }
 
                     if (i == workSheet.Dimension.End.Row)
@@ -1488,46 +1498,19 @@ namespace JACA
                     {
                         conn.Open();
                     }
-                    Clipboard.SetText(conteudo.ToString());
-                    linha = linha + 1;
-                    cmd.CommandText = conteudo.ToString();
-                    SqlTransaction trE = null;
-                    trE = conn.BeginTransaction();
-                    cmd.Transaction = trE;
-                    cmd.ExecuteNonQuery();
-                    trE.Commit();
-                    conteudo.Clear();
+                    if (pendencia == false)
+                    {
+                        numCarregados++;
+                        lblCarregada.Text = numCarregados.ToString();
+                        lblCarregada.Refresh();
+                        cmd.CommandText = conteudo.ToString();
+                        fazTransacao(conn, cmd);
+                    }
+                    linha++;
                 }
                  
                 package.Dispose();
-                //MessageBox.Show(new Form { TopMost = true }, "Carregamento " + linha.ToString() + " registros de Relação Produção de Produção realizado com sucesso!");
-
-                //SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-                //cmdArquivoCarregado.CommandText =
-                //" declare @tabela varchar(max) = 'D_RELACAO_CARGA';" +
-                //" if (select count(arq_id) from S_ArquivoCarregado where Arq_Tabela = @tabela) = 0" +
-                //" insert into S_ArquivoCarregado" +
-                //" (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                //" values(1, '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                //" GETDATE(), ' " + linha.ToString() + "', REPLACE(SUSER_NAME(), 'ATRAME\\',''))" +
-                //" else" +
-                //" insert into S_ArquivoCarregado" +
-                //" (Arq_ID, Arq_Nome, Arq_Tabela, Arq_Mensagem, Arq_DataCarga, Arq_Quantidade, Arq_Login)" +
-                //" values(" + pegarID("D_RELACAO_CARGA") + ", '" + caminho + "', @tabela, 'Carga efetuada com sucesso.'," +
-                //" GETDATE(), " + linha.ToString() + ", REPLACE(SUSER_NAME(), 'ATRAME\\',''))";
-
-                //if (conn.State.ToString() == "Closed")
-                //{
-                //    conn.Open();
-                //}
-
-                //SqlTransaction trA = null;
-                //trA = conn.BeginTransaction();
-                //cmdArquivoCarregado.Transaction = trA;
-                //cmdArquivoCarregado.ExecuteNonQuery();
-                //trA.Commit();
-                //conn.Close();
-
+ 
                 if (numCarregados == 0)
                 {
                     MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de relação de produção carregado");
@@ -1541,12 +1524,12 @@ namespace JACA
                     fazTransacao(conn, cmdArquivoCarregado);
                 }
 
-            }
+        }
             catch (Exception ex)
             {
                 MessageBox.Show("Erro no carregamento de Relação de Produção " + ex.Message);
             }
-        }
+}
 
         public void PIC()
         {
@@ -1715,78 +1698,66 @@ namespace JACA
 
         public void Custo()
         {
-            //try
-            //{
-            int linha = 1;
-            string filePath = caminho;
-            int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
-            //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-            //string filePath = @"C:\Base\custo.xlsx";
-            FileInfo existingFile = new FileInfo(filePath);
-            ExcelPackage package = new ExcelPackage(existingFile);
-            ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-            //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-            StringBuilder conteudo = new StringBuilder();
-            var lista = new List<String>();
-            SqlCommand cmd = conn.CreateCommand();
-            bool penLayout = false;
-            string produto = "", cnpj = "", mes = "", ano = "";
-            bool pendencia = false;
-            
-
-            if (conn.State.ToString() == "Closed")
+            try
             {
-                conn.Open();
-            }
+                int linha = 1;
+                string filePath = caminho;
+                int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
+                FileInfo existingFile = new FileInfo(filePath);
+                ExcelPackage package = new ExcelPackage(existingFile);
+                ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
+                StringBuilder conteudo = new StringBuilder();
+                var lista = new List<String>();
+                SqlCommand cmd = conn.CreateCommand();
+                bool penLayout = false;
+                string produto = "", cnpj = "", mes = "", ano = "";
+                bool pendencia = false;
 
-            SqlCommand cmdProc = conn.CreateCommand();
-            SqlTransaction trProc = null;
-            cmdProc.CommandText = "CREATE or ALTER PROCEDURE [SP_VERF_CST_REPETIDOS]  @PRO_ID varchar(max), @CNPJ varchar(max), @MES varchar(max), @ANO varchar(max) AS BEGIN IF NOT EXISTS (SELECT * FROM D_Custo_Medio WHERE Cst_Pro_Id = @PRO_ID and Cst_Mes = @MES AND Cst_Ano = @ANO AND Cst_CNPJ = @CNPJ)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
-            trProc = conn.BeginTransaction();
-            cmdProc.Transaction = trProc;
-            cmdProc.ExecuteNonQuery();
-            trProc.Commit();
 
-                //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-                //lblTotal.Refresh();
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
 
-                //try
-                //{
+                SqlCommand cmdProc = conn.CreateCommand();
+                SqlTransaction trProc = null;
+                cmdProc.CommandText = "CREATE or ALTER PROCEDURE [SP_VERF_CST_REPETIDOS]  @PRO_ID varchar(max), @CNPJ varchar(max), @MES varchar(max), @ANO varchar(max) AS BEGIN IF NOT EXISTS (SELECT * FROM D_Custo_Medio WHERE Cst_Pro_Id = @PRO_ID and Cst_Mes = @MES AND Cst_Ano = @ANO AND Cst_CNPJ = @CNPJ)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
+                trProc = conn.BeginTransaction();
+                cmdProc.Transaction = trProc;
+                cmdProc.ExecuteNonQuery();
+                trProc.Commit();
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                pendencia = false;
-                cnpj = null;
-                produto = null;
-                mes = null;
-                ano = null;
-                penLayout = false;
+                    pendencia = false;
+                    cnpj = null;
+                    produto = null;
+                    mes = null;
+                    ano = null;
+                    penLayout = false;
 
-                 lblCarregada.Text = numCarregados.ToString();
-                lblCarregada.Refresh();
+                    lblCarregada.Text = numCarregados.ToString();
+                    lblCarregada.Refresh();
 
-                lblPendencia.Text = numPendencias.ToString();
-                lblPendencia.Refresh();
+                    lblPendencia.Text = numPendencias.ToString();
+                    lblPendencia.Refresh();
 
                     for (int k = workSheet.Dimension.End.Column; k <= workSheet.Dimension.End.Column; k++)
-                {
-                  cnpj = (workSheet.Cells[i, k].Value == null ? " " : workSheet.Cells[i, k].Value.ToString());
-                }
- 
-                for (int k = 2; k <= 2; k++)
-                {
-                    mes = (workSheet.Cells[i, k].Value == null ? " " : workSheet.Cells[i, k].Value.ToString());
-                }
+                    {
+                        cnpj = (workSheet.Cells[i, k].Value == null ? " " : workSheet.Cells[i, k].Value.ToString());
+                    }
 
-                for (int k = 3; k <= 3; k++)
-                {
-                    ano = (workSheet.Cells[i, k].Value == null ? " " : workSheet.Cells[i, k].Value.ToString());
-                }
+                    for (int k = 2; k <= 2; k++)
+                    {
+                        mes = (workSheet.Cells[i, k].Value == null ? " " : workSheet.Cells[i, k].Value.ToString());
+                    }
 
-                //lblCarregada.Text = i.ToString();
-                //lblCarregada.Refresh();
+                    for (int k = 3; k <= 3; k++)
+                    {
+                        ano = (workSheet.Cells[i, k].Value == null ? " " : workSheet.Cells[i, k].Value.ToString());
+                    }
 
-                for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                    for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
                         if ((j == 1 || j == 2 || j == 3 || j == 4) && (workSheet.Cells[i, j].Value == null))
                         {
@@ -1794,7 +1765,7 @@ namespace JACA
                             penLayout = true;
                             numPendencias++;
                             conteudo.Clear();
-                    }
+                        }
 
                         if (j == workSheet.Dimension.End.Column)
                         {
@@ -1802,76 +1773,76 @@ namespace JACA
                             conteudo.Append(" " + pegarID("D_Custo_Medio") + " ");
                         }
 
-                       
-                        else if((j == 1) && workSheet.Cells[i, j].Value != null)
+
+                        else if ((j == 1) && workSheet.Cells[i, j].Value != null)
                         {
-                        conteudo.Clear();
-                        produto = workSheet.Cells[i, j].Value.ToString();
-                         
-                                 SqlCommand cmdeProc = conn.CreateCommand();
-                                cmdeProc.CommandType = CommandType.StoredProcedure;
-                                cmdeProc.CommandText = "[SP_VERF_CST_REPETIDOS]";
-                                cmdeProc.Parameters.Add("@PRO_ID", SqlDbType.VarChar);
-                                cmdeProc.Parameters["@PRO_ID"].Direction = ParameterDirection.ReturnValue;
-                                cmdeProc.Parameters.AddWithValue("@PRO_ID", produto);
-                                cmdeProc.Parameters.Add("@CNPJ", SqlDbType.VarChar);
-                                cmdeProc.Parameters["@CNPJ"].Direction = ParameterDirection.ReturnValue;
-                                cmdeProc.Parameters.AddWithValue("@CNPJ", cnpj);
-                                cmdeProc.Parameters.Add("@MES", SqlDbType.VarChar);
-                                cmdeProc.Parameters["@MES"].Direction = ParameterDirection.ReturnValue;
-                                cmdeProc.Parameters.AddWithValue("@MES", mes);
-                                cmdeProc.Parameters.Add("@ANO", SqlDbType.VarChar);
-                                cmdeProc.Parameters["@ANO"].Direction = ParameterDirection.ReturnValue;
-                                cmdeProc.Parameters.AddWithValue("@ANO", ano);
+                            conteudo.Clear();
+                            produto = workSheet.Cells[i, j].Value.ToString();
 
-                                if (conn.State.ToString() == "Closed")
-                                {
-                                    conn.Open();
-                                }
+                            SqlCommand cmdeProc = conn.CreateCommand();
+                            cmdeProc.CommandType = CommandType.StoredProcedure;
+                            cmdeProc.CommandText = "[SP_VERF_CST_REPETIDOS]";
+                            cmdeProc.Parameters.Add("@PRO_ID", SqlDbType.VarChar);
+                            cmdeProc.Parameters["@PRO_ID"].Direction = ParameterDirection.ReturnValue;
+                            cmdeProc.Parameters.AddWithValue("@PRO_ID", produto);
+                            cmdeProc.Parameters.Add("@CNPJ", SqlDbType.VarChar);
+                            cmdeProc.Parameters["@CNPJ"].Direction = ParameterDirection.ReturnValue;
+                            cmdeProc.Parameters.AddWithValue("@CNPJ", cnpj);
+                            cmdeProc.Parameters.Add("@MES", SqlDbType.VarChar);
+                            cmdeProc.Parameters["@MES"].Direction = ParameterDirection.ReturnValue;
+                            cmdeProc.Parameters.AddWithValue("@MES", mes);
+                            cmdeProc.Parameters.Add("@ANO", SqlDbType.VarChar);
+                            cmdeProc.Parameters["@ANO"].Direction = ParameterDirection.ReturnValue;
+                            cmdeProc.Parameters.AddWithValue("@ANO", ano);
 
-                                cmdeProc.ExecuteNonQuery();
-                                int ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
-
-                                conn.Close();
-
-                                if (ret == 1)
-                                {
-                                    numRepetidos++;
-                                    lblRepetido.Text = numRepetidos.ToString();
-                                    lblRepetido.Refresh();
-                                }
-                                else
-                                {
-                                    numCarregados++;
-                                    lblCarregada.Text = numCarregados.ToString();
-                                    lblCarregada.Refresh();
-                                }
-
-                                conteudo.Append(" declare @cst_pro_id varchar(max)  = '" + produto + "';");
-                                conteudo.Append(Environment.NewLine);
-                                conteudo.Append(" declare @cnpj varchar(max) = '" + cnpj + "';");
-                                conteudo.Append(Environment.NewLine);
-                                conteudo.Append(" declare @ano varchar(max) = '" + ano + "';");
-                                conteudo.Append(Environment.NewLine);
-                                conteudo.Append(" declare @mes varchar(max) = '" + mes + "';");
-                                conteudo.Append(Environment.NewLine);
-                                conteudo.Append("  if  (select max(cst_pro_id) from D_Custo_Medio WHERE Cst_Pro_Id = @cst_pro_id and Cst_Mes = @mes AND Cst_Ano = @ANO AND Cst_CNPJ = @CNPJ) > '' ");
-                                conteudo.Append(Environment.NewLine);
-                                conteudo.Append(" print 'OK' ");
-                                conteudo.Append(Environment.NewLine);
-                                conteudo.Append(" else ");
-
-                                conteudo.Append(" INSERT INTO D_Custo_Medio " +
-                                "(Cst_Pro_Id, " +
-                                "Cst_Mes, " +
-                                "Cst_Ano, " +
-                                "Cst_Vl_Custo, " +
-                                "Cst_CNPJ, " +
-                                "[Lin_Origem_ID], " +
-                                "[Arq_Origem_ID]) " +
-                                " VALUES ( ");
-                                conteudo.Append(" '" + workSheet.Cells[i, j].Value.ToString() + "', ");
+                            if (conn.State.ToString() == "Closed")
+                            {
+                                conn.Open();
                             }
+
+                            cmdeProc.ExecuteNonQuery();
+                            int ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
+
+                            conn.Close();
+
+                            if (ret == 1)
+                            {
+                                numRepetidos++;
+                                lblRepetido.Text = numRepetidos.ToString();
+                                lblRepetido.Refresh();
+                            }
+                            else
+                            {
+                                numCarregados++;
+                                lblCarregada.Text = numCarregados.ToString();
+                                lblCarregada.Refresh();
+                            }
+
+                            conteudo.Append(" declare @cst_pro_id varchar(max)  = '" + produto + "';");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append(" declare @cnpj varchar(max) = '" + cnpj + "';");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append(" declare @ano varchar(max) = '" + ano + "';");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append(" declare @mes varchar(max) = '" + mes + "';");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append("  if  (select max(cst_pro_id) from D_Custo_Medio WHERE Cst_Pro_Id = @cst_pro_id and Cst_Mes = @mes AND Cst_Ano = @ANO AND Cst_CNPJ = @CNPJ) > '' ");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append(" print 'OK' ");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append(" else ");
+
+                            conteudo.Append(" INSERT INTO D_Custo_Medio " +
+                            "(Cst_Pro_Id, " +
+                            "Cst_Mes, " +
+                            "Cst_Ano, " +
+                            "Cst_Vl_Custo, " +
+                            "Cst_CNPJ, " +
+                            "[Lin_Origem_ID], " +
+                            "[Arq_Origem_ID]) " +
+                            " VALUES ( ");
+                            conteudo.Append(" '" + workSheet.Cells[i, j].Value.ToString() + "', ");
+                        }
 
                         else
                         {
@@ -1879,7 +1850,7 @@ namespace JACA
                             {
                                 DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
                             };
-                           if ((workSheet.Cells[i, j].Value == null ? " NULL " : workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
+                            if ((workSheet.Cells[i, j].Value == null ? " NULL " : workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
                             {
                                 workSheet.Cells[i, j].Style.Numberformat.Format = DateTimeFormatInfo.CurrentInfo.YearMonthPattern;
                                 conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, " : "'" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "', ");
@@ -1900,18 +1871,16 @@ namespace JACA
                         conteudo.Append(Environment.NewLine);
                     }
 
-                    //Clipboard.SetText(conteudo.ToString());
- 
-                     if (penLayout == false)
+
+                    if (penLayout == false)
                     {
                         cmd = conn.CreateCommand();
-                        // Clipboard.SetText(conteudo.ToString());
 
                         if (conn.State.ToString() == "Closed")
                         {
                             conn.Open();
                         }
-                       // Clipboard.SetText(conteudo.ToString());
+                        // Clipboard.SetText(conteudo.ToString());
                         cmd.CommandText = conteudo.ToString();
                         SqlTransaction trE = null;
                         trE = conn.BeginTransaction();
@@ -1924,8 +1893,14 @@ namespace JACA
                     {
                         conn.Open();
                     }
- 
+
                 }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro no carregamento da tabela de custos " + ex.Message);
+            }
            
         }
          
@@ -2394,12 +2369,9 @@ namespace JACA
         {
            
             string filePath = caminho;
-        //try
-        //{
-        ///// temporario
-        //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-        //filePath = @"C:\Base\Vendas_Doosan_Jan_Jun_2019.xlsx";
-        FileInfo existingFile = new FileInfo(filePath);
+            try
+            {
+                FileInfo existingFile = new FileInfo(filePath);
         ExcelPackage package = new ExcelPackage(existingFile);
         ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
         StringBuilder conteudo = new StringBuilder();
@@ -2479,18 +2451,17 @@ namespace JACA
             trE.Commit();
             conn.Close();
             conteudo.Clear();
-            package.Dispose();
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("Erro na CustoPenLayout: " + ex.Message);
-            //}
+                package.Dispose();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erro na Fornecedores: " + ex.Message);
+            }
         }
 
         void ClientesPenLayout(int linha)
         {
             string filePath = caminho;
-            ///// temporario
             FileInfo existingFile = new FileInfo(filePath);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
@@ -2577,7 +2548,6 @@ namespace JACA
         void ProdutosPenLayout(int linha)
         {
             string filePath = caminho;
-            ///// temporario
             FileInfo existingFile = new FileInfo(filePath);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
@@ -2660,7 +2630,6 @@ namespace JACA
         void InventarioPenLayout(int linha)
         {
             string filePath = caminho;
-            ///// temporario
             FileInfo existingFile = new FileInfo(filePath);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
@@ -2739,7 +2708,6 @@ namespace JACA
         void InsumoPenLayout(int linha)
         {
             string filePath = caminho;
-            ///// temporario
             FileInfo existingFile = new FileInfo(filePath);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
@@ -2814,6 +2782,85 @@ namespace JACA
             conteudo.Clear();
             //  package.Dispose();
         }
+
+        void RelacaoPenLayout(int linha)
+        {
+            string filePath = caminho;
+            FileInfo existingFile = new FileInfo(filePath);
+            ExcelPackage package = new ExcelPackage(existingFile);
+            ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
+            StringBuilder conteudo = new StringBuilder();
+            SqlCommand cmd = conn.CreateCommand();
+
+            for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+            {
+                if (j == 1)
+                {
+                    conteudo.Append(" INSERT INTO[dbo].[A_PendenciaLayout] " +
+                                        " ([pen_Linha], " +
+                                        " [pen_Tabela]," +
+                                        " [pen_Campo]," +
+                                        " [pen_Posi]," +
+                                        " [pen_Tam]," +
+                                        " [pen_Erro]," +
+                                        " [pen_Registro]," +
+                                        " [pen_Arq_Origem])" +
+                                        " VALUES ( ");
+                    if (workSheet.Cells[linha, j].Value == null)
+                    {
+                        int registro = linha - 1;
+                        conteudo.Append(" " + registro + ", 'D_Relacao_Carga', 'Inv_pro_id', 0, 0, 'Campo [Código do Produto Acabado Produto] é obrigatório', '");
+                    }
+                    else
+                    {
+                        int registro = linha - 1;
+                        conteudo.Append(" " + registro + ", 'D_Relacao_Carga', 'Inv_pro_id', 0, 0, 'Campo [Código do Produto Acabado Produto] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
+                    }
+                }
+                else if (j == 2 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                {
+                    conteudo.Replace("[Código do Produto Acabado Produto]", "[Código da Matéria Prima]");
+                }
+                else if (j == workSheet.Dimension.End.Column)
+                {
+                    if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                    {
+                        conteudo.Append(" ', " + pegarID("D_Relacao_Carga") + ") ");
+                    }
+                    else
+                    {
+                        conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + "', " + pegarID("D_Relacao_Carga") + ") ");
+                    }
+                }
+                else if (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "")
+                {
+
+                    conteudo.Append(" ");
+                }
+                else
+                {
+                    conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
+                }
+            }
+
+            //     Clipboard.SetText(conteudo.ToString());
+
+            if (conn.State.ToString() == "Closed")
+            {
+                conn.Open();
+            }
+
+            cmd.CommandText = conteudo.ToString();
+            SqlTransaction trE = null;
+            trE = conn.BeginTransaction();
+            cmd.Transaction = trE;
+            cmd.ExecuteNonQuery();
+            trE.Commit();
+            conn.Close();
+            conteudo.Clear();
+            //  package.Dispose();
+        }
+
 
         //COMBOBOX
         private void comboBoxServidor_SelectedIndexChanged(object sender, EventArgs e)
