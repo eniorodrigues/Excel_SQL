@@ -64,19 +64,6 @@ namespace JACA
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
 
-                ///// temporario
-                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                //filePath = @"C:\Base\Vendas_Doosan_Jan_Jun_2019.xlsx";
-                //FileInfo existingFile = new FileInfo(filePath);
-                //ExcelPackage package = new ExcelPackage(existingFile);
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-                //StringBuilder conteudo = new StringBuilder();
-                //SqlCommand cmd = conn.CreateCommand();
-
-                //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-                //lblTotal.Refresh();
-                //MessageBox.Show(workSheet.Dimension.End.Row.ToString());
-
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
  
@@ -301,7 +288,6 @@ namespace JACA
             int linhaRegistro = 1;
             int registroInconsistente = 0;
             int registroConsistente = 0;
-            int registroRepetido = 0;
             bool penLayout = false;
 
             try
@@ -312,18 +298,6 @@ namespace JACA
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
-
-                //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-                //lblTotal.Refresh();
-
-                ///// temporario
-                //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-                //filePath = @"C:\Base\Compras_Doosan_Jan_Jun_2019.xlsx";
-                //FileInfo existingFile = new FileInfo(filePath);
-                //ExcelPackage package = new ExcelPackage(existingFile);
-                //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
-                //StringBuilder conteudo = new StringBuilder();
-                //SqlCommand cmd = conn.CreateCommand();
 
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
                 {
@@ -1538,20 +1512,13 @@ namespace JACA
 
             string filePath = caminho;
 
-            //conn = new SqlConnection("Data Source=BRCAENRODRIGUES\\SQLEXPRESS01; Integrated Security=True; Initial Catalog=LAMPADA");
-            //string filePath = @"C:\Base\ordens_de_producao_evonik_2019.xlsx";
-
             FileInfo existingFile = new FileInfo(filePath);
             ExcelPackage package = new ExcelPackage(existingFile);
             ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-            //ExcelWorksheet workSheet = package.Workbook.Worksheets.First();
             StringBuilder conteudo = new StringBuilder();
             var lista = new List<String>();
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
-
-            //lblTotal.Text = workSheet.Dimension.End.Row.ToString();
-            //lblTotal.Refresh();
 
             try
             {
@@ -2861,7 +2828,6 @@ namespace JACA
             //  package.Dispose();
         }
 
-
         //COMBOBOX
         private void comboBoxServidor_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -2959,7 +2925,7 @@ namespace JACA
             baseDeDados = comboBoxBase.Text;
             conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
             conn1 = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
-
+            buttonAbrir.Enabled = true;
         }
 
         private void cmbPlanilha_SelectedIndexChanged(object sender, EventArgs e)

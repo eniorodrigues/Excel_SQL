@@ -53,6 +53,7 @@
             // 
             // buttonAbrir
             // 
+            this.buttonAbrir.Enabled = false;
             this.buttonAbrir.Location = new System.Drawing.Point(13, 123);
             this.buttonAbrir.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.buttonAbrir.Name = "buttonAbrir";
@@ -65,7 +66,7 @@
             // lblEndereço
             // 
             this.lblEndereço.AutoSize = true;
-            this.lblEndereço.Location = new System.Drawing.Point(17, 438);
+            this.lblEndereço.Location = new System.Drawing.Point(10, 417);
             this.lblEndereço.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblEndereço.Name = "lblEndereço";
             this.lblEndereço.Size = new System.Drawing.Size(0, 20);
@@ -193,7 +194,7 @@
             // lblCarregada
             // 
             this.lblCarregada.AutoSize = true;
-            this.lblCarregada.Location = new System.Drawing.Point(475, 263);
+            this.lblCarregada.Location = new System.Drawing.Point(272, 444);
             this.lblCarregada.Name = "lblCarregada";
             this.lblCarregada.Size = new System.Drawing.Size(18, 20);
             this.lblCarregada.TabIndex = 37;
@@ -220,7 +221,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(322, 263);
+            this.label5.Location = new System.Drawing.Point(9, 444);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(147, 20);
             this.label5.TabIndex = 38;
@@ -229,7 +230,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(220, 283);
+            this.label2.Location = new System.Drawing.Point(9, 465);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(249, 20);
             this.label2.TabIndex = 38;
@@ -238,7 +239,7 @@
             // lblPendencia
             // 
             this.lblPendencia.AutoSize = true;
-            this.lblPendencia.Location = new System.Drawing.Point(475, 283);
+            this.lblPendencia.Location = new System.Drawing.Point(272, 464);
             this.lblPendencia.Name = "lblPendencia";
             this.lblPendencia.Size = new System.Drawing.Size(18, 20);
             this.lblPendencia.TabIndex = 37;
@@ -247,7 +248,7 @@
             // lblRepetido
             // 
             this.lblRepetido.AutoSize = true;
-            this.lblRepetido.Location = new System.Drawing.Point(475, 304);
+            this.lblRepetido.Location = new System.Drawing.Point(272, 485);
             this.lblRepetido.Name = "lblRepetido";
             this.lblRepetido.Size = new System.Drawing.Size(18, 20);
             this.lblRepetido.TabIndex = 37;
@@ -256,7 +257,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(383, 302);
+            this.label8.Location = new System.Drawing.Point(9, 485);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(86, 20);
             this.label8.TabIndex = 38;
@@ -266,7 +267,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(577, 462);
+            this.ClientSize = new System.Drawing.Size(577, 516);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label5);
@@ -292,7 +293,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Form1";
             this.ShowIcon = false;
-            this.Text = "Tool";
+            this.Text = "Tool Versão Teste 1.3";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
