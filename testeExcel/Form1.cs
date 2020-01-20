@@ -66,13 +66,7 @@ namespace JACA
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
- 
-                    lblCarregada.Text = registroConsistente.ToString();
-                    lblCarregada.Refresh();
-
-                    lblPendencia.Text = registroInconsistente.ToString();
-                    lblPendencia.Refresh();
-
+  
                     penLayout = false;
                     for (int j = workSheet.Dimension.Start.Column; j <= 26; j++)
                     {
@@ -229,13 +223,13 @@ namespace JACA
                     if (penLayout == false)
                     {
                         cmd = conn.CreateCommand();
-                        // Clipboard.SetText(conteudo.ToString());
+                        //  Clipboard.SetText(conteudo.ToString());
 
                         if(conn.State.ToString() == "Closed")
                         {
                         conn.Open();
                         }
-                       // Clipboard.SetText(conteudo.ToString());
+                       //  Clipboard.SetText(conteudo.ToString());
                         cmd.CommandText = conteudo.ToString();
                         SqlTransaction trE = null;
                         trE = conn.BeginTransaction();
@@ -244,6 +238,12 @@ namespace JACA
                         trE.Commit();
                         conteudo.Clear();
                     }
+
+                    lblCarregada.Text = registroConsistente.ToString();
+                    lblCarregada.Refresh();
+
+                    lblPendencia.Text = registroInconsistente.ToString();
+                    lblPendencia.Refresh();
                 }
                 package.Dispose();
 
@@ -306,11 +306,7 @@ namespace JACA
 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    lblCarregada.Text = registroConsistente.ToString();
-                    lblCarregada.Refresh();
-
-                    lblPendencia.Text = registroInconsistente.ToString();
-                    lblPendencia.Refresh();
+    
 
                     penLayout = false;
                     for (int j = workSheet.Dimension.Start.Column; j <= 30; j++)
@@ -456,10 +452,11 @@ namespace JACA
                         registroConsistente++;
                     }
                     linhaRegistro++;
+
                     if (penLayout == false)
                     {
                         cmd = conn.CreateCommand();
-                        //     Clipboard.SetText(conteudo.ToString());
+                        //     // Clipboard.SetText(conteudo.ToString());
                         if (conn.State.ToString() == "Closed")
                         {
                             conn.Open();
@@ -472,6 +469,12 @@ namespace JACA
                         trE.Commit();
                         conteudo.Clear();
                     }
+
+                    lblCarregada.Text = registroConsistente.ToString();
+                    lblCarregada.Refresh();
+
+                    lblPendencia.Text = registroInconsistente.ToString();
+                    lblPendencia.Refresh();
                 }
                 package.Dispose();
 
@@ -548,16 +551,24 @@ namespace JACA
                 for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                 {
 
-                    if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
-                    {
-                        pendencia = true;
-                        numPendencias++;
-                        lblPendencia.Text = numPendencias.ToString();
-                        ClientesPenLayout(i);
-                        conteudo.Clear();
-                    }
-
-                    else if (j == 1)
+                    //if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    //{
+                    //    pendencia = true;
+                    //    numPendencias++;
+                    //    lblPendencia.Text = numPendencias.ToString();
+                    //    ClientesPenLayout(i);
+                    //    conteudo.Clear();
+                    //}
+                    //    if (j == 4 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                    //    {
+                    //        pendencia = true;
+                    //        numPendencias++;
+                    //        lblPendencia.Text = numPendencias.ToString();
+                    //        ClientesPenLayout(i);
+                    //        conteudo.Clear();
+                    //    }
+    
+                         if (j == 1)
                     {
                         Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
                         {
@@ -566,7 +577,7 @@ namespace JACA
 
                         SqlCommand cmdeProc = conn.CreateCommand();
                         cmdeProc.CommandType = CommandType.StoredProcedure;
-                        cmdeProc.CommandText = "[SP_VERIFICA_CLIENTES_REPETIDOS_CARREGADOR]";
+                        cmdeProc.CommandText = "[SP_VERIF_CLI_REPT_CARREGADOR]";
                         cmdeProc.Parameters.Add("@CLI", SqlDbType.VarChar);
                         cmdeProc.Parameters["@CLI"].Direction = ParameterDirection.ReturnValue;
                         cmdeProc.Parameters.AddWithValue("@CLI", workSheet.Cells[i, j].Value.ToString());
@@ -632,13 +643,11 @@ namespace JACA
                         DateTime oDate = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
                         conteudo.Append("'" + oDate + "', ");
                     }
-
                     else if (j == workSheet.Dimension.End.Column)
                     {
                         conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "" ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
                         conteudo.Append(" " + pegarID("D_Clientes") + " ");
                     }
-
                     else
                     {
                         conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "" ? " NULL, " : " '" + workSheet.Cells[i, j].Value + "', ");
@@ -656,7 +665,7 @@ namespace JACA
                     conteudo.Append(Environment.NewLine);
                 }
 
-                Clipboard.SetText(conteudo.ToString());
+               //  Clipboard.SetText(conteudo.ToString());
                 if (conn.State.ToString() == "Closed")
                 {
                     conn.Open();
@@ -664,7 +673,7 @@ namespace JACA
 
                 if (pendencia == false)
                 {
-                    // Clipboard.SetText(conteudo.ToString());
+                    //  Clipboard.SetText(conteudo.ToString());
                     cmd.CommandText = conteudo.ToString();
                     fazTransacao(conn, cmd);
                 }
@@ -846,7 +855,7 @@ namespace JACA
                     conteudo.Append(Environment.NewLine);
                 }
 
-                //Clipboard.SetText(conteudo.ToString());
+                //// Clipboard.SetText(conteudo.ToString());
                 if (conn.State.ToString() == "Closed")
                 {
                     conn.Open();
@@ -854,7 +863,7 @@ namespace JACA
 
                 if (pendencia == false)
                 {
-                    //  Clipboard.SetText(conteudo.ToString());
+                    //  // Clipboard.SetText(conteudo.ToString());
                     cmd.CommandText = conteudo.ToString();
                     fazTransacao(conn, cmd);
                 }
@@ -1040,7 +1049,6 @@ namespace JACA
                                 DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
                             };
                             {
-                                
                                 conteudo.Append(" '" + workSheet.Cells[i, j].Value.ToString() + "', ");
                             }
                         }
@@ -1083,12 +1091,12 @@ namespace JACA
                         {
                         conteudo.Append("'" + workSheet.Cells[i, j].Value.ToString() + "', ");
                         }
-                        else if (j == workSheet.Dimension.End.Column && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                        else if (j == 6 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
                         {
                         conteudo.Append(" '' ,  '" + linha + "', ");
                         conteudo.Append(" " + pegarID("D_INVENTARIO_CARGA") + "  ");
                         }
-                        else if (j == workSheet.Dimension.End.Column && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != ""))
+                        else if (j == 6 && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != ""))
                         {
                             conteudo.Append(" '" + cnpj + "' , '" + linha + "', ");
                             conteudo.Append(" " + pegarID("D_INVENTARIO_CARGA") + "  ");
@@ -1117,7 +1125,7 @@ namespace JACA
                     linha = linha + 1;
                     if (pendencia == false)
                     {
-                        Clipboard.SetText(conteudo.ToString());
+                     //   Clipboard.SetText(conteudo.ToString());
                         cmd.CommandText = conteudo.ToString();
                         fazTransacao(conn, cmd);
                     }
@@ -1265,7 +1273,7 @@ namespace JACA
                     conn.Open();
                 }
 
-                //Clipboard.SetText(conteudo.ToString());
+                //// Clipboard.SetText(conteudo.ToString());
                 if (pendencia == false)
                 {
                     numCarregados++;
@@ -1524,9 +1532,7 @@ namespace JACA
             {
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    lblCarregada.Text = i.ToString();
-                    lblCarregada.Refresh();
-
+    
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
                         if (j == workSheet.Dimension.End.Column)
@@ -1610,7 +1616,7 @@ namespace JACA
                     {
                         conn.Open();
                     }
-                   // Clipboard.SetText(conteudo.ToString());
+                   //  Clipboard.SetText(conteudo.ToString());
                     linha = linha + 1;
                     cmd.CommandText = conteudo.ToString();
                     SqlTransaction trE = null;
@@ -1619,8 +1625,12 @@ namespace JACA
                     cmd.ExecuteNonQuery();
                     trE.Commit();
                     conteudo.Clear();
+
+                    lblCarregada.Text = i.ToString();
+                    lblCarregada.Refresh();
+
+                    }
                 }
-            }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
@@ -1847,7 +1857,7 @@ namespace JACA
                         {
                             conn.Open();
                         }
-                        // Clipboard.SetText(conteudo.ToString());
+                        //  Clipboard.SetText(conteudo.ToString());
                         cmd.CommandText = conteudo.ToString();
                         SqlTransaction trE = null;
                         trE = conn.BeginTransaction();
@@ -1861,6 +1871,20 @@ namespace JACA
                         conn.Open();
                     }
 
+                }
+
+                if (numCarregados == 0)
+                {
+                    MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de custo carregado");
+                }
+                else
+                {
+                    MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + numCarregados.ToString() + " registros de custo realizados com sucesso");
+
+                    SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+                    cmdArquivoCarregado.CommandText = gravaId(caminho, numCarregados, "D_Custo_Medio");
+                    fazTransacao(conn, cmdArquivoCarregado);
+                    gravaId(caminho, numCarregados, "D_Custo_Medio");
                 }
 
             }
@@ -2006,7 +2030,7 @@ namespace JACA
                     }
                     if (pendencia == false)
                     {
-                    //    Clipboard.SetText(conteudo.ToString());
+                    //    // Clipboard.SetText(conteudo.ToString());
                         cmd.CommandText = conteudo.ToString();
                         //SqlTransaction trE = null;
                         //trE = conn.BeginTransaction();
@@ -2218,7 +2242,7 @@ namespace JACA
                     }
                 }
 
-                //Clipboard.SetText(conteudo.ToString());
+                //// Clipboard.SetText(conteudo.ToString());
                 if (conn.State.ToString() == "Closed")
                 {
                     conn.Open();
@@ -2311,7 +2335,7 @@ namespace JACA
                         conteudo.Append(" " + workSheet.Cells[linha, j].Value.ToString() + " ");
                     }
                 }
-                Clipboard.SetText(conteudo.ToString());
+                // Clipboard.SetText(conteudo.ToString());
                 if (conn.State.ToString() == "Closed")
                 {
                     conn.Open();
@@ -2403,7 +2427,7 @@ namespace JACA
                     }
                 }
 
-               Clipboard.SetText(conteudo.ToString());
+               // Clipboard.SetText(conteudo.ToString());
 
                 if (conn.State.ToString() == "Closed")
                 {
@@ -2494,7 +2518,7 @@ namespace JACA
                 }
             }
 
-           // Clipboard.SetText(conteudo.ToString());
+           //  Clipboard.SetText(conteudo.ToString());
 
             if (conn.State.ToString() == "Closed")
             {
@@ -2576,7 +2600,7 @@ namespace JACA
                 }
             }
 
-             Clipboard.SetText(conteudo.ToString());
+             // Clipboard.SetText(conteudo.ToString());
 
             if (conn.State.ToString() == "Closed")
             {
@@ -2654,7 +2678,7 @@ namespace JACA
                 }
             }
 
-             Clipboard.SetText(conteudo.ToString());
+             // Clipboard.SetText(conteudo.ToString());
 
             if (conn.State.ToString() == "Closed")
             {
@@ -2732,7 +2756,7 @@ namespace JACA
                 }
             }
 
-       //     Clipboard.SetText(conteudo.ToString());
+       //     // Clipboard.SetText(conteudo.ToString());
 
             if (conn.State.ToString() == "Closed")
             {
@@ -2810,7 +2834,7 @@ namespace JACA
                 }
             }
 
-            //     Clipboard.SetText(conteudo.ToString());
+            //     // Clipboard.SetText(conteudo.ToString());
 
             if (conn.State.ToString() == "Closed")
             {
