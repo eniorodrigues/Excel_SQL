@@ -1,0 +1,7 @@
+C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\JACA.Form1.resources
+C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\Excel_SQL.Properties.Resources.resources
+C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\Excel_SQL.csproj.GenerateResource.cache
+C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\Excel_SQL.TrustInfo.xml
+C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\Excel_SQL.exe
+C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\Excel_SQL.pdb
+C:\Users\enrodrigues\Desktop\tudo\JACA\testeExcel\obj\Release\Excel_SQL.csprojAssemblyReference.cache

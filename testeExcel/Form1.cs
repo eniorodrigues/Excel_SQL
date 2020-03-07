@@ -64,7 +64,8 @@ namespace JACA
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
 
-                for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+ 
+                    for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
   
                     penLayout = false;
@@ -273,7 +274,7 @@ namespace JACA
                 conn.Close();
 
                 MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + registroConsistente.ToString() + " registros de vendas");
-
+ 
             }
             catch (Exception ex)
             {
@@ -304,14 +305,15 @@ namespace JACA
                     DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
                 };
 
-                for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+   
+                    for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
     
 
                     penLayout = false;
                     for (int j = workSheet.Dimension.Start.Column; j <= 30; j++)
                     {
-                        if (j == workSheet.Dimension.End.Column)
+                        if (j == 30)
                         {
                             conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == "" ? " '', '" + linhaRegistro + "', " : " '" + workSheet.Cells[i, j].Value.ToString() + "' , '" + linhaRegistro + "', ");
                             conteudo.Append(" " + pegarID("D_Compras") + "  ");
@@ -456,7 +458,7 @@ namespace JACA
                     if (penLayout == false)
                     {
                         cmd = conn.CreateCommand();
-                        //     // Clipboard.SetText(conteudo.ToString());
+                        //Clipboard.SetText(conteudo.ToString());
                         if (conn.State.ToString() == "Closed")
                         {
                             conn.Open();
@@ -538,174 +540,185 @@ namespace JACA
 
             SqlCommand cmdProc = conn.CreateCommand();
             SqlTransaction trProc = null;
-            cmdProc.CommandText = "create or alter PROCEDURE [dbo].[SP_VERIF_CLI_REPT_CARREGADOR] @CLI VARCHAR(MAX) AS BEGIN IF NOT EXISTS(SELECT * FROM D_Clientes WHERE Cli_Id = @CLI)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
+            cmdProc.CommandText = "CREATE or ALTER PROCEDURE [dbo].[SP_VERIF_CLI_REPT_CARREGADOR] @CLI VARCHAR(MAX) AS BEGIN IF NOT EXISTS(SELECT * FROM D_Clientes WHERE Cli_Id = @CLI)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
             trProc = conn.BeginTransaction();
             cmdProc.Transaction = trProc;
             cmdProc.ExecuteNonQuery();
             trProc.Commit();
 
-            for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
-            {
-                pendencia = false;
-                conteudo.Clear();
-                for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
+                if (workSheet.Dimension.End.Column == 7)
                 {
 
-                    //if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
-                    //{
-                    //    pendencia = true;
-                    //    numPendencias++;
-                    //    lblPendencia.Text = numPendencias.ToString();
-                    //    ClientesPenLayout(i);
-                    //    conteudo.Clear();
-                    //}
-                    //    if (j == 4 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
-                    //    {
-                    //        pendencia = true;
-                    //        numPendencias++;
-                    //        lblPendencia.Text = numPendencias.ToString();
-                    //        ClientesPenLayout(i);
-                    //        conteudo.Clear();
-                    //    }
-    
-                         if (j == 1)
+                    for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                     {
-                        Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
+                        pendencia = false;
+                        conteudo.Clear();
+                        for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                         {
-                            DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
-                        };
 
-                        SqlCommand cmdeProc = conn.CreateCommand();
-                        cmdeProc.CommandType = CommandType.StoredProcedure;
-                        cmdeProc.CommandText = "[SP_VERIF_CLI_REPT_CARREGADOR]";
-                        cmdeProc.Parameters.Add("@CLI", SqlDbType.VarChar);
-                        cmdeProc.Parameters["@CLI"].Direction = ParameterDirection.ReturnValue;
-                        cmdeProc.Parameters.AddWithValue("@CLI", workSheet.Cells[i, j].Value.ToString());
+                            //if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                            //{
+                            //    pendencia = true;
+                            //    numPendencias++;
+                            //    lblPendencia.Text = numPendencias.ToString();
+                            //    ClientesPenLayout(i);
+                            //    conteudo.Clear();
+                            //}
+                            //    if (j == 4 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                            //    {
+                            //        pendencia = true;
+                            //        numPendencias++;
+                            //        lblPendencia.Text = numPendencias.ToString();
+                            //        ClientesPenLayout(i);
+                            //        conteudo.Clear();
+                            //    }
 
+                            if (j == 1)
+                            {
+                                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
+                                {
+                                    DateTimeFormat = { YearMonthPattern = "yyyy-mm-dd" }
+                                };
+
+                                SqlCommand cmdeProc = conn.CreateCommand();
+                                cmdeProc.CommandType = CommandType.StoredProcedure;
+                                cmdeProc.CommandText = "[SP_VERIF_CLI_REPT_CARREGADOR]";
+                                cmdeProc.Parameters.Add("@CLI", SqlDbType.VarChar);
+                                cmdeProc.Parameters["@CLI"].Direction = ParameterDirection.ReturnValue;
+                                cmdeProc.Parameters.AddWithValue("@CLI", workSheet.Cells[i, j].Value.ToString());
+
+                                if (conn.State.ToString() == "Closed")
+                                {
+                                    conn.Open();
+                                }
+
+                                cmdeProc.ExecuteNonQuery();
+                                int ret = Convert.ToInt32(cmdeProc.Parameters["@CLI"].Value);
+                                conn.Close();
+                                if (ret == 1)
+                                {
+                                    numRepetidos++;
+                                    lblRepetido.Text = numRepetidos.ToString();
+                                    lblRepetido.Refresh();
+                                }
+                                else
+                                {
+                                    numCarregados++;
+                                    lblCarregada.Text = numCarregados.ToString();
+                                    lblCarregada.Refresh();
+                                }
+
+                                conteudo.Append(" declare @cli_id varchar(max) = '" + workSheet.Cells[i, j].Value.ToString() + "';");
+                                conteudo.Append(Environment.NewLine);
+                                conteudo.Append(" if  (select max(cli_id) from D_Clientes where cli_id = @cli_id) = (select (cli_id) from D_Clientes where cli_id = (@cli_id)) ");
+                                conteudo.Append(Environment.NewLine);
+                                conteudo.Append(" print 'OK' ");
+                                conteudo.Append(Environment.NewLine);
+                                conteudo.Append(" else ");
+                                conteudo.Append(" INSERT INTO D_CLIENTES " +
+                                "(CLI_ID, " +
+                                "CLI_NOME, " +
+                                "CLI_PSS_ID, " +
+                                "CLI_VINC, " +
+                                "CLI_VINC_DT_INI, " +
+                                "CLI_VINC_DT_FIM, " +
+                                "CLI_CNPJ, " +
+                                "[Lin_Origem_ID], " +
+                                "[Arq_Origem_ID]) " +
+                                " VALUES ( ");
+                                conteudo.Append("'" + workSheet.Cells[i, j].Value + "', ");
+                            }
+                            else if ((j == 5 || j == 6) && (workSheet.Cells[i, j].Value == null) || (workSheet.Cells[linha, j].Value.ToString() == ""))
+                            {
+                                conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "" ? " NULL, " : " '" + workSheet.Cells[i, j].Value + "', ");
+                            }
+                            else if ((j == 5 || j == 6) && (workSheet.Cells[i, j].Value != null || (workSheet.Cells[i, j].Value.ToString() != "")))
+                            {
+                                if (workSheet.Cells[i, j].Value.ToString().Contains(@"/00/"))
+                                {
+                                    conteudo.Append(" NULL, ");
+                                }
+                                else
+                                {
+                                    conteudo.Append(" ' " + workSheet.Cells[i, j].Value + "', ");
+                                }
+                            }
+                            else if ((workSheet.Cells[i, j].Value == null ? " NULL " : workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
+                            {
+                                DateTime oDate = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                                conteudo.Append("'" + oDate + "', ");
+                            }
+                            else if (j == workSheet.Dimension.End.Column)
+                            {
+                                conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "" ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
+                                conteudo.Append(" " + pegarID("D_Clientes") + " ");
+                            }
+                            else
+                            {
+                                conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "" ? " NULL, " : " '" + workSheet.Cells[i, j].Value + "', ");
+                            }
+                        }
+
+
+                        if (i == workSheet.Dimension.End.Row)
+                        {
+                            conteudo.Append(" ) ");
+                        }
+                        else
+                        {
+                            conteudo.Append(")");
+                            conteudo.Append(Environment.NewLine);
+                        }
+
+                        //  Clipboard.SetText(conteudo.ToString());
                         if (conn.State.ToString() == "Closed")
                         {
-                        conn.Open();
-                        }
-                           
-                        cmdeProc.ExecuteNonQuery();
-                        int ret = Convert.ToInt32(cmdeProc.Parameters["@CLI"].Value);
-                        conn.Close();
-                        if (ret == 1)
-                        {
-                            numRepetidos++;
-                            lblRepetido.Text = numRepetidos.ToString();
-                            lblRepetido.Refresh();
-                        }
-                        else
-                        {
-                            numCarregados++;
-                            lblCarregada.Text = numCarregados.ToString();
-                            lblCarregada.Refresh();
+                            conn.Open();
                         }
 
-                        conteudo.Append(" declare @cli_id varchar(max) = '" + workSheet.Cells[i, j].Value.ToString() + "';");
-                        conteudo.Append(Environment.NewLine);
-                        conteudo.Append(" if  (select max(cli_id) from D_Clientes where cli_id = @cli_id) = (select (cli_id) from D_Clientes where cli_id = (@cli_id)) ");
-                        conteudo.Append(Environment.NewLine);
-                        conteudo.Append(" print 'OK' ");
-                        conteudo.Append(Environment.NewLine);
-                        conteudo.Append(" else ");
-                        conteudo.Append(" INSERT INTO D_CLIENTES " +
-                        "(CLI_ID, " +
-                        "CLI_NOME, " +
-                        "CLI_PSS_ID, " +
-                        "CLI_VINC, " +
-                        "CLI_VINC_DT_INI, " +
-                        "CLI_VINC_DT_FIM, " +
-                        "CLI_CNPJ, " +
-                        "[Lin_Origem_ID], " +
-                        "[Arq_Origem_ID]) " +
-                        " VALUES ( ");
-                        conteudo.Append("'" + workSheet.Cells[i, j].Value + "', ");
-                    }
-                    else if ((j == 5 || j == 6) && (workSheet.Cells[i, j].Value == null) || (workSheet.Cells[linha, j].Value.ToString() == ""))
-                    {
-                        conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "" ? " NULL, " : " '" + workSheet.Cells[i, j].Value + "', ");
-                    }
-                    else if ((j == 5 || j == 6) && (workSheet.Cells[i, j].Value != null || (workSheet.Cells[i, j].Value.ToString() != "")))
-                    {
-                        if (workSheet.Cells[i, j].Value.ToString().Contains(@"/00/"))
+                        if (pendencia == false)
                         {
-                            conteudo.Append(" NULL, ");
+                            //  Clipboard.SetText(conteudo.ToString());
+                            cmd.CommandText = conteudo.ToString();
+                            fazTransacao(conn, cmd);
                         }
-                        else
-                        {
-                            conteudo.Append(" ' " + workSheet.Cells[i, j].Value + "', ");
-                        }
+
+                        conteudo.Clear();
+
                     }
-                    else if ((workSheet.Cells[i, j].Value == null ? " NULL " : workSheet.Cells[i, j].Value.GetType().Name.ToString()) == "DateTime")
+                    package.Dispose();
+
+                    if (numCarregados == 0)
                     {
-                        DateTime oDate = DateTime.ParseExact(workSheet.Cells[i, j].Value.ToString(), "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                        conteudo.Append("'" + oDate + "', ");
-                    }
-                    else if (j == workSheet.Dimension.End.Column)
-                    {
-                        conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "" ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
-                        conteudo.Append(" " + pegarID("D_Clientes") + " ");
+                        MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de clientes carregado");
                     }
                     else
                     {
-                        conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "" ? " NULL, " : " '" + workSheet.Cells[i, j].Value + "', ");
+                        MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + numCarregados.ToString() + " registros de clientes realizados com sucesso");
+
+                        SqlCommand cmdArquivoCarregado = conn.CreateCommand();
+                        cmdArquivoCarregado.CommandText = gravaId(caminho, numCarregados, "D_Clientes");
+                        fazTransacao(conn, cmdArquivoCarregado);
+                        gravaId(caminho, numCarregados, "D_Clientes");
                     }
-                }
 
 
-                if (i == workSheet.Dimension.End.Row)
-                {
-                    conteudo.Append(" ) ");
+                    conteudo.Clear();
                 }
                 else
                 {
-                    conteudo.Append(")");
-                    conteudo.Append(Environment.NewLine);
+                    MessageBox.Show("Quantidade de colunas divergente do modelo");
                 }
 
-               //  Clipboard.SetText(conteudo.ToString());
-                if (conn.State.ToString() == "Closed")
-                {
-                    conn.Open();
-                }
-
-                if (pendencia == false)
-                {
-                    //  Clipboard.SetText(conteudo.ToString());
-                    cmd.CommandText = conteudo.ToString();
-                    fazTransacao(conn, cmd);
-                }
-
-                conteudo.Clear();
-
-            }
-            package.Dispose();
-
-            if (numCarregados == 0)
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Nenhum registro de clientes carregado");
-            }
-            else
-            {
-                MessageBox.Show(new Form { TopMost = true }, "Carregamento de " + numCarregados.ToString() + " registros de clientes realizados com sucesso");
-
-                SqlCommand cmdArquivoCarregado = conn.CreateCommand();
-                cmdArquivoCarregado.CommandText = gravaId(caminho, numCarregados, "D_Clientes");
-                fazTransacao(conn, cmdArquivoCarregado);
-                gravaId(caminho, numCarregados, "D_Clientes");
-            }
-
-
-            conteudo.Clear();
-
+                  
+         
             }
             catch (Exception ex)
             {
                 MessageBox.Show(" Erro ao carregar clientes : " + ex.Message);
             }
-        }
+   
+    }
 
         public void Fornecedores()
         {
@@ -737,8 +750,8 @@ namespace JACA
             cmdProc.Transaction = trProc;
             cmdProc.ExecuteNonQuery();
             trProc.Commit();
-
-            for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+ 
+           for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
             {
                 pendencia = false;
                 conteudo.Clear();
@@ -897,8 +910,8 @@ namespace JACA
 
         public void Inventario()
         {
-            try
-            {
+            //try
+            //{
                 int linha = 1;
                 string filePath = caminho;
                 
@@ -907,9 +920,10 @@ namespace JACA
                 ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
                 StringBuilder conteudo = new StringBuilder();
                 SqlCommand cmd = conn.CreateCommand();
-                string produto = "", cnpj = "";
-                bool pendencia = false;
-                 int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
+                string produto = "", cnpj = "", data="";
+                DateTime dateTime;
+                bool pendencia = false, repetido = false;
+                int numRepetidos = 0, numCarregados = 0, numPendencias = 0, ret = 0;
                 if (conn.State.ToString() == "Closed")
                 {
                     conn.Open();
@@ -917,16 +931,18 @@ namespace JACA
 
                 SqlCommand cmdProc = conn.CreateCommand();
                 SqlTransaction trProc = null;
-                cmdProc.CommandText = "CREATE or ALTER PROCEDURE [SP_VERF_INV_REPETIDOS] @PRO_ID VARCHAR(MAX), @CNPJ VARCHAR(MAX)  AS BEGIN IF NOT EXISTS(SELECT * FROM D_Inventario_Carga WHERE inv_pro_id = @PRO_ID and Inv_CNPJ = @CNPJ)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
+                cmdProc.CommandText = " CREATE or ALTER PROCEDURE [SP_VERF_INV_REPETIDOS] @PRO_ID VARCHAR(MAX), @CNPJ VARCHAR(MAX), @DATA VARCHAR(MAX)  AS BEGIN IF NOT EXISTS(SELECT * FROM D_Inventario_Carga WHERE inv_pro_id = @PRO_ID and Inv_CNPJ = @CNPJ and Inv_Data = @DATA)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
                 trProc = conn.BeginTransaction();
                 cmdProc.Transaction = trProc;
+                Clipboard.SetText(cmdProc.CommandText.ToString());
                 cmdProc.ExecuteNonQuery();
+
                 trProc.Commit();
-             
+ 
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
-                    pendencia = false;
-                    conteudo.Clear();
+                pendencia = false;
+                conteudo.Clear();
 
                     for (int j = 1; j <= 6; j++)
                     {
@@ -935,41 +951,61 @@ namespace JACA
 
                     for (int k = 6; k <= 6; k++)
                     {
-                        if ((workSheet.Cells[i, 6].Value == null || workSheet.Cells[i, 6].Value.ToString() == ""))
-                        {
-                            cnpj = "";
-                        }
-                        else if ((workSheet.Cells[i, 6].Value != null || workSheet.Cells[i, 6].Value.ToString() != ""))
-                        {
-                            cnpj = workSheet.Cells[i, 6].Value.ToString();
-                        }
-                     
-                        else
-                        {
-                            cnpj = "";
-                        }
-                    }
-                     
-                    if ((j == 1) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
-                    {
-                        pendencia = true;
-                        numPendencias++;
-                        lblPendencia.Text = numPendencias.ToString();
-                        lblPendencia.Refresh();
-                        InventarioPenLayout(i);
-                        conteudo.Clear();
-                    }
-                    if ((j == 2) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
-                    {
-                        pendencia = true;
-                        numPendencias++;
-                        lblPendencia.Text = numPendencias.ToString();
-                        lblPendencia.Refresh();
-                        InventarioPenLayout(i);
-                        conteudo.Clear();
-                    }
+                            if ((workSheet.Cells[i, 6].Value == null || workSheet.Cells[i, 6].Value.ToString() == ""))
+                            {
+                                cnpj = "";
+                            }
 
-                    else if ((j == 1) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value != "") && pendencia == false)
+                            else if ((workSheet.Cells[i, 6].Value != null || workSheet.Cells[i, 6].Value.ToString() != ""))
+                            {
+                                cnpj = workSheet.Cells[i, 6].Value.ToString();
+                            }
+                     
+                            else
+                            {
+                                cnpj = "";
+                            }
+                        }
+
+                        for (int k = 2; k <= 2; k++)
+                        {
+                            if ((workSheet.Cells[i, 2].Value == null || workSheet.Cells[i, 2].Value.ToString() == ""))
+                            {
+                                data = "";
+                            }
+
+                            else if ((workSheet.Cells[i, 2].Value != null || workSheet.Cells[i, 2].Value.ToString() != ""))
+                            {
+                                data = workSheet.Cells[i, 2].Value.ToString();
+                            
+                            }
+
+                            else
+                            {
+                                data = "";
+                            }
+                        }
+                        if ((j == 1) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                        {
+                            pendencia = true;
+                            numPendencias++;
+                            lblPendencia.Text = numPendencias.ToString();
+                            lblPendencia.Refresh();
+                            InventarioPenLayout(i);
+                            conteudo.Clear();
+                        }
+
+                        if ((j == 2) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                        {
+                            pendencia = true;
+                            numPendencias++;
+                            lblPendencia.Text = numPendencias.ToString();
+                            lblPendencia.Refresh();
+                            InventarioPenLayout(i);
+                            conteudo.Clear();
+                        }
+                     
+                        else if((j == 1)  && pendencia == false)
                         {
                             produto = workSheet.Cells[i, j].Value.ToString();
                             SqlCommand cmdeProc = conn.CreateCommand();
@@ -981,6 +1017,13 @@ namespace JACA
                             cmdeProc.Parameters.Add("@CNPJ", SqlDbType.VarChar);
                             cmdeProc.Parameters["@CNPJ"].Direction = ParameterDirection.ReturnValue;
                             cmdeProc.Parameters.AddWithValue("@CNPJ", cnpj);
+                            data =  Convert.ToDateTime(data).ToString("MM/dd/yyyy HH:mm:ss");
+                            dateTime = DateTime.ParseExact(data, "MM/dd/yyyy HH:mm:ss",new CultureInfo("en-US"), DateTimeStyles.None);
+                            cmdeProc.Parameters.Add("@DATA", SqlDbType.VarChar);
+                            cmdeProc.Parameters["@DATA"].Direction = ParameterDirection.ReturnValue;
+                            cmdeProc.Parameters.AddWithValue("@DATA", data);
+
+                       
 
                             if (conn.State.ToString() == "Closed")
                             {
@@ -988,7 +1031,7 @@ namespace JACA
                             }
 
                             cmdeProc.ExecuteNonQuery();
-                            int ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
+                            ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
                             conn.Close();
 
                             if (ret == 1 && pendencia == false)
@@ -996,6 +1039,7 @@ namespace JACA
                                 numRepetidos++;
                                 lblRepetido.Text = numRepetidos.ToString();
                                 lblRepetido.Refresh();
+                                repetido = true;
                             }
                             else if (pendencia == false)
                             {
@@ -1003,13 +1047,14 @@ namespace JACA
                                 lblCarregada.Text = numCarregados.ToString();
                                 lblCarregada.Refresh();
                             }
-
-
+                             
                             conteudo.Append(" declare @inv_pro_id varchar(max)  = '" + produto + "';");
                             conteudo.Append(Environment.NewLine);
                             conteudo.Append(" declare @cnpj varchar(max) = '" + cnpj + "';");
                             conteudo.Append(Environment.NewLine);
-                            conteudo.Append("  if  (select max(inv_pro_id) from D_Inventario_Carga where inv_pro_id = @inv_pro_id and  Inv_CNPJ = @cnpj) > '' ");
+                            conteudo.Append(" declare @data varchar(max) = '" + data + "';");
+                            conteudo.Append(Environment.NewLine);
+                            conteudo.Append("  if  (select max(inv_pro_id) from D_Inventario_Carga where inv_pro_id = @inv_pro_id and Inv_CNPJ = @cnpj and Inv_data = @data) > '' ");
                             conteudo.Append(Environment.NewLine);
                             conteudo.Append(" print 'OK' ");
                             conteudo.Append(Environment.NewLine);
@@ -1026,12 +1071,12 @@ namespace JACA
                                             " VALUES ( ");
                             conteudo.Append(" '" + workSheet.Cells[i, j].Value.ToString() + "', ");
                         }
-                    else if ((j == 2) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != "") && workSheet.Cells[i, j].Value.GetType().Name.ToString() == "Double")
-                    {
-                        DateTime myDate = DateTime.FromOADate(Double.Parse(workSheet.Cells[i, j].Value.ToString()));
-                        conteudo.Append("'" + myDate + "', ");
-                    }
-                    else if ((j == 2) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != "") && workSheet.Cells[i, j].Value.GetType().Name.ToString() != "DateTime")
+                        else if ((j == 2) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != "") && workSheet.Cells[i, j].Value.GetType().Name.ToString() == "Double")
+                        {
+                            DateTime myDate = DateTime.FromOADate(Double.Parse(workSheet.Cells[i, j].Value.ToString()));
+                            conteudo.Append("'" + myDate + "', ");
+                        }
+                        else if ((j == 2) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != "") && workSheet.Cells[i, j].Value.GetType().Name.ToString() != "DateTime")
                         {
                             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
                             {
@@ -1065,7 +1110,7 @@ namespace JACA
                         }
                         else if ((j == 2) && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
                         {
-                                conteudo.Append(" '', ");
+                            conteudo.Append(" '', ");
                         }
                          else if ((j == 3) && (workSheet.Cells[i, j].Value != null || workSheet.Cells[i, j].Value.ToString() != ""))
                         {
@@ -1105,6 +1150,10 @@ namespace JACA
                         {
                             conteudo.Append(" 0, ");
                         }
+                        else 
+                        {
+                            conteudo.Append(" ");
+                        }
                 }
 
                     if (i == workSheet.Dimension.End.Row)
@@ -1123,9 +1172,9 @@ namespace JACA
                     }
 
                     linha = linha + 1;
-                    if (pendencia == false)
+                    if (pendencia == false && repetido == false)
                     {
-                     //   Clipboard.SetText(conteudo.ToString());
+                        Clipboard.SetText(conteudo.ToString());
                         cmd.CommandText = conteudo.ToString();
                         fazTransacao(conn, cmd);
                     }
@@ -1148,13 +1197,12 @@ namespace JACA
                 }
 
                 conteudo.Clear();
-
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Erro ao carregar inventario " + ex.Message);
-            }
+ 
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Erro ao carregar inventario " + ex.Message);
+            //}
         }
 
         public void Insumo_Produto()
@@ -1174,8 +1222,8 @@ namespace JACA
 
                  if (conn.State.ToString() == "Closed")
                     conn.Open();
- 
-                for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+
+                    for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
           
                     pendencia = false;
@@ -1506,7 +1554,7 @@ namespace JACA
                     fazTransacao(conn, cmdArquivoCarregado);
                 }
 
-        }
+            }
             catch (Exception ex)
             {
                 MessageBox.Show("Erro no carregamento de Relação de Produção " + ex.Message);
@@ -1528,9 +1576,8 @@ namespace JACA
             SqlCommand cmd = conn.CreateCommand();
             int linha = 1;
 
-            try
-            {
-                for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+
+                    for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
     
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
@@ -1630,13 +1677,8 @@ namespace JACA
                     lblCarregada.Refresh();
 
                     }
-                }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
+
+             
                 package.Dispose();
                 MessageBox.Show(new Form { TopMost = true }, "Carregamento " + linha.ToString() + " registros de PIC realizado com sucesso!");
 
@@ -1664,8 +1706,7 @@ namespace JACA
                 cmdArquivoCarregado.ExecuteNonQuery();
                 trA.Commit();
                 conn.Close();
-            }
-
+ 
             }
             catch (Exception ex)
             {
@@ -1690,8 +1731,9 @@ namespace JACA
                 string produto = "", cnpj = "", mes = "", ano = "";
                 bool pendencia = false;
 
-
-                if (conn.State.ToString() == "Closed")
+                if (workSheet.Dimension.End.Column == 5)
+                {
+                    if (conn.State.ToString() == "Closed")
                 {
                     conn.Open();
                 }
@@ -1886,7 +1928,11 @@ namespace JACA
                     fazTransacao(conn, cmdArquivoCarregado);
                     gravaId(caminho, numCarregados, "D_Custo_Medio");
                 }
-
+                }
+                else
+                {
+                    MessageBox.Show("Quantidade de colunas divergente do modelo");
+                }
             }
             catch (Exception ex)
             {
@@ -2054,6 +2100,7 @@ namespace JACA
                     cmdArquivoCarregado.CommandText = gravaId(caminho, numCarregados, "D_Produtos");
                     fazTransacao(conn, cmdArquivoCarregado);
                 }
+ 
             }
             catch (Exception ex)
             {
@@ -2860,8 +2907,7 @@ namespace JACA
             {
                 conexao = comboBoxServidor.Text;
                 conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True;");
-
-          
+  
                     if (conn.State.ToString() == "Closed")
                     {
                         conn.Open();
@@ -3740,6 +3786,11 @@ namespace JACA
         }
 
         private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
         {
 
         }
