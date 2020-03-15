@@ -977,7 +977,6 @@ namespace JACA
                             else if ((workSheet.Cells[i, 2].Value != null || workSheet.Cells[i, 2].Value.ToString() != ""))
                             {
                                 data = workSheet.Cells[i, 2].Value.ToString();
-                            
                             }
 
                             else
@@ -1017,19 +1016,25 @@ namespace JACA
                             cmdeProc.Parameters.Add("@CNPJ", SqlDbType.VarChar);
                             cmdeProc.Parameters["@CNPJ"].Direction = ParameterDirection.ReturnValue;
                             cmdeProc.Parameters.AddWithValue("@CNPJ", cnpj);
-                            data =  Convert.ToDateTime(data).ToString("MM/dd/yyyy HH:mm:ss");
-                            dateTime = DateTime.ParseExact(data, "MM/dd/yyyy HH:mm:ss",new CultureInfo("en-US"), DateTimeStyles.None);
-                            cmdeProc.Parameters.Add("@DATA", SqlDbType.VarChar);
+
+           
+                        DateTime.TryParseExact(data, "o", CultureInfo.InvariantCulture,  DateTimeStyles.None, out dateTime);
+                            MessageBox.Show( data + " "  + dateTime.ToString() + " " + dateTime.Kind);
+                         
+
+                     //   DateTime.TryParseExact(data, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out dateTime);
+                     //   MessageBox.Show(data);
+                      //  MessageBox.Show(data.GetType().ToString()); 
+                        cmdeProc.Parameters.Add("@DATA", SqlDbType.VarChar);
                             cmdeProc.Parameters["@DATA"].Direction = ParameterDirection.ReturnValue;
                             cmdeProc.Parameters.AddWithValue("@DATA", data);
-
-                       
-
+                            //MessageBox.Show(dtIniConvertida
+                            // MessageBox.Show(dtIniConvertida.GetType().ToString());
                             if (conn.State.ToString() == "Closed")
                             {
                                 conn.Open();
                             }
-
+                        
                             cmdeProc.ExecuteNonQuery();
                             ret = Convert.ToInt32(cmdeProc.Parameters["@PRO_ID"].Value);
                             conn.Close();
@@ -1047,7 +1052,6 @@ namespace JACA
                                 lblCarregada.Text = numCarregados.ToString();
                                 lblCarregada.Refresh();
                             }
-                             
                             conteudo.Append(" declare @inv_pro_id varchar(max)  = '" + produto + "';");
                             conteudo.Append(Environment.NewLine);
                             conteudo.Append(" declare @cnpj varchar(max) = '" + cnpj + "';");
