@@ -43,26 +43,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EPPlus.dll" size="1250304">
-      <assemblyIdentity name="EPPlus" version="4.1.1.0" publicKeyToken="EA159FDAA78159A1" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="EPPlus.dll" size="1827328">
+      <assemblyIdentity name="EPPlus" version="5.0.4.0" publicKeyToken="EA159FDAA78159A1" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>E1/J/YRdXKfHJHLMu6xEioaI+AghLy2qnhu697HGO0o=</dsig:DigestValue>
+        <dsig:DigestValue>UG6IQQRDV6vTl0yNVm9YGH7SzFKpdEkGLJNhnjm8g8M=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Excel_SQL.exe" size="177664">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Excel_SQL.exe" size="177152">
       <assemblyIdentity name="Excel_SQL" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>F6hUEomimp5OFDwIlRjr9tfvyIMHSx+K6h43JIx1mqs=</dsig:DigestValue>
+        <dsig:DigestValue>0hykF5IdUiG6UIbet0whH5T+J+eHTd/xm5zrhwsaTFc=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
