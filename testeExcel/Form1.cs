@@ -1028,6 +1028,7 @@ namespace JACA
                         while (reader.Read())
                         {
                             ret = (int)reader[0];
+                            MessageBox.Show(ret.ToString());
                         }
 
                         reader.Close();
@@ -1187,9 +1188,12 @@ namespace JACA
                 }
 
                 linha = linha + 1;
+                
+                MessageBox.Show("Test " + i.ToString());
 
                 if (pendencia == false && repetido == false)
                 {
+                    MessageBox.Show("Test " + i.ToString());
                     cmd.CommandText = conteudo.ToString();
                     fazTransacao(conn, cmd);
                 }
@@ -1679,7 +1683,7 @@ namespace JACA
                         conn.Open();
                     }
                    //  Clipboard.SetText(conteudo.ToString());
-                    linha = linha + 1;
+                    linha = linha ;
                     cmd.CommandText = conteudo.ToString();
                     SqlTransaction trE = null;
                     trE = conn.BeginTransaction();
