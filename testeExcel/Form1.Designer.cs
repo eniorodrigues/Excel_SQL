@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.buttonAbrir = new System.Windows.Forms.Button();
             this.lblEndereço = new System.Windows.Forms.Label();
             this.cmbPlanilha = new System.Windows.Forms.ComboBox();
@@ -54,10 +55,9 @@
             // buttonAbrir
             // 
             this.buttonAbrir.Enabled = false;
-            this.buttonAbrir.Location = new System.Drawing.Point(12, 128);
-            this.buttonAbrir.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.buttonAbrir.Location = new System.Drawing.Point(8, 83);
             this.buttonAbrir.Name = "buttonAbrir";
-            this.buttonAbrir.Size = new System.Drawing.Size(554, 66);
+            this.buttonAbrir.Size = new System.Drawing.Size(369, 43);
             this.buttonAbrir.TabIndex = 3;
             this.buttonAbrir.Text = "Abrir Arquivo Excel";
             this.buttonAbrir.UseVisualStyleBackColor = true;
@@ -66,38 +66,36 @@
             // lblEndereço
             // 
             this.lblEndereço.AutoSize = true;
-            this.lblEndereço.Location = new System.Drawing.Point(10, 503);
-            this.lblEndereço.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblEndereço.Location = new System.Drawing.Point(11, 335);
             this.lblEndereço.Name = "lblEndereço";
-            this.lblEndereço.Size = new System.Drawing.Size(0, 20);
+            this.lblEndereço.Size = new System.Drawing.Size(0, 13);
             this.lblEndereço.TabIndex = 11;
             // 
             // cmbPlanilha
             // 
             this.cmbPlanilha.Enabled = false;
             this.cmbPlanilha.FormattingEnabled = true;
-            this.cmbPlanilha.Location = new System.Drawing.Point(12, 234);
-            this.cmbPlanilha.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.cmbPlanilha.Location = new System.Drawing.Point(8, 152);
             this.cmbPlanilha.Name = "cmbPlanilha";
-            this.cmbPlanilha.Size = new System.Drawing.Size(554, 28);
+            this.cmbPlanilha.Size = new System.Drawing.Size(371, 21);
             this.cmbPlanilha.TabIndex = 22;
             this.cmbPlanilha.SelectedIndexChanged += new System.EventHandler(this.cmbPlanilha_SelectedIndexChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(642, 385);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(428, 250);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 20);
+            this.label1.Size = new System.Drawing.Size(0, 13);
             this.label1.TabIndex = 23;
             // 
             // btnCarregar
             // 
             this.btnCarregar.Enabled = false;
-            this.btnCarregar.Location = new System.Drawing.Point(12, 363);
+            this.btnCarregar.Location = new System.Drawing.Point(8, 236);
+            this.btnCarregar.Margin = new System.Windows.Forms.Padding(2);
             this.btnCarregar.Name = "btnCarregar";
-            this.btnCarregar.Size = new System.Drawing.Size(556, 55);
+            this.btnCarregar.Size = new System.Drawing.Size(371, 36);
             this.btnCarregar.TabIndex = 27;
             this.btnCarregar.Text = "Carregar";
             this.btnCarregar.UseVisualStyleBackColor = true;
@@ -106,9 +104,10 @@
             // lblPlanilha
             // 
             this.lblPlanilha.AutoSize = true;
-            this.lblPlanilha.Location = new System.Drawing.Point(8, 209);
+            this.lblPlanilha.Location = new System.Drawing.Point(5, 136);
+            this.lblPlanilha.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblPlanilha.Name = "lblPlanilha";
-            this.lblPlanilha.Size = new System.Drawing.Size(106, 20);
+            this.lblPlanilha.Size = new System.Drawing.Size(73, 13);
             this.lblPlanilha.TabIndex = 28;
             this.lblPlanilha.Text = "Planilha Excel";
             // 
@@ -127,36 +126,40 @@
             "D_Relacao_Carga",
             "D_Vendas_Itens",
             "D_PIC"});
-            this.cmbTabela.Location = new System.Drawing.Point(12, 329);
+            this.cmbTabela.Location = new System.Drawing.Point(8, 214);
+            this.cmbTabela.Margin = new System.Windows.Forms.Padding(2);
             this.cmbTabela.Name = "cmbTabela";
-            this.cmbTabela.Size = new System.Drawing.Size(554, 28);
+            this.cmbTabela.Size = new System.Drawing.Size(371, 21);
             this.cmbTabela.TabIndex = 29;
             this.cmbTabela.SelectedIndexChanged += new System.EventHandler(this.cmbTabela_SelectedIndexChanged);
             // 
             // lblTabela
             // 
             this.lblTabela.AutoSize = true;
-            this.lblTabela.Location = new System.Drawing.Point(3, 306);
+            this.lblTabela.Location = new System.Drawing.Point(2, 199);
+            this.lblTabela.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblTabela.Name = "lblTabela";
-            this.lblTabela.Size = new System.Drawing.Size(93, 20);
+            this.lblTabela.Size = new System.Drawing.Size(64, 13);
             this.lblTabela.TabIndex = 30;
             this.lblTabela.Text = "Tabela SQL";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(15, 58);
+            this.label7.Location = new System.Drawing.Point(10, 38);
+            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(120, 20);
+            this.label7.Size = new System.Drawing.Size(81, 13);
             this.label7.TabIndex = 35;
             this.label7.Text = "Base de dados:";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(64, 25);
+            this.label6.Location = new System.Drawing.Point(43, 16);
+            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(71, 20);
+            this.label6.Size = new System.Drawing.Size(49, 13);
             this.label6.TabIndex = 34;
             this.label6.Text = "Servidor:";
             // 
@@ -164,9 +167,10 @@
             // 
             this.comboBoxBase.Enabled = false;
             this.comboBoxBase.FormattingEnabled = true;
-            this.comboBoxBase.Location = new System.Drawing.Point(140, 51);
+            this.comboBoxBase.Location = new System.Drawing.Point(93, 33);
+            this.comboBoxBase.Margin = new System.Windows.Forms.Padding(2);
             this.comboBoxBase.Name = "comboBoxBase";
-            this.comboBoxBase.Size = new System.Drawing.Size(426, 28);
+            this.comboBoxBase.Size = new System.Drawing.Size(285, 21);
             this.comboBoxBase.Sorted = true;
             this.comboBoxBase.TabIndex = 2;
             this.comboBoxBase.SelectedIndexChanged += new System.EventHandler(this.comboBoxBase_SelectedIndexChanged);
@@ -174,18 +178,20 @@
             // comboBoxServidor
             // 
             this.comboBoxServidor.FormattingEnabled = true;
-            this.comboBoxServidor.Location = new System.Drawing.Point(140, 17);
+            this.comboBoxServidor.Location = new System.Drawing.Point(93, 11);
+            this.comboBoxServidor.Margin = new System.Windows.Forms.Padding(2);
             this.comboBoxServidor.Name = "comboBoxServidor";
-            this.comboBoxServidor.Size = new System.Drawing.Size(426, 28);
+            this.comboBoxServidor.Size = new System.Drawing.Size(285, 21);
             this.comboBoxServidor.TabIndex = 1;
             this.comboBoxServidor.SelectedIndexChanged += new System.EventHandler(this.comboBoxServidor_SelectedIndexChanged);
             this.comboBoxServidor.Enter += new System.EventHandler(this.comboBoxServidor_Enter);
             // 
             // btnGerarModelo
             // 
-            this.btnGerarModelo.Location = new System.Drawing.Point(12, 85);
+            this.btnGerarModelo.Location = new System.Drawing.Point(8, 55);
+            this.btnGerarModelo.Margin = new System.Windows.Forms.Padding(2);
             this.btnGerarModelo.Name = "btnGerarModelo";
-            this.btnGerarModelo.Size = new System.Drawing.Size(188, 35);
+            this.btnGerarModelo.Size = new System.Drawing.Size(125, 23);
             this.btnGerarModelo.TabIndex = 36;
             this.btnGerarModelo.Text = "Gerar Modelo de Excel ";
             this.btnGerarModelo.UseVisualStyleBackColor = true;
@@ -194,80 +200,88 @@
             // lblCarregada
             // 
             this.lblCarregada.AutoSize = true;
-            this.lblCarregada.Location = new System.Drawing.Point(270, 449);
+            this.lblCarregada.Location = new System.Drawing.Point(180, 292);
+            this.lblCarregada.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblCarregada.Name = "lblCarregada";
-            this.lblCarregada.Size = new System.Drawing.Size(18, 20);
+            this.lblCarregada.Size = new System.Drawing.Size(13, 13);
             this.lblCarregada.TabIndex = 37;
             this.lblCarregada.Text = "0";
             // 
             // lblTotal
             // 
             this.lblTotal.AutoSize = true;
-            this.lblTotal.Location = new System.Drawing.Point(474, 209);
+            this.lblTotal.Location = new System.Drawing.Point(316, 136);
+            this.lblTotal.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblTotal.Name = "lblTotal";
-            this.lblTotal.Size = new System.Drawing.Size(18, 20);
+            this.lblTotal.Size = new System.Drawing.Size(13, 13);
             this.lblTotal.TabIndex = 37;
             this.lblTotal.Text = "0";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(345, 209);
+            this.label4.Location = new System.Drawing.Point(230, 136);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(121, 20);
+            this.label4.Size = new System.Drawing.Size(83, 13);
             this.label4.TabIndex = 38;
             this.label4.Text = "Total de Linhas:";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(8, 449);
+            this.label5.Location = new System.Drawing.Point(5, 292);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(147, 20);
+            this.label5.Size = new System.Drawing.Size(98, 13);
             this.label5.TabIndex = 38;
             this.label5.Text = "Linhas Carregadas:";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 469);
+            this.label2.Location = new System.Drawing.Point(5, 305);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(249, 20);
+            this.label2.Size = new System.Drawing.Size(169, 13);
             this.label2.TabIndex = 38;
             this.label2.Text = "Pendência de Layout e Conteúdo:";
             // 
             // lblPendencia
             // 
             this.lblPendencia.AutoSize = true;
-            this.lblPendencia.Location = new System.Drawing.Point(270, 469);
+            this.lblPendencia.Location = new System.Drawing.Point(180, 305);
+            this.lblPendencia.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblPendencia.Name = "lblPendencia";
-            this.lblPendencia.Size = new System.Drawing.Size(18, 20);
+            this.lblPendencia.Size = new System.Drawing.Size(13, 13);
             this.lblPendencia.TabIndex = 37;
             this.lblPendencia.Text = "0";
             // 
             // lblRepetido
             // 
             this.lblRepetido.AutoSize = true;
-            this.lblRepetido.Location = new System.Drawing.Point(270, 489);
+            this.lblRepetido.Location = new System.Drawing.Point(180, 318);
+            this.lblRepetido.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblRepetido.Name = "lblRepetido";
-            this.lblRepetido.Size = new System.Drawing.Size(18, 20);
+            this.lblRepetido.Size = new System.Drawing.Size(13, 13);
             this.lblRepetido.TabIndex = 37;
             this.lblRepetido.Text = "0";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(8, 489);
+            this.label8.Location = new System.Drawing.Point(5, 318);
+            this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(86, 20);
+            this.label8.Size = new System.Drawing.Size(58, 13);
             this.label8.TabIndex = 38;
             this.label8.Text = "Repetidos:";
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(585, 538);
+            this.ClientSize = new System.Drawing.Size(390, 359);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label5);
@@ -290,10 +304,10 @@
             this.Controls.Add(this.lblEndereço);
             this.Controls.Add(this.buttonAbrir);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.ShowIcon = false;
-            this.Text = "Tool Versão de Teste 1.4";
+            this.Text = "Tool Versão de Teste 1.6";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
