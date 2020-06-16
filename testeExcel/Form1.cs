@@ -65,7 +65,7 @@ namespace JACA
                 SqlCommand cmd = conn.CreateCommand();
 
  
-                    for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+                for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
   
                     penLayout = false;
@@ -245,6 +245,8 @@ namespace JACA
 
                     lblPendencia.Text = registroInconsistente.ToString();
                     lblPendencia.Refresh();
+
+                    progressBar1.Value = (i);
                 }
                 package.Dispose();
 
@@ -306,7 +308,7 @@ namespace JACA
                 };
 
    
-                    for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+                for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                 {
     
 
@@ -477,6 +479,8 @@ namespace JACA
 
                     lblPendencia.Text = registroInconsistente.ToString();
                     lblPendencia.Refresh();
+
+                    progressBar1.Value = (i);
                 }
                 package.Dispose();
 
@@ -685,7 +689,7 @@ namespace JACA
                         }
 
                         conteudo.Clear();
-
+                        progressBar1.Value = (i);
                     }
                     package.Dispose();
 
@@ -752,8 +756,8 @@ namespace JACA
             cmdProc.ExecuteNonQuery();
             trProc.Commit();
  
-           for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
-            {
+               for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+               {
                 pendencia = false;
                 conteudo.Clear();
                 for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
@@ -882,8 +886,9 @@ namespace JACA
                     fazTransacao(conn, cmd);
                 }
 
-                conteudo.Clear();
-            }
+                    conteudo.Clear();
+                    progressBar1.Value = (i);
+                }
             package.Dispose();
 
             if (numCarregados == 0)
@@ -1197,8 +1202,8 @@ namespace JACA
                         cmd.CommandText = conteudo.ToString();
                         fazTransacao(conn, cmd);
                     }
-
-                }
+                progressBar1.Value = (i);
+            }
                 package.Dispose();
  
                 if (numCarregados == 0)
@@ -1243,7 +1248,7 @@ namespace JACA
                     conn.Open();
 
                     for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
-                {
+                    {
           
                     pendencia = false;
                     conteudo.Clear();
@@ -1351,7 +1356,8 @@ namespace JACA
                     fazTransacao(conn, cmd);
                 }
                 linha++;
-            }
+                    progressBar1.Value = (i);
+                }
  
 
             package.Dispose();
@@ -1556,6 +1562,7 @@ namespace JACA
                         fazTransacao(conn, cmd);
                     }
                     linha++;
+                    progressBar1.Value = (i);
                 }
                  
                 package.Dispose();
@@ -1596,11 +1603,13 @@ namespace JACA
             int linha = 1;
 
 
-                    for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
-                {
+                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
+                 {
     
                     for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                     {
+
+                 
                         if (j == workSheet.Dimension.End.Column)
                         {
                             conteudo.Append(workSheet.Cells[i, j].Value == null ? " NULL, '" + linha + "', " : " '" + workSheet.Cells[i, j].Value.ToString().Replace(',', '.') + "' , '" + linha + "', ");
@@ -1666,6 +1675,7 @@ namespace JACA
                                 }
                             }
                         }
+                         
                     }
 
                     if (i == workSheet.Dimension.End.Row)
@@ -1694,8 +1704,10 @@ namespace JACA
 
                     lblCarregada.Text = (i - 1).ToString();
                     lblCarregada.Refresh();
+                    progressBar1.Value = (i);
 
-                    }
+
+                }
 
              
                 package.Dispose();
@@ -1931,8 +1943,8 @@ namespace JACA
                     {
                         conn.Open();
                     }
-
-                }
+                        progressBar1.Value = (i);
+                    }
 
                 if (numCarregados == 0)
                 {
@@ -2106,6 +2118,7 @@ namespace JACA
                     }
                     conteudo.Clear();
                     //        }
+                    progressBar1.Value = (i);
                 }
                 package.Dispose();
                 if (numCarregados == 0)
@@ -3014,7 +3027,8 @@ namespace JACA
             baseDeDados = comboBoxBase.Text;
             conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
             conn1 = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
-            buttonAbrir.Enabled = true;
+            cmbTabela.Enabled = true;
+
         }
 
         private void cmbPlanilha_SelectedIndexChanged(object sender, EventArgs e)
@@ -3030,8 +3044,8 @@ namespace JACA
 
             lblTotal.Text = (workSheet.Dimension.End.Row - 1).ToString();
             lblTotal.Refresh();
-
-            cmbTabela.Enabled = true;
+            progressBar1.Maximum = (workSheet.Dimension.End.Row );
+            
 
         }
 
@@ -3042,6 +3056,8 @@ namespace JACA
             lblCarregada.Text = "0";
             cmbSelecionado = true;
             btnCarregar.Enabled = true;
+            buttonAbrir.Enabled = true;
+
         }
 
 
@@ -3050,146 +3066,7 @@ namespace JACA
         {
 
 
-            using (ExcelPackage excel = new ExcelPackage())
-            {
-                excel.Workbook.Worksheets.Add("Compras");
-                excel.Workbook.Worksheets.Add("Vendas");
-                excel.Workbook.Worksheets.Add("Ordem");
-                excel.Workbook.Worksheets.Add("Inventario");
-                excel.Workbook.Worksheets.Add("Relacao");
-                excel.Workbook.Worksheets.Add("Custo");
-                excel.Workbook.Worksheets.Add("Clientes");
-                excel.Workbook.Worksheets.Add("Produtos");
-                excel.Workbook.Worksheets.Add("Fornecedores");
-                excel.Workbook.Worksheets.Add("PIC");
-
-                var comprasWorksheet = excel.Workbook.Worksheets["Compras"];
-                var vendasWorksheet = excel.Workbook.Worksheets["Vendas"];
-                var ordemWorksheet = excel.Workbook.Worksheets["Ordem"];
-                var custoWorksheet = excel.Workbook.Worksheets["Custo"];
-                var inventarioWorksheet = excel.Workbook.Worksheets["Inventario"];
-                var relacaoWorksheet = excel.Workbook.Worksheets["Relacao"];
-                var clientesWorksheet = excel.Workbook.Worksheets["Clientes"];
-                var produtosWorksheet = excel.Workbook.Worksheets["Produtos"];
-                var fornecedoresWorksheet = excel.Workbook.Worksheets["Fornecedores"];
-                var picWorksheet = excel.Workbook.Worksheets["PIC"];
-
-                List<string[]> headerRowCompras = new List<string[]>()
-                    {
-                        new string[] { "Código do Produto",   "Código Divisão",   "Código do Fornecedor", "Lançamento",   "Fatura",   "BL Data",  "Número da DI",    "Data da Importação",   "N da NF de Entrada",  "Serie",    "Data Entrada NF",  "CFOP NF Entrada",  "Data de Vencimento Média", "Dias", "Quantidade",   "Valor FOB (Moeda Estrangeira)",    "Código da Moeda Estrangeira",  "Frete",    "Seguro",   "Código Moeda Frete",   "Código Moeda Seguro",  "Imposto de Importação (Reais)",    "Icms", "Pis",  "Cofins", "Unidade", "CNPJ", "Incoterm",  "Id Fornecedor Seguro", "Id Fornecedor Frete" }
-                    };
-
-                List<string[]> headerRowVendas = new List<string[]>()
-                    {
-                      new string[] {"Código do Cliente",    "Número NF",    "Série NF", "Código da Divisão", "CFOP", "Data Emissão", "Data Vencimento",  "Prazo de Vencimento", "Item Nota Fiscal", "Código do Produto",    "Quantidade",   "Valor Venda sem o IPI (Reais)",  "Descontos Incondicionais", "ICMS", "PIS",  "COFINS",   "ISS",  "Comissão", "Frete",  "Seguro",   "Data de Embarque", "Código Moeda Estrangeira", "Valor em Moeda Estrangeira",   "Custo da Venda (CPV)" ,"RE", "CNPJ" }
-                    };
-
-                List<string[]> headerRowOrdem = new List<string[]>()
-                    {
-                      new string[] { "Código do Produto Acabado",   "Quantidade Produzida", "Unidade de Medida Produto Acabado",    "Código Matéria-Prima", "Quantidade Requisitada",   "Unidade de Medida Matéria-Prima",  "N da Ordem de Produção",  "Data Inínio",  "Data Fim", "CNPJ" }
-                    };
-
-                List<string[]> headerRowInventario = new List<string[]>()
-                    {
-                      new string[] { "Código do Produto",   "Data Inventário",  "Quantidade em Estoque", "Valor",   "Unidade de Medida", "CNPJ" }
-                    };
-
-                List<string[]> headerRowRelacao = new List<string[]>()
-                    {
-                      new string[] { "Produto Acabado", "Matéria Prima", "Quantidade Produzida", "Quantidade Requisitada", "Relacao", "Tipo Relação" }
-                    };
-
-                List<string[]> headerRowClientes = new List<string[]>()
-                    {
-                      new string[] { "Código do Cliente", "Nome", "Código do País","Vínculo",  "Data Inicio",  "Data Fim", "CNPJ"}
-                    };
-
-                List<string[]> headerRowProdutos = new List<string[]>()
-                    {
-                      new string[] {"Código do Produto",    "Descrição",    "Unidade de Medida",    "Classificação Fiscal (NCM)", "Margem"}
-                    };
-
-                List<string[]> headerRowFornecedores = new List<string[]>()
-                    {
-                      new string[] { "Código do Fornecedor", "Nome", "Código do País","Vínculo", "Data Inicio",  "Data Fim", "CNPJ"}
-                    };
-
-                List<string[]> headerRowCusto = new List<string[]>()
-                    {
-                      new string[] {"Código do Produto", "Mês", "Ano", "Custo Médio Unitário", "CNPJ" }
-                    };
-
-                List<string[]> headerRowPIC = new List<string[]>()
-                    {
-                      new string[] {"Fornecedor Código",   "Fornecedor Pais", "Pro Código",   "Qtde", "Vl Moeda Bruto",   "Cod Moeda",    "Data Emissao",   "Data Venc",  "Cli Código",   "Cli Pais", "Doc Oper", "Dias", "CFOP", "Imposto Intern",   "FOB Moeda",    "IPI",  "ICMS", "Pis",  "Cofins",   "Frete",    "Seguro"}
-                    };
-
-                string headerRangeFornecedores = "A1:" + Char.ConvertFromUtf32(headerRowFornecedores[0].Length + 64) + "1";
-                fornecedoresWorksheet.Cells[headerRangeFornecedores].LoadFromArrays(headerRowFornecedores);
-                fornecedoresWorksheet.Cells[headerRangeFornecedores].Style.Font.Bold = true;
-                fornecedoresWorksheet.Column(1).AutoFit();
-
-                string headerRangeCompras = "A1:AB1";
-                comprasWorksheet.Cells[headerRangeCompras].LoadFromArrays(headerRowCompras);
-                comprasWorksheet.Cells[headerRangeCompras].Style.Font.Bold = true;
-                comprasWorksheet.Column(1).AutoFit();
-
-                string headerRangeInventario = "A1:" + Char.ConvertFromUtf32(headerRowInventario[0].Length + 64) + "1";
-                inventarioWorksheet.Cells[headerRangeInventario].LoadFromArrays(headerRowInventario);
-                inventarioWorksheet.Cells[headerRangeInventario].Style.Font.Bold = true;
-                inventarioWorksheet.Column(1).AutoFit();
-
-                string headerRangeVendas = "A1:" + Char.ConvertFromUtf32(headerRowVendas[0].Length + 64) + "1";
-                vendasWorksheet.Cells[headerRangeVendas].LoadFromArrays(headerRowVendas);
-                vendasWorksheet.Cells[headerRangeVendas].Style.Font.Bold = true;
-                vendasWorksheet.Column(1).AutoFit();
-
-                string headerRangeOrdem = "A1:" + Char.ConvertFromUtf32(headerRowOrdem[0].Length + 64) + "1";
-                ordemWorksheet.Cells[headerRangeOrdem].LoadFromArrays(headerRowOrdem);
-                ordemWorksheet.Cells[headerRangeOrdem].Style.Font.Bold = true;
-                ordemWorksheet.Column(1).AutoFit();
-
-                string headerRangeClientes = "A1:" + Char.ConvertFromUtf32(headerRowClientes[0].Length + 64) + "1";
-                clientesWorksheet.Cells[headerRangeClientes].LoadFromArrays(headerRowClientes);
-                clientesWorksheet.Cells[headerRangeClientes].Style.Font.Bold = true;
-                clientesWorksheet.Column(1).AutoFit();
-
-                string headerRangeProdutos = "A1:" + Char.ConvertFromUtf32(headerRowProdutos[0].Length + 64) + "1";
-                produtosWorksheet.Cells[headerRangeProdutos].LoadFromArrays(headerRowProdutos);
-                produtosWorksheet.Cells[headerRangeProdutos].Style.Font.Bold = true;
-                produtosWorksheet.Column(1).AutoFit();
-
-                string headerRangeRelacao = "A1:" + Char.ConvertFromUtf32(headerRowRelacao[0].Length + 64) + "1";
-                relacaoWorksheet.Cells[headerRangeRelacao].LoadFromArrays(headerRowRelacao);
-                relacaoWorksheet.Cells[headerRangeRelacao].Style.Font.Bold = true;
-                relacaoWorksheet.Column(1).AutoFit();
-
-                string headerRangeCusto = "A1:" + Char.ConvertFromUtf32(headerRowCusto[0].Length + 64) + "1";
-                custoWorksheet.Cells[headerRangeCusto].LoadFromArrays(headerRowCusto);
-                custoWorksheet.Cells[headerRangeCusto].Style.Font.Bold = true;
-                custoWorksheet.Column(1).AutoFit();
-
-                string headerRangePIC = "A1:" + Char.ConvertFromUtf32(headerRowPIC[0].Length + 64) + "1";
-                picWorksheet.Cells[headerRangePIC].LoadFromArrays(headerRowPIC);
-                picWorksheet.Cells[headerRangePIC].Style.Font.Bold = true;
-                picWorksheet.Column(1).AutoFit();
-
-                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-                saveFileDialog1.Filter = "Excel|*.xlsx";
-                saveFileDialog1.Title = "Salvar Excel";
-                saveFileDialog1.RestoreDirectory = true;
-                saveFileDialog1.FileName = "Modelo Carregamento Dados TPS.xlsx";
-                saveFileDialog1.ShowDialog();
-
-                // If the file name is not an empty string open it for saving.  
-                if (saveFileDialog1.FileName != "")
-                {
-                    // Saves the Image via a FileStream created by the OpenFile method.  
-                    System.IO.FileStream fs = (System.IO.FileStream)saveFileDialog1.OpenFile();
-                    excel.SaveAs(fs);
-                }
-                excel.Dispose();
-            }
+           
         }
 
         private void buttonAbrir_Click(object sender, EventArgs e)
@@ -3813,6 +3690,181 @@ namespace JACA
         private void pictureBox1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblRepetido_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblPendencia_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblCarregada_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+  
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            using (ExcelPackage excel = new ExcelPackage())
+            {
+                excel.Workbook.Worksheets.Add("Compras");
+                excel.Workbook.Worksheets.Add("Vendas");
+                excel.Workbook.Worksheets.Add("Ordem");
+                excel.Workbook.Worksheets.Add("Inventario");
+                excel.Workbook.Worksheets.Add("Relacao");
+                excel.Workbook.Worksheets.Add("Custo");
+                excel.Workbook.Worksheets.Add("Clientes");
+                excel.Workbook.Worksheets.Add("Produtos");
+                excel.Workbook.Worksheets.Add("Fornecedores");
+                excel.Workbook.Worksheets.Add("PIC");
+
+                var comprasWorksheet = excel.Workbook.Worksheets["Compras"];
+                var vendasWorksheet = excel.Workbook.Worksheets["Vendas"];
+                var ordemWorksheet = excel.Workbook.Worksheets["Ordem"];
+                var custoWorksheet = excel.Workbook.Worksheets["Custo"];
+                var inventarioWorksheet = excel.Workbook.Worksheets["Inventario"];
+                var relacaoWorksheet = excel.Workbook.Worksheets["Relacao"];
+                var clientesWorksheet = excel.Workbook.Worksheets["Clientes"];
+                var produtosWorksheet = excel.Workbook.Worksheets["Produtos"];
+                var fornecedoresWorksheet = excel.Workbook.Worksheets["Fornecedores"];
+                var picWorksheet = excel.Workbook.Worksheets["PIC"];
+
+                List<string[]> headerRowCompras = new List<string[]>()
+                    {
+                        new string[] { "Código do Produto",   "Código Divisão",   "Código do Fornecedor", "Lançamento",   "Fatura",   "BL Data",  "Número da DI",    "Data da Importação",   "N da NF de Entrada",  "Serie",    "Data Entrada NF",  "CFOP NF Entrada",  "Data de Vencimento Média", "Dias", "Quantidade",   "Valor FOB (Moeda Estrangeira)",    "Código da Moeda Estrangeira",  "Frete",    "Seguro",   "Código Moeda Frete",   "Código Moeda Seguro",  "Imposto de Importação (Reais)",    "Icms", "Pis",  "Cofins", "Unidade", "CNPJ", "Incoterm",  "Id Fornecedor Seguro", "Id Fornecedor Frete" }
+                    };
+
+                List<string[]> headerRowVendas = new List<string[]>()
+                    {
+                      new string[] {"Código do Cliente",    "Número NF",    "Série NF", "Código da Divisão", "CFOP", "Data Emissão", "Data Vencimento",  "Prazo de Vencimento", "Item Nota Fiscal", "Código do Produto",    "Quantidade",   "Valor Venda sem o IPI (Reais)",  "Descontos Incondicionais", "ICMS", "PIS",  "COFINS",   "ISS",  "Comissão", "Frete",  "Seguro",   "Data de Embarque", "Código Moeda Estrangeira", "Valor em Moeda Estrangeira",   "Custo da Venda (CPV)" ,"RE", "CNPJ" }
+                    };
+
+                List<string[]> headerRowOrdem = new List<string[]>()
+                    {
+                      new string[] { "Código do Produto Acabado",   "Quantidade Produzida", "Unidade de Medida Produto Acabado",    "Código Matéria-Prima", "Quantidade Requisitada",   "Unidade de Medida Matéria-Prima",  "N da Ordem de Produção",  "Data Inínio",  "Data Fim", "CNPJ" }
+                    };
+
+                List<string[]> headerRowInventario = new List<string[]>()
+                    {
+                      new string[] { "Código do Produto",   "Data Inventário",  "Quantidade em Estoque", "Valor",   "Unidade de Medida", "CNPJ" }
+                    };
+
+                List<string[]> headerRowRelacao = new List<string[]>()
+                    {
+                      new string[] { "Produto Acabado", "Matéria Prima", "Quantidade Produzida", "Quantidade Requisitada", "Relacao", "Tipo Relação" }
+                    };
+
+                List<string[]> headerRowClientes = new List<string[]>()
+                    {
+                      new string[] { "Código do Cliente", "Nome", "Código do País","Vínculo",  "Data Inicio",  "Data Fim", "CNPJ"}
+                    };
+
+                List<string[]> headerRowProdutos = new List<string[]>()
+                    {
+                      new string[] {"Código do Produto",    "Descrição",    "Unidade de Medida",    "Classificação Fiscal (NCM)", "Margem"}
+                    };
+
+                List<string[]> headerRowFornecedores = new List<string[]>()
+                    {
+                      new string[] { "Código do Fornecedor", "Nome", "Código do País","Vínculo", "Data Inicio",  "Data Fim", "CNPJ"}
+                    };
+
+                List<string[]> headerRowCusto = new List<string[]>()
+                    {
+                      new string[] {"Código do Produto", "Mês", "Ano", "Custo Médio Unitário", "CNPJ" }
+                    };
+
+                List<string[]> headerRowPIC = new List<string[]>()
+                    {
+                      new string[] {"Fornecedor Código",   "Fornecedor Pais", "Pro Código",   "Qtde", "Vl Moeda Bruto",   "Cod Moeda",    "Data Emissao",   "Data Venc",  "Cli Código",   "Cli Pais", "Doc Oper", "Dias", "CFOP", "Imposto Intern",   "FOB Moeda",    "IPI",  "ICMS", "Pis",  "Cofins",   "Frete",    "Seguro"}
+                    };
+
+                string headerRangeFornecedores = "A1:" + Char.ConvertFromUtf32(headerRowFornecedores[0].Length + 64) + "1";
+                fornecedoresWorksheet.Cells[headerRangeFornecedores].LoadFromArrays(headerRowFornecedores);
+                fornecedoresWorksheet.Cells[headerRangeFornecedores].Style.Font.Bold = true;
+                fornecedoresWorksheet.Column(1).AutoFit();
+
+                string headerRangeCompras = "A1:AB1";
+                comprasWorksheet.Cells[headerRangeCompras].LoadFromArrays(headerRowCompras);
+                comprasWorksheet.Cells[headerRangeCompras].Style.Font.Bold = true;
+                comprasWorksheet.Column(1).AutoFit();
+
+                string headerRangeInventario = "A1:" + Char.ConvertFromUtf32(headerRowInventario[0].Length + 64) + "1";
+                inventarioWorksheet.Cells[headerRangeInventario].LoadFromArrays(headerRowInventario);
+                inventarioWorksheet.Cells[headerRangeInventario].Style.Font.Bold = true;
+                inventarioWorksheet.Column(1).AutoFit();
+
+                string headerRangeVendas = "A1:" + Char.ConvertFromUtf32(headerRowVendas[0].Length + 64) + "1";
+                vendasWorksheet.Cells[headerRangeVendas].LoadFromArrays(headerRowVendas);
+                vendasWorksheet.Cells[headerRangeVendas].Style.Font.Bold = true;
+                vendasWorksheet.Column(1).AutoFit();
+
+                string headerRangeOrdem = "A1:" + Char.ConvertFromUtf32(headerRowOrdem[0].Length + 64) + "1";
+                ordemWorksheet.Cells[headerRangeOrdem].LoadFromArrays(headerRowOrdem);
+                ordemWorksheet.Cells[headerRangeOrdem].Style.Font.Bold = true;
+                ordemWorksheet.Column(1).AutoFit();
+
+                string headerRangeClientes = "A1:" + Char.ConvertFromUtf32(headerRowClientes[0].Length + 64) + "1";
+                clientesWorksheet.Cells[headerRangeClientes].LoadFromArrays(headerRowClientes);
+                clientesWorksheet.Cells[headerRangeClientes].Style.Font.Bold = true;
+                clientesWorksheet.Column(1).AutoFit();
+
+                string headerRangeProdutos = "A1:" + Char.ConvertFromUtf32(headerRowProdutos[0].Length + 64) + "1";
+                produtosWorksheet.Cells[headerRangeProdutos].LoadFromArrays(headerRowProdutos);
+                produtosWorksheet.Cells[headerRangeProdutos].Style.Font.Bold = true;
+                produtosWorksheet.Column(1).AutoFit();
+
+                string headerRangeRelacao = "A1:" + Char.ConvertFromUtf32(headerRowRelacao[0].Length + 64) + "1";
+                relacaoWorksheet.Cells[headerRangeRelacao].LoadFromArrays(headerRowRelacao);
+                relacaoWorksheet.Cells[headerRangeRelacao].Style.Font.Bold = true;
+                relacaoWorksheet.Column(1).AutoFit();
+
+                string headerRangeCusto = "A1:" + Char.ConvertFromUtf32(headerRowCusto[0].Length + 64) + "1";
+                custoWorksheet.Cells[headerRangeCusto].LoadFromArrays(headerRowCusto);
+                custoWorksheet.Cells[headerRangeCusto].Style.Font.Bold = true;
+                custoWorksheet.Column(1).AutoFit();
+
+                string headerRangePIC = "A1:" + Char.ConvertFromUtf32(headerRowPIC[0].Length + 64) + "1";
+                picWorksheet.Cells[headerRangePIC].LoadFromArrays(headerRowPIC);
+                picWorksheet.Cells[headerRangePIC].Style.Font.Bold = true;
+                picWorksheet.Column(1).AutoFit();
+
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+                saveFileDialog1.Filter = "Excel|*.xlsx";
+                saveFileDialog1.Title = "Salvar Excel";
+                saveFileDialog1.RestoreDirectory = true;
+                saveFileDialog1.FileName = "Modelo Carregamento Dados TPS.xlsx";
+                saveFileDialog1.ShowDialog();
+
+                // If the file name is not an empty string open it for saving.  
+                if (saveFileDialog1.FileName != "")
+                {
+                    // Saves the Image via a FileStream created by the OpenFile method.  
+                    System.IO.FileStream fs = (System.IO.FileStream)saveFileDialog1.OpenFile();
+                    excel.SaveAs(fs);
+                }
+                excel.Dispose();
+            }
         }
     }
 

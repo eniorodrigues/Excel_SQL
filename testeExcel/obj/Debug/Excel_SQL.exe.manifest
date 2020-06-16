@@ -55,14 +55,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Excel_SQL.exe" size="357888">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Excel_SQL.exe" size="743424">
       <assemblyIdentity name="Excel_SQL" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>0HQaM9Bjhrrx5p85vc3eFMvYLzlPThv8rp74KPEfu/o=</dsig:DigestValue>
+        <dsig:DigestValue>h6iwzQO+lpMNHZs1++SHQb1YqauDsTC0arEggisfxxo=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
