@@ -59,5 +59,15 @@ namespace Excel_SQL.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _105994254_3078040295606083_9158336974536457510_o {
+            get {
+                object obj = ResourceManager.GetObject("105994254_3078040295606083_9158336974536457510_o", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

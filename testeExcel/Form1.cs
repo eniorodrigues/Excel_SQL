@@ -562,7 +562,6 @@ namespace JACA
 
                             if (j == 1 && (workSheet.Cells[i, j].Value == null))
                             {
-                                MessageBox.Show("Test");
                                 pendencia = true;
                                 numPendencias++;
                                 lblPendencia.Text = numPendencias.ToString();
@@ -577,8 +576,7 @@ namespace JACA
                                 ClientesPenLayout(i);
                                 conteudo.Clear();
                             }
-
-                            if (j == 1)
+                            else if (j == 1)
                             {
                                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
                                 {
@@ -944,7 +942,6 @@ namespace JACA
                //cmdProc.Transaction = trProc;
                //Clipboard.SetText(cmdProc.CommandText.ToString());
                //cmdProc.ExecuteNonQuery();
-
                // trProc.Commit();
  
                 for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
@@ -2979,33 +2976,7 @@ namespace JACA
         {
             comboBoxServidor.Items.Clear();
             string myServer = Environment.MachineName;
-
-            //System.Data.DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
-
-            //if (servers.Rows.Count > 0)
-            //{
-            //    comboBoxServidor.Items.Add(servers.Rows[0]["ServerName"]);
-
-            //    for (int i = 0; i < servers.Rows.Count; i++)
-            //    {
-
-            //        if (myServer == servers.Rows[i]["ServerName"].ToString())
-            //        {
-            //            if ((servers.Rows[i]["InstanceName"] as string) != null)
-            //            {
-            //                comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
-            //            }
-            //            else
-            //            {
-            //                comboBoxServidor.Items.Add(servers.Rows[i]["ServerName"]);
-            //            }
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    comboBoxServidor.Items.Add(myServer);
-            //}
+ 
             comboBoxServidor.Items.Add(myServer);
             string ServerName = Environment.MachineName;
             RegistryView registryView = Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Registry32;
@@ -3026,13 +2997,13 @@ namespace JACA
         {
             baseDeDados = comboBoxBase.Text;
             conn = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
-            conn1 = new SqlConnection("Data Source=" + conexao + "; Integrated Security=True; Initial Catalog=" + baseDeDados);
             cmbTabela.Enabled = true;
 
         }
 
         private void cmbPlanilha_SelectedIndexChanged(object sender, EventArgs e)
         {
+            btnCarregar.Enabled = true;
             string filePath = caminho;
             FileInfo existingFile = new FileInfo(filePath);
             ExcelPackage package = new ExcelPackage(existingFile);
@@ -3044,6 +3015,7 @@ namespace JACA
 
             lblTotal.Text = (workSheet.Dimension.End.Row - 1).ToString();
             lblTotal.Refresh();
+            progressBar1.Value = 0;
             progressBar1.Maximum = (workSheet.Dimension.End.Row );
             
 
@@ -3055,7 +3027,7 @@ namespace JACA
             lblPendencia.Text = "0";
             lblCarregada.Text = "0";
             cmbSelecionado = true;
-            btnCarregar.Enabled = true;
+
             buttonAbrir.Enabled = true;
 
         }
@@ -3098,6 +3070,7 @@ namespace JACA
                         }
                     }
                     cmbPlanilha.Enabled = true;
+                    label1.Text = openFileDialog1.FileName;
                 }
                 catch (Exception ex)
                 {
@@ -3135,7 +3108,6 @@ namespace JACA
             {
                 MessageBox.Show("Escolha a tabela do SQL para carregamento ");
             }
-
 
             else if (cmbSelecionado == true)
             {

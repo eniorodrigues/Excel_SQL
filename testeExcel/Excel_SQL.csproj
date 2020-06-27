@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Untitled-1.ico</ApplicationIcon>
+    <ApplicationIcon>13393972_1070744416335691_1453121935243340343_n.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -149,6 +149,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\105994254_3078040295606083_9158336974536457510_o.png" />
+    <Content Include="13393972_1070744416335691_1453121935243340343_n.ico" />
     <Content Include="Untitled-1.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
