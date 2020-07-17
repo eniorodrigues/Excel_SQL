@@ -522,45 +522,45 @@ namespace JACA
         {
             try
             {
+                int linha = 1;
+                int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
 
-            int linha = 1;
-            int numRepetidos = 0, numCarregados = 0, numPendencias = 0;
-            FileInfo existingFile = new FileInfo(caminho);
-            ExcelPackage package = new ExcelPackage(existingFile);
-            ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
-            StringBuilder conteudo = new StringBuilder();
-            var lista = new List<String>();
-            SqlCommand cmd = conn.CreateCommand();
-            ArrayList Excel = new ArrayList();
-            ArrayList SQL = new ArrayList();
-            ArrayList repetido = new ArrayList();
-            ArrayList carregado = new ArrayList();
-            bool pendencia = false;
+                FileInfo existingFile = new FileInfo(caminho);
+                ExcelPackage package = new ExcelPackage(existingFile);
+                ExcelWorksheet workSheet = package.Workbook.Worksheets[cmbPlanilha.SelectedIndex + 1];
+                StringBuilder conteudo = new StringBuilder();
+                var lista = new List<String>();
+                SqlCommand cmd = conn.CreateCommand();
+                ArrayList Excel = new ArrayList();
+                ArrayList SQL = new ArrayList();
+                ArrayList repetido = new ArrayList();
+                ArrayList carregado = new ArrayList();
+                bool pendencia = false;
 
-            if (conn.State.ToString() == "Closed")
-            {
-                conn.Open();
-            }
+                if (conn.State.ToString() == "Closed")
+                {
+                    conn.Open();
+                }
 
-            SqlCommand cmdProc = conn.CreateCommand();
-            SqlTransaction trProc = null;
-            cmdProc.CommandText = "CREATE or ALTER PROCEDURE [dbo].[SP_VERIF_CLI_REPT_CARREGADOR] @CLI VARCHAR(MAX) AS BEGIN IF NOT EXISTS(SELECT * FROM D_Clientes WHERE Cli_Id = @CLI)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
-            trProc = conn.BeginTransaction();
-            cmdProc.Transaction = trProc;
-            cmdProc.ExecuteNonQuery();
-            trProc.Commit();
+                SqlCommand cmdProc = conn.CreateCommand();
+                SqlTransaction trProc = null;
+                cmdProc.CommandText = "CREATE or ALTER PROCEDURE [dbo].[SP_VERIF_CLI_REPT_CARREGADOR] @CLI VARCHAR(MAX) AS BEGIN IF NOT EXISTS(SELECT * FROM D_Clientes WHERE Cli_Id = @CLI)  BEGIN  RETURN 0; END ELSE  RETURN 1;  END ";
+                trProc = conn.BeginTransaction();
+                cmdProc.Transaction = trProc;
+                cmdProc.ExecuteNonQuery();
+                trProc.Commit();
 
                 if (workSheet.Dimension.End.Column == 7)
                 {
-
                     for (int i = workSheet.Dimension.Start.Row + 1; i <= workSheet.Dimension.End.Row; i++)
                     {
                         pendencia = false;
                         conteudo.Clear();
+
                         for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
                         {
 
-                            if (j == 1 && (workSheet.Cells[i, j].Value == null))
+                            if (j == 1 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
                             {
                                 pendencia = true;
                                 numPendencias++;
@@ -568,7 +568,7 @@ namespace JACA
                                 ClientesPenLayout(i);
                                 conteudo.Clear();
                             }
-                            if (j == 4 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
+                            else if (j == 2 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
                             {
                                 pendencia = true;
                                 numPendencias++;
@@ -576,7 +576,23 @@ namespace JACA
                                 ClientesPenLayout(i);
                                 conteudo.Clear();
                             }
-                            else if (j == 1)
+                            else if (j == 3 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                            {
+                                pendencia = true;
+                                numPendencias++;
+                                lblPendencia.Text = numPendencias.ToString();
+                                ClientesPenLayout(i);
+                                conteudo.Clear();
+                            }
+                            else if (j == 4 && (workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
+                            {
+                                pendencia = true;
+                                numPendencias++;
+                                lblPendencia.Text = numPendencias.ToString();
+                                ClientesPenLayout(i);
+                                conteudo.Clear();
+                            }
+                            else if (j == 1 && !(workSheet.Cells[i, j].Value == null || workSheet.Cells[i, j].Value.ToString() == ""))
                             {
                                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
                                 {
@@ -588,7 +604,18 @@ namespace JACA
                                 cmdeProc.CommandText = "[SP_VERIF_CLI_REPT_CARREGADOR]";
                                 cmdeProc.Parameters.Add("@CLI", SqlDbType.VarChar);
                                 cmdeProc.Parameters["@CLI"].Direction = ParameterDirection.ReturnValue;
-                                cmdeProc.Parameters.AddWithValue("@CLI", workSheet.Cells[i, j].Value.ToString());
+                                String result;
+
+                                if (workSheet.Cells[i, j].Value == null)
+                                {
+                                    result = "";
+                                }
+                                else
+                                {
+                                    result = workSheet.Cells[i, j].Value.ToString();
+                                }
+
+                                cmdeProc.Parameters.AddWithValue("@CLI", (result));
 
                                 if (conn.State.ToString() == "Closed")
                                 {
@@ -597,39 +624,36 @@ namespace JACA
 
                                 cmdeProc.ExecuteNonQuery();
                                 int ret = Convert.ToInt32(cmdeProc.Parameters["@CLI"].Value);
+
                                 conn.Close();
+
                                 if (ret == 1)
                                 {
                                     numRepetidos++;
                                     lblRepetido.Text = numRepetidos.ToString();
                                     lblRepetido.Refresh();
+                                    conteudo.Clear();
+                                    pendencia = true;
+                                    break;
                                 }
                                 else
                                 {
-                                    numCarregados++;
-                                    lblCarregada.Text = numCarregados.ToString();
-                                    lblCarregada.Refresh();
+
+                                    conteudo.Append(" INSERT INTO D_CLIENTES " +
+                                            "(CLI_ID, " +
+                                            "CLI_NOME, " +
+                                            "CLI_PSS_ID, " +
+                                            "CLI_VINC, " +
+                                            "CLI_VINC_DT_INI, " +
+                                            "CLI_VINC_DT_FIM, " +
+                                            "CLI_CNPJ, " +
+                                            "[Lin_Origem_ID], " +
+                                            "[Arq_Origem_ID]) " +
+                                            " VALUES ( ");
+                                    conteudo.Append("'" + workSheet.Cells[i, j].Value + "', ");
+
                                 }
 
-                                conteudo.Append(" declare @cli_id varchar(max) = '" + workSheet.Cells[i, j].Value.ToString() + "';");
-                                conteudo.Append(Environment.NewLine);
-                                conteudo.Append(" if  (select max(cli_id) from D_Clientes where cli_id = @cli_id) = (select (cli_id) from D_Clientes where cli_id = (@cli_id)) ");
-                                conteudo.Append(Environment.NewLine);
-                                conteudo.Append(" print 'OK' ");
-                                conteudo.Append(Environment.NewLine);
-                                conteudo.Append(" else ");
-                                conteudo.Append(" INSERT INTO D_CLIENTES " +
-                                "(CLI_ID, " +
-                                "CLI_NOME, " +
-                                "CLI_PSS_ID, " +
-                                "CLI_VINC, " +
-                                "CLI_VINC_DT_INI, " +
-                                "CLI_VINC_DT_FIM, " +
-                                "CLI_CNPJ, " +
-                                "[Lin_Origem_ID], " +
-                                "[Arq_Origem_ID]) " +
-                                " VALUES ( ");
-                                conteudo.Append("'" + workSheet.Cells[i, j].Value + "', ");
                             }
                             else if ((j == 5 || j == 6) && (workSheet.Cells[i, j].Value == null) || (workSheet.Cells[linha, j].Value.ToString() == ""))
                             {
@@ -660,10 +684,10 @@ namespace JACA
                             {
                                 conteudo.Append(workSheet.Cells[i, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == "" ? " NULL, " : " '" + workSheet.Cells[i, j].Value + "', ");
                             }
+
                         }
 
-
-                        if (i == workSheet.Dimension.End.Row)
+                        if (i == workSheet.Dimension.End.Row && pendencia == false)
                         {
                             conteudo.Append(" ) ");
                         }
@@ -681,9 +705,13 @@ namespace JACA
 
                         if (pendencia == false)
                         {
+
                             //  Clipboard.SetText(conteudo.ToString());
                             cmd.CommandText = conteudo.ToString();
                             fazTransacao(conn, cmd);
+                            numCarregados++;
+                            lblCarregada.Text = numCarregados.ToString();
+                            lblCarregada.Refresh();
                         }
 
                         conteudo.Clear();
@@ -707,14 +735,15 @@ namespace JACA
 
 
                     conteudo.Clear();
+
                 }
                 else
                 {
                     MessageBox.Show("Quantidade de colunas divergente do modelo");
                 }
 
-                  
-         
+
+
             }
             catch (Exception ex)
             {
@@ -2535,6 +2564,8 @@ namespace JACA
             StringBuilder conteudo = new StringBuilder();
             SqlCommand cmd = conn.CreateCommand();
 
+            MessageBox.Show(linha.ToString());
+
             for (int j = workSheet.Dimension.Start.Column; j <= workSheet.Dimension.End.Column; j++)
             {
                 if (j == 1)
@@ -2552,12 +2583,12 @@ namespace JACA
                     if (workSheet.Cells[linha, j].Value == null)
                     {
                         int registro = linha - 1;
-                        conteudo.Append(" " + registro + ", 'D_Clientes', 'For_id', 0, 0, 'Campo [Código do Cliente] é obrigatório', '");
+                        conteudo.Append(" " + registro + ", 'D_Clientes', 'Cli_id', 0, 0, 'Campo [Código do Cliente] é obrigatório', '");
                     }
                     else
                     {
                         int registro = linha - 1;
-                        conteudo.Append(" " + registro + ", 'D_Clientes', 'For_id', 0, 0, 'Campo [Código do Cliente] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
+                        conteudo.Append(" " + registro + ", 'D_Clientes', 'Cli_id', 0, 0, 'Campo [Código do Cliente] é obrigatório', '" + workSheet.Cells[linha, j].Value.ToString() + " ");
                     }
                 }
                 else if (j == 2 && (workSheet.Cells[linha, j].Value == null || workSheet.Cells[linha, j].Value.ToString() == ""))
