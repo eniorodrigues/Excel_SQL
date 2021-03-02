@@ -62,7 +62,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>DG3jk1Idcx7u+hxCk1vSXyB4r3HsTLwVv5lIEQX8dHI=</dsig:DigestValue>
+        <dsig:DigestValue>5+vqY9EPCQqpegUM7jZJq843mKkD3V4Zpx4jl8RIQAs=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -75,13 +75,13 @@
       <dsig:DigestValue>MYznarlxP9pkj42oPX6u+n9yW6Um7URPyDhyswOPU7I=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Excel_SQL.exe.config" size="180">
+  <file name="Excel_SQL.exe.config" size="186">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>6NZ5q/Z5UFoSMFzRRt3Wx5AAb8jUyuER6EhOEgKC0VA=</dsig:DigestValue>
+      <dsig:DigestValue>1NgAxCSw4ibTXzWVy7D6Rw60Qih4Dn37KvGhG5Ora/s=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Untitled-1.ico" size="129815">

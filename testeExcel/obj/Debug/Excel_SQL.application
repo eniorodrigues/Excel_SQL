@@ -4,7 +4,7 @@
   <description asmv2:publisher="Excel_SQL" asmv2:product="Excel_SQL" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <deployment install="true" />
   <compatibleFrameworks xmlns="urn:schemas-microsoft-com:clickonce.v2">
-    <framework targetVersion="4.7.1" profile="Full" supportedRuntime="4.0.30319" />
+    <framework targetVersion="4.6.1" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
     <dependentAssembly dependencyType="install" codebase="Excel_SQL.exe.manifest" size="6193">
@@ -14,7 +14,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>0nLxUWAvx1w7ejtsU8pt0lK8jvKSTUPUl4eZBN4/o1Y=</dsig:DigestValue>
+        <dsig:DigestValue>ZwArvu9mP/jx8c58GbqLcdvvoktyg8LuTic9gDlDrzQ=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
